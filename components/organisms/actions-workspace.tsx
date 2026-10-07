@@ -50,7 +50,7 @@ export function ActionsWorkspace() {
           `${alert.quantity} pcs`,
           <span
             key="reason"
-            className="block min-w-[230px] max-w-[440px] whitespace-normal"
+            className="block min-w-57.5 max-w-110 whitespace-normal"
           >
             {alert.reason}
           </span>,

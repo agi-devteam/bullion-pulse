@@ -12,7 +12,7 @@ export function Metric({ label, value, note }: MetricProps) {
       <div className="text-[0.875rem] font-semibold tracking-[0.06em] text-muted-text uppercase">
         {label}
       </div>
-      <strong className="mono my-2.5 block text-[1.8rem] font-medium tracking-[-0.025em] [overflow-wrap:anywhere]">
+      <strong className="mono my-2.5 block text-[1.8rem] font-medium tracking-tight wrap-anywhere">
         {value}
       </strong>
       {note ? (

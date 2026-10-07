@@ -33,7 +33,7 @@ function DialogShell({
   const setDialog = useUIStore((state) => state.setDialog);
 
   return (
-    <DialogContent showCloseButton={false} className="w-[680px]">
+    <DialogContent showCloseButton={false} className="w-170">
       <DialogClose
         render={
           <Button

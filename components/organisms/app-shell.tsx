@@ -47,13 +47,13 @@ export function AppShell({ children }: AppShellProps) {
         className={cn(
           "mx-auto w-full max-w-[1920px]",
           isHome
-            ? "px-8 pt-5 pb-6 min-[2560px]:px-[42px] min-[2560px]:pt-7 min-[2560px]:pb-[34px] max-[1000px]:p-4 max-[700px]:p-3"
+            ? "px-8 pt-5 pb-6 min-[2560px]:px-10.5 min-[2560px]:pt-7 min-[2560px]:pb-8.5 max-[1000px]:p-4 max-[700px]:p-3"
             : "px-8 pt-6 pb-9 max-[700px]:px-3 max-[700px]:py-4",
         )}
       >
         <header
           className={cn(
-            "mb-[22px] flex items-center gap-3.5",
+            "mb-5.5 flex items-center gap-3.5",
             isHome &&
               "mb-4 flex-wrap justify-between gap-4 min-[701px]:max-[1500px]:grid min-[701px]:max-[1500px]:grid-cols-[auto_auto] min-[701px]:max-[1500px]:items-center max-[700px]:flex max-[700px]:items-center max-[700px]:gap-2.5",
           )}
@@ -99,7 +99,7 @@ export function AppShell({ children }: AppShellProps) {
           {isHome ? (
             <>
               <MarketStrip />
-              <div className="flex min-w-0 items-center gap-3 min-[701px]:max-[1500px]:justify-self-end max-[700px]:order-2 max-[700px]:ml-auto max-[700px]:gap-[7px] max-[480px]:ml-0 max-[480px]:w-full max-[480px]:justify-between">
+              <div className="flex min-w-0 items-center gap-3 min-[701px]:max-[1500px]:justify-self-end max-[700px]:order-2 max-[700px]:ml-auto max-[700px]:gap-1.75 max-[480px]:ml-0 max-[480px]:w-full max-[480px]:justify-between">
                 <ChannelFilter />
                 <DropdownMenu>
                   <DropdownMenuTrigger
@@ -115,7 +115,7 @@ export function AppShell({ children }: AppShellProps) {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent
                     align="end"
-                    className="w-[300px] rounded-[20px] border-line p-2 shadow-[0_16px_48px_#0003]"
+                    className="w-75 rounded-lg border-line p-2 shadow-[0_16px_48px_#0003]"
                   >
                     <DropdownMenuItem
                       className="min-h-12 gap-3.5 rounded-[14px] px-3.5 text-[1.0625rem]"

@@ -14,7 +14,7 @@ export function InventorySplitBar({ sell, route, hold }: InventorySplitBarProps)
 
   return (
     <div
-      className="flex h-4 gap-[3px] overflow-hidden rounded-lg bg-track"
+      className="flex h-4 gap-0.75 overflow-hidden rounded-lg bg-track"
       aria-label="Inventory decision split"
     >
       {SEGMENTS.map((key) => (

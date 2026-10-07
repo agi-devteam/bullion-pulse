@@ -34,7 +34,7 @@ export function NavigationDrawer() {
           </span>
           <span>
             Bullion Pulse
-            <small className="mt-[3px] block text-[0.8rem] font-normal text-muted-text">
+            <small className="mt-0.75 block text-[0.8rem] font-normal text-muted-text">
               Trading workspace
             </small>
           </span>
@@ -61,7 +61,7 @@ export function NavigationDrawer() {
       >
         {NAV_GROUPS.map((group) => (
           <div key={group.id} className="contents">
-            <div className="mx-3.5 mt-3 mb-[5px] text-[0.8rem] font-semibold tracking-[0.08em] text-muted-text uppercase">
+            <div className="mx-3.5 mt-3 mb-1.25 text-[0.8rem] font-semibold tracking-[0.08em] text-muted-text uppercase">
               {group.title}
             </div>
             {group.items.map((id) => {

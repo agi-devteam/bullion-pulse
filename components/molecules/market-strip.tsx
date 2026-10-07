@@ -37,7 +37,7 @@ export function MarketStrip() {
   const clock = useWibClock();
 
   return (
-    <div className="flex min-w-0 flex-wrap gap-2 min-[701px]:max-[1500px]:col-span-full min-[701px]:max-[1500px]:row-start-2 max-[1500px]:flex-nowrap max-[1500px]:overflow-x-auto max-[1500px]:[scrollbar-width:none] max-[700px]:order-3 max-[700px]:w-full [&::-webkit-scrollbar]:hidden">
+    <div className="flex min-w-0 flex-wrap gap-2 min-[701px]:max-[1500px]:col-span-full min-[701px]:max-[1500px]:row-start-2 max-[1500px]:flex-nowrap max-[1500px]:overflow-x-auto max-[1500px]:scrollbar-none max-[700px]:order-3 max-[700px]:w-full [&::-webkit-scrollbar]:hidden">
       <MarketPill
         label="XAU/USD"
         value={xau.data ? formatUsd(xau.data.current) : "Unavailable"}

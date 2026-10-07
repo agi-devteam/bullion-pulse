@@ -57,7 +57,7 @@ function TabsTrigger({ className, ...props }: TabsPrimitive.Tab.Props) {
     <TabsPrimitive.Tab
       data-slot="tabs-trigger"
       className={cn(
-        "relative inline-flex h-auto min-h-[44px] flex-none items-center justify-center gap-1.5 rounded-[999px] border border-line bg-surface px-6 py-3 text-[0.9375rem] font-semibold whitespace-nowrap text-ink shadow-none transition-all group-data-vertical/tabs:w-full group-data-vertical/tabs:justify-start hover:bg-track focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        "relative inline-flex h-auto min-h-11 flex-none items-center justify-center gap-1.5 rounded-[999px] border border-line bg-surface px-6 py-3 text-[0.9375rem] font-semibold whitespace-nowrap text-ink shadow-none transition-all group-data-vertical/tabs:w-full group-data-vertical/tabs:justify-start hover:bg-track focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         "data-active:border-ink data-active:bg-ink data-active:text-surface dark:data-active:border-ink dark:data-active:bg-ink dark:data-active:text-surface",
         "after:hidden",
         className

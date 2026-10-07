@@ -86,7 +86,7 @@ export function InventoryWorkspace() {
       </div>
       <PageToolbar>
         <div className="flex min-w-0 flex-1 flex-wrap items-center gap-3.5">
-          <div className="min-w-[160px]">
+          <div className="min-w-40">
             <Choice
               label="Channel"
               value={channel}
@@ -101,7 +101,7 @@ export function InventoryWorkspace() {
               ]}
             />
           </div>
-          <div className="min-w-[160px]">
+          <div className="min-w-40">
             <Choice
               label="Availability"
               value={status}
@@ -117,7 +117,7 @@ export function InventoryWorkspace() {
               ]}
             />
           </div>
-          <div className="min-w-[160px]">
+          <div className="min-w-40">
             <Choice
               label="Decision"
               value={decision}
@@ -134,7 +134,7 @@ export function InventoryWorkspace() {
             />
           </div>
           <Input
-            className="min-w-[200px] flex-1"
+            className="min-w-50 flex-1"
             placeholder="Serial / stock ID / gramasi"
             aria-label="Cari inventory"
             value={query}

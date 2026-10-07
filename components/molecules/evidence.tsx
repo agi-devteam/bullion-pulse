@@ -13,7 +13,7 @@ export function Evidence({ rows }: EvidenceProps) {
           className="grid grid-cols-1 gap-1 sm:grid-cols-[1fr_1.6fr] sm:gap-4"
         >
           <dt className="text-muted-text">{label}</dt>
-          <dd className="m-0 [overflow-wrap:anywhere]">{value}</dd>
+          <dd className="m-0 wrap-anywhere">{value}</dd>
         </div>
       ))}
     </dl>

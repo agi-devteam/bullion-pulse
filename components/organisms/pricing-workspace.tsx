@@ -41,7 +41,7 @@ export function PricingWorkspace() {
       </NoticeBanner>
       <PageToolbar>
         <div className="flex flex-wrap gap-3.5">
-          <div className="min-w-[160px]">
+          <div className="min-w-40">
             <Choice
               label="Channel pricing"
               value={channel}
@@ -53,7 +53,7 @@ export function PricingWorkspace() {
               ]}
             />
           </div>
-          <div className="min-w-[160px]">
+          <div className="min-w-40">
             <Choice
               label="Gramasi pricing"
               value={gram}

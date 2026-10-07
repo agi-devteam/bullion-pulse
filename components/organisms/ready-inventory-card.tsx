@@ -36,9 +36,9 @@ export function ReadyInventoryCard({
       aria-label="Lihat Ready Inventory evidence"
       onClick={onOpenEvidence}
       onKeyDown={onKeyDown}
-      className="grid cursor-pointer grid-cols-[minmax(0,1fr)_minmax(0,2fr)] gap-0 overflow-hidden p-0 py-0 [--card-spacing:0px] focus-visible:outline-2 focus-visible:outline-offset-[-4px] focus-visible:outline-route-f max-[1000px]:grid-cols-1"
+      className="grid cursor-pointer grid-cols-[minmax(0,1fr)_minmax(0,2fr)] gap-0 overflow-hidden p-0 py-0 [--card-spacing:0px] focus-visible:outline-2 focus-visible:-outline-offset-4 focus-visible:outline-route-f max-[1000px]:grid-cols-1"
     >
-      <div className="flex min-w-0 flex-col gap-[18px] px-7 py-6">
+      <div className="flex min-w-0 flex-col gap-4.5 px-7 py-6">
         <div className="text-[0.875rem] font-semibold tracking-[0.06em] text-muted-text uppercase">
           Ready Inventory · {channel}
         </div>

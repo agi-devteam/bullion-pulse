@@ -18,7 +18,7 @@ export function DenominationBarChart({ rows, tone }: DenominationBarChartProps) 
       {rows.map((row) => (
         <div
           key={row.gram}
-          className="grid min-h-[26px] grid-cols-[44px_minmax(0,1fr)_68px] items-center gap-3 text-base"
+          className="grid min-h-6.5 grid-cols-[44px_minmax(0,1fr)_68px] items-center gap-3 text-base"
         >
           <span className="mono text-left text-[0.9375rem] text-muted-text">
             {row.gram}g

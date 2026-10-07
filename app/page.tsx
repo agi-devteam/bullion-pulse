@@ -22,7 +22,7 @@ export default function Home() {
     .slice(0, 3);
 
   return (
-    <div className="flex flex-col gap-4 min-[2560px]:gap-[22px] max-[1000px]:gap-3.5">
+    <div className="flex flex-col gap-4 min-[2560px]:gap-5.5 max-[1000px]:gap-3.5">
       <ReadyInventoryCard
         data={data}
         segment={segment}

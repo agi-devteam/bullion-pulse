@@ -17,7 +17,7 @@ export function ChannelFilter() {
 
   return (
     <div
-      className="flex gap-1 rounded-[999px] bg-track p-1 max-[700px]:p-[3px] max-[480px]:flex-1"
+      className="flex gap-1 rounded-[999px] bg-track p-1 max-[700px]:p-0.75 max-[480px]:flex-1"
       aria-label="Segmen bisnis"
     >
       {SEGMENTS.map((option) => {
@@ -30,7 +30,7 @@ export function ChannelFilter() {
             aria-pressed={pressed}
             onClick={() => setSegment(option.id)}
             className={cn(
-              "min-h-11 min-w-[76px] px-[18px] tracking-normal",
+              "min-h-11 min-w-19 px-4.5 tracking-normal",
               !pressed && "text-muted-text",
               "max-[700px]:min-h-10 max-[700px]:min-w-0 max-[700px]:px-3",
               "max-[480px]:flex-1 max-[480px]:px-2",

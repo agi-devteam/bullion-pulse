@@ -21,7 +21,7 @@ export function FormRow({ label, id, note, children }: FormRowProps) {
           </small>
         ) : null}
       </div>
-      <div className="w-[210px] flex-none max-[700px]:w-full">{children}</div>
+      <div className="w-52.5 flex-none max-[700px]:w-full">{children}</div>
     </div>
   );
 }

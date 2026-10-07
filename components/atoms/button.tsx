@@ -20,14 +20,14 @@ const buttonVariants = cva(
       },
       size: {
         default:
-          "h-auto min-h-[44px] gap-1.5 px-6 text-[0.9375rem] leading-normal",
+          "h-auto min-h-11 gap-1.5 px-6 text-[0.9375rem] leading-normal",
         xs: "h-6 min-h-6 gap-1 px-2 text-xs has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3",
-        sm: "h-auto min-h-[36px] gap-1 px-3.5 text-[0.8125rem] has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3.5",
-        lg: "h-auto min-h-[48px] gap-1.5 px-7 text-base",
-        icon: "size-[44px] min-h-[44px] p-0",
+        sm: "h-auto min-h-9 gap-1 px-3.5 text-[0.8125rem] has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3.5",
+        lg: "h-auto min-h-12 gap-1.5 px-7 text-base",
+        icon: "size-11 min-h-11 p-0",
         "icon-xs": "size-6 min-h-6 p-0 [&_svg:not([class*='size-'])]:size-3",
         "icon-sm": "size-7 min-h-7 p-0",
-        "icon-lg": "size-[44px] min-h-[44px] p-0",
+        "icon-lg": "size-11 min-h-11 p-0",
       },
     },
     defaultVariants: {

@@ -100,7 +100,7 @@ export function DecisionPanel({
   return (
     <section
       className={cn(
-        "flex min-w-0 cursor-pointer flex-col gap-3 px-7 py-6 focus-visible:outline-2 focus-visible:outline-offset-[-4px] focus-visible:outline-route-f",
+        "flex min-w-0 cursor-pointer flex-col gap-3 px-7 py-6 focus-visible:outline-2 focus-visible:-outline-offset-4 focus-visible:outline-route-f",
         "[&+&]:border-l [&+&]:border-line max-[1000px]:[&+&]:border-t max-[1000px]:[&+&]:border-l-0",
       )}
       role="button"
@@ -113,7 +113,7 @@ export function DecisionPanel({
         <Status tone={bucket}>{DECISION_CAPTIONS[bucket]}</Status>
         <ArrowUpRight size={20} aria-hidden="true" />
       </div>
-      <h2 className="mt-1.5 text-[clamp(3rem,5vw,4.5rem)] leading-[0.95] font-bold tracking-[-0.05em] text-ink">
+      <h2 className="mt-1.5 text-[clamp(3rem,5vw,4.5rem)] leading-[0.95] font-bold tracking-tighter text-ink">
         {bucket.toUpperCase()}
       </h2>
       <div className="flex flex-wrap items-baseline gap-x-4 gap-y-2">
@@ -135,7 +135,7 @@ export function DecisionPanel({
             {supplierSplit.map((supplier) => (
               <span
                 key={supplier.name}
-                className="flex items-baseline gap-[7px]"
+                className="flex items-baseline gap-1.75"
                 role="listitem"
               >
                 <b className="font-semibold text-route-t">{supplier.name}</b>

@@ -52,7 +52,7 @@ export function SuppliersWorkspace() {
         ])}
       />
       <Card className="block p-6">
-        <h2 className="mt-0 mb-[18px] text-[1.25rem] font-semibold">
+        <h2 className="mt-0 mb-4.5 text-[1.25rem] font-semibold">
           Supplier directory
         </h2>
         <p className="m-0 mb-4 text-[0.9375rem] text-muted-text">

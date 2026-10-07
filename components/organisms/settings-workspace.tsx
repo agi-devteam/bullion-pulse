@@ -197,7 +197,7 @@ export function SettingsWorkspace() {
           className="flex flex-col gap-6"
         >
           <Card className="block p-6">
-            <h2 className="mt-0 mb-[18px] text-[1.25rem] font-semibold">
+            <h2 className="mt-0 mb-4.5 text-[1.25rem] font-semibold">
               {TAB_LABELS.find((item) => item.id === tab)?.label}
             </h2>
             <TabsContent value="dashboard">
@@ -495,7 +495,7 @@ export function SettingsWorkspace() {
               </FormRow>
             </TabsContent>
           </Card>
-          <div className="flex flex-wrap items-center justify-between gap-[18px]">
+          <div className="flex flex-wrap items-center justify-between gap-4.5">
             <p className="m-0 text-[0.9375rem] text-muted-text">
               Perubahan berlaku setelah Save. Pengaturan disimpan pada browser
               ini.

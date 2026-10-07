@@ -22,6 +22,6 @@ export function PageToolbar({
 
 export function WorkspaceStack({ children }: { children: ReactNode }) {
   return (
-    <div className="flex flex-col gap-[22px] max-[700px]:gap-4">{children}</div>
+    <div className="flex flex-col gap-5.5 max-[700px]:gap-4">{children}</div>
   );
 }
