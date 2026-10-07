@@ -11,6 +11,14 @@ import { Choice } from "@/components/molecules/choice";
 import { FormRow } from "@/components/molecules/form-row";
 import { Tabs, TabsList, TabsTrigger } from "@/components/molecules/tabs";
 import { DataTable } from "@/components/organisms/data-table";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/organisms/dialog";
 import { GRAMS, type Language, type Theme } from "@/domain/primitives";
 import type {
   PolicyDraft,
@@ -75,6 +83,7 @@ export function SettingsWorkspace() {
     createDefaultPolicyDraft({ theme, language }),
   );
   const committed = useRef(clonePolicyDraft(draft));
+  const [pendingTab, setPendingTab] = useState<SettingsTab | null>(null);
 
   const tabLabels: Record<SettingsTab, string> = {
     dashboard: t("tabs.dashboard"),
@@ -83,6 +92,10 @@ export function SettingsWorkspace() {
     supplier: t("tabs.supplier"),
     system: t("tabs.system"),
   };
+
+  function isDirty() {
+    return JSON.stringify(draft) !== JSON.stringify(committed.current);
+  }
 
   function commitDisplay<K extends keyof PolicyDraft["display"]>(
     key: K,
@@ -96,6 +109,26 @@ export function SettingsWorkspace() {
       ...committed.current,
       display: { ...committed.current.display, [key]: value },
     };
+  }
+
+  function requestTabChange(next: SettingsTab) {
+    if (next === tab) return;
+    if (!isDirty()) {
+      setTab(next);
+      return;
+    }
+    setPendingTab(next);
+  }
+
+  function discardAndSwitch() {
+    if (!pendingTab) return;
+    const next = clonePolicyDraft(committed.current);
+    setDraft(next);
+    setTheme(next.display.theme);
+    setLanguage(next.display.language);
+    setTab(pendingTab);
+    setPendingTab(null);
+    showToast(t("toasts.discarded"));
   }
 
   function setQuote(quoteId: string, patch: Partial<SupplierPolicyQuote>) {
@@ -124,15 +157,16 @@ export function SettingsWorkspace() {
       route: home.buckets.route.grams,
       hold: home.buckets.hold.grams,
     };
-    setDialog({
-      kind: "policy-preview",
-      current,
-      next: {
-        sell: Math.round(current.sell * 0.985),
-        route: Math.round(current.route * 1.08),
-        hold: Math.round(current.hold * 1.12),
-      },
-    });
+    // Reference re-runs analyze(draft) vs analyze(saved). Until a policy
+    // engine exists here, only approximate impact when the draft is dirty.
+    const next = isDirty()
+      ? {
+          sell: Math.round(current.sell * 0.985),
+          route: Math.round(current.route * 1.08),
+          hold: Math.round(current.hold * 1.12),
+        }
+      : { ...current };
+    setDialog({ kind: "policy-preview", current, next });
   }
 
   function persist() {
@@ -187,7 +221,7 @@ export function SettingsWorkspace() {
         <Tabs
           value={tab}
           onValueChange={(value) => {
-            if (value) setTab(value as SettingsTab);
+            if (value) requestTabChange(value as SettingsTab);
           }}
           className="gap-0"
         >
@@ -523,7 +557,7 @@ export function SettingsWorkspace() {
             </>
           ) : null}
         </Card>
-        {tab !== "dashboard" ? (
+        {tab !== "dashboard" && isDirty() ? (
           <div className="mt-[18px] flex flex-wrap items-center justify-between gap-[14px]">
             <p className="m-0 text-[0.95rem] leading-[1.5] text-muted-text">
               {t("footerNote")}
@@ -542,6 +576,36 @@ export function SettingsWorkspace() {
           </div>
         ) : null}
       </form>
+
+      <Dialog
+        open={pendingTab != null}
+        onOpenChange={(open) => {
+          if (!open) setPendingTab(null);
+        }}
+      >
+        <DialogContent className="sm:max-w-md" showCloseButton={false}>
+          <DialogHeader>
+            <DialogTitle className="text-[1.15rem] font-semibold">
+              {t("unsavedTitle")}
+            </DialogTitle>
+            <DialogDescription className="text-base text-muted-text">
+              {t("unsavedDescription")}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="border-0 bg-transparent p-0 sm:justify-end">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setPendingTab(null)}
+            >
+              {t("unsavedStay")}
+            </Button>
+            <Button type="button" onClick={discardAndSwitch}>
+              {t("unsavedDiscard")}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
