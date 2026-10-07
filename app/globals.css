@@ -62,7 +62,7 @@
   --radius-md: 12px;
   --radius-lg: 20px;
   --radius-xl: 24px;
-  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-2xl: 16px;
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
 }
@@ -152,6 +152,12 @@
     font-size: clamp(14px, 0.84vw, 26px);
   }
 
+  @media (max-width: 1000px) {
+    html {
+      font-size: 14px;
+    }
+  }
+
   body {
     margin: 0;
     background: var(--bg);
@@ -186,6 +192,25 @@
 .mono {
   font-family: var(--font-jetbrains-mono), "JetBrains Mono", ui-monospace, monospace;
   font-variant-numeric: tabular-nums;
+}
+
+/* Compact settings controls — width comes from FormRow / table-wrap */
+.policy-matrix [data-slot="input"],
+.policy-matrix [data-slot="select-trigger"] {
+  min-height: 40px !important;
+  height: 40px !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  padding-left: 14px !important;
+  padding-right: 14px !important;
+  font-size: 1.0625rem;
+}
+
+/* Margin policy table keeps live 94px fields */
+.policy-matrix .table-wrap [data-slot="input"] {
+  width: 94px !important;
+  min-width: 94px !important;
+  max-width: 94px !important;
 }
 
 /*

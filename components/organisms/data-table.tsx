@@ -1,4 +1,7 @@
+"use client";
+
 import type { ReactNode } from "react";
+import { useTranslations } from "next-intl";
 import {
   Table,
   TableBody,
@@ -14,6 +17,8 @@ export interface DataTableProps {
 }
 
 export function DataTable({ headers, rows }: DataTableProps) {
+  const t = useTranslations("common");
+
   return (
     <div className="table-wrap max-w-full overflow-auto rounded-2xl border border-line">
       <Table className="border-collapse text-left">
@@ -39,7 +44,7 @@ export function DataTable({ headers, rows }: DataTableProps) {
                 colSpan={headers.length}
                 className="px-8 py-8 text-center whitespace-normal text-muted-text"
               >
-                Tidak ada data yang sesuai.
+                {t("emptyTable")}
               </TableCell>
             </TableRow>
           )}

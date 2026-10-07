@@ -1,21 +1,22 @@
 "use client";
 
-import { useMemo, useRef, useState, type FormEvent } from "react";
+import { useRef, useState, type FormEvent } from "react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/atoms/button";
 import { Input } from "@/components/atoms/input";
+import { Status } from "@/components/atoms/status";
 import { Switch } from "@/components/atoms/switch";
 import { Card } from "@/components/molecules/card";
 import { Choice } from "@/components/molecules/choice";
 import { FormRow } from "@/components/molecules/form-row";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/molecules/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/molecules/tabs";
 import { DataTable } from "@/components/organisms/data-table";
 import { GRAMS, type Language, type Theme } from "@/domain/primitives";
-import type { PolicyDraft, SettingsTab, SupplierPolicyQuote } from "@/domain/settings";
+import type {
+  PolicyDraft,
+  SettingsTab,
+  SupplierPolicyQuote,
+} from "@/domain/settings";
 import { getHomeIntelligence } from "@/lib/mocks/home-intelligence";
 import {
   clonePolicyDraft,
@@ -24,35 +25,25 @@ import {
 import { useSettingsStore } from "@/stores/use-settings-store";
 import { useUIStore } from "@/stores/use-ui-store";
 
-const TAB_LABELS: { id: SettingsTab; label: string }[] = [
-  { id: "dashboard", label: "Dashboard" },
-  { id: "margin", label: "Margin Policy" },
-  { id: "route", label: "Route Policy" },
-  { id: "supplier", label: "Supplier Policy" },
-  { id: "system", label: "System / Market" },
+const TAB_IDS: SettingsTab[] = [
+  "dashboard",
+  "margin",
+  "route",
+  "supplier",
+  "system",
 ];
-
-function groupQuotes(quotes: SupplierPolicyQuote[]) {
-  const groups = new Map<string, SupplierPolicyQuote[]>();
-
-  for (const quote of quotes) {
-    const list = groups.get(quote.name) ?? [];
-    list.push(quote);
-    groups.set(quote.name, list);
-  }
-
-  for (const list of groups.values()) {
-    list.sort((a, b) => a.gram - b.gram);
-  }
-
-  return groups;
-}
 
 function numericInput(
   id: string,
   value: number,
   onChange: (value: number) => void,
-  attrs: { min?: string; max?: string; step?: string; label?: string } = {},
+  attrs: {
+    min?: string;
+    max?: string;
+    step?: string;
+    label?: string;
+    className?: string;
+  } = {},
 ) {
   return (
     <Input
@@ -63,12 +54,15 @@ function numericInput(
       step={attrs.step ?? "any"}
       value={Number.isFinite(value) ? value : ""}
       aria-label={attrs.label}
+      className={attrs.className}
       onChange={(event) => onChange(Number(event.target.value))}
     />
   );
 }
 
 export function SettingsWorkspace() {
+  const t = useTranslations("settings");
+  const tCommon = useTranslations("common");
   const theme = useSettingsStore((state) => state.theme);
   const language = useSettingsStore((state) => state.language);
   const setTheme = useSettingsStore((state) => state.setTheme);
@@ -82,12 +76,15 @@ export function SettingsWorkspace() {
   );
   const committed = useRef(clonePolicyDraft(draft));
 
-  const groupedSuppliers = useMemo(
-    () => groupQuotes(draft.supplier.quotes),
-    [draft.supplier.quotes],
-  );
+  const tabLabels: Record<SettingsTab, string> = {
+    dashboard: t("tabs.dashboard"),
+    margin: t("tabs.margin"),
+    route: t("tabs.route"),
+    supplier: t("tabs.supplier"),
+    system: t("tabs.system"),
+  };
 
-  function patchDisplay<K extends keyof PolicyDraft["display"]>(
+  function commitDisplay<K extends keyof PolicyDraft["display"]>(
     key: K,
     value: PolicyDraft["display"][K],
   ) {
@@ -95,12 +92,13 @@ export function SettingsWorkspace() {
       ...current,
       display: { ...current.display, [key]: value },
     }));
+    committed.current = {
+      ...committed.current,
+      display: { ...committed.current.display, [key]: value },
+    };
   }
 
-  function setQuote(
-    quoteId: string,
-    patch: Partial<SupplierPolicyQuote>,
-  ) {
+  function setQuote(quoteId: string, patch: Partial<SupplierPolicyQuote>) {
     setDraft((current) => ({
       ...current,
       supplier: {
@@ -112,18 +110,27 @@ export function SettingsWorkspace() {
   }
 
   function discard() {
-    setDraft(clonePolicyDraft(committed.current));
-    showToast("Perubahan dibatalkan.");
+    const next = clonePolicyDraft(committed.current);
+    setDraft(next);
+    setTheme(next.display.theme);
+    setLanguage(next.display.language);
+    showToast(t("toasts.discarded"));
   }
 
   function preview() {
-    const current = getHomeIntelligence("all");
+    const home = getHomeIntelligence("all");
+    const current = {
+      sell: home.buckets.sell.grams,
+      route: home.buckets.route.grams,
+      hold: home.buckets.hold.grams,
+    };
     setDialog({
       kind: "policy-preview",
+      current,
       next: {
-        sell: Math.round(current.buckets.sell.grams * 0.985),
-        route: Math.round(current.buckets.route.grams * 1.08),
-        hold: Math.round(current.buckets.hold.grams * 1.12),
+        sell: Math.round(current.sell * 0.985),
+        route: Math.round(current.route * 1.08),
+        hold: Math.round(current.hold * 1.12),
       },
     });
   }
@@ -133,7 +140,7 @@ export function SettingsWorkspace() {
       for (const channel of ["B2C", "B2B"] as const) {
         const value = draft.margin.minimumMargin[channel][gram];
         if (!Number.isFinite(value) || value < 0 || value >= 100) {
-          showToast("Margin policy harus berada di 0–99.99%");
+          showToast(t("toasts.marginRange"));
           return;
         }
       }
@@ -146,12 +153,12 @@ export function SettingsWorkspace() {
       !Number.isFinite(draft.route.maxLeadHours) ||
       draft.route.maxLeadHours < 0
     ) {
-      showToast("Nilai route policy invalid");
+      showToast(t("toasts.routeInvalid"));
       return;
     }
 
     if (draft.system.refreshSeconds < 1 || draft.system.staleMinutes < 1) {
-      showToast("Nilai policy di luar range");
+      showToast(t("toasts.outOfRange"));
       return;
     }
 
@@ -163,7 +170,7 @@ export function SettingsWorkspace() {
         quote.lead_time < 0 ||
         !Number.isFinite(Date.parse(quote.valid_until))
       ) {
-        showToast("Supplier capacity, lead time, dan expiry harus valid.");
+        showToast(t("toasts.supplierInvalid"));
         return;
       }
     }
@@ -171,75 +178,96 @@ export function SettingsWorkspace() {
     committed.current = clonePolicyDraft(draft);
     setTheme(draft.display.theme);
     setLanguage(draft.display.language);
-    showToast("Pengaturan disimpan.");
+    showToast(t("toasts.saved"));
   }
 
   return (
-    <div className="flex flex-col gap-6">
-      <Tabs
-        value={tab}
-        onValueChange={(value) => {
-          if (value) setTab(value as SettingsTab);
+    <div className="flex flex-col gap-[22px]">
+      <nav aria-label={t("tabsNav")} className="flex flex-wrap gap-2">
+        <Tabs
+          value={tab}
+          onValueChange={(value) => {
+            if (value) setTab(value as SettingsTab);
+          }}
+          className="gap-0"
+        >
+          <TabsList className="gap-2">
+            {TAB_IDS.map((id) => (
+              <TabsTrigger key={id} value={id} className="min-h-[44px] py-0">
+                {tabLabels[id]}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </Tabs>
+      </nav>
+      <form
+        onSubmit={(event: FormEvent) => {
+          event.preventDefault();
+          persist();
         }}
       >
-        <TabsList>
-          {TAB_LABELS.map((item) => (
-            <TabsTrigger key={item.id} value={item.id}>
-              {item.label}
-            </TabsTrigger>
-          ))}
-        </TabsList>
-        <form
-          onSubmit={(event: FormEvent) => {
-            event.preventDefault();
-            persist();
-          }}
-          className="flex flex-col gap-6"
-        >
-          <Card className="block p-6">
-            <h2 className="mt-0 mb-4.5 text-[1.25rem] font-semibold">
-              {TAB_LABELS.find((item) => item.id === tab)?.label}
-            </h2>
-            <TabsContent value="dashboard">
+        <Card className="policy-matrix block gap-0 p-[24px]">
+          <h2 className="mt-0 mb-[18px] text-[1.25rem] font-bold">
+            {tabLabels[tab]}
+          </h2>
+          {tab === "dashboard" ? (
+            <>
               <FormRow
-                label="Theme"
+                label={t("dashboard.theme")}
                 id="theme"
-                note="Theme control hanya berada di Settings."
+                note={t("dashboard.themeNote")}
+                controlWidth={210}
               >
                 <Choice
-                  label="Theme"
+                  label={t("dashboard.theme")}
                   value={draft.display.theme}
-                  onChange={(value) => patchDisplay("theme", value as Theme)}
+                  onChange={(value) => {
+                    const next = value as Theme;
+                    commitDisplay("theme", next);
+                    setTheme(next);
+                  }}
                   options={[
-                    ["system", "System"],
-                    ["light", "Light"],
-                    ["dark", "Dark"],
+                    ["system", t("dashboard.themeSystem")],
+                    ["light", t("dashboard.themeLight")],
+                    ["dark", t("dashboard.themeDark")],
                   ]}
                 />
               </FormRow>
-              <FormRow label="Language" id="language">
+              <FormRow
+                label={t("dashboard.language")}
+                id="language"
+                note={t("dashboard.languageNote")}
+                controlWidth={210}
+              >
                 <Choice
-                  label="Language"
+                  label={t("dashboard.language")}
                   value={draft.display.language}
-                  onChange={(value) =>
-                    patchDisplay("language", value as Language)
-                  }
+                  onChange={(value) => {
+                    const next = value as Language;
+                    commitDisplay("language", next);
+                    setLanguage(next);
+                  }}
                   options={[
-                    ["id", "Indonesia (id)"],
-                    ["en", "English (en)"],
+                    ["id", t("dashboard.languageId")],
+                    ["en", t("dashboard.languageEn")],
                   ]}
                 />
               </FormRow>
-            </TabsContent>
-            <TabsContent value="margin">
-              <p className="mb-4 text-[0.9375rem] text-muted-text">
-                Default B2C 3% / B2B 2.5% untuk seluruh gramasi. Margin = total GP
-                / harga jual; bukan hanya komponen Prognosa.
+            </>
+          ) : null}
+          {tab === "margin" ? (
+            <>
+              <p className="mt-0 mb-[14px] text-[0.95rem] leading-[1.5] text-muted-text">
+                {t("margin.intro")}
               </p>
               <DataTable
-                headers={["Gramasi", "B2C minimum %", "B2B minimum %"]}
+                headers={[
+                  t("margin.gramasi"),
+                  t("margin.b2cMin"),
+                  t("margin.b2bMin"),
+                ]}
                 rows={GRAMS.map((gram) => [
-                  `${gram}g`,
+                  tCommon("gramsUnit", { value: gram }),
                   numericInput(
                     `margin-B2C-${gram}`,
                     draft.margin.minimumMargin.B2C[gram],
@@ -259,7 +287,7 @@ export function SettingsWorkspace() {
                     {
                       max: "99.99",
                       step: "0.1",
-                      label: `B2C ${gram}g minimum margin`,
+                      label: t("margin.b2cAria", { gram }),
                     },
                   ),
                   numericInput(
@@ -281,14 +309,16 @@ export function SettingsWorkspace() {
                     {
                       max: "99.99",
                       step: "0.1",
-                      label: `B2B ${gram}g minimum margin`,
+                      label: t("margin.b2bAria", { gram }),
                     },
                   ),
                 ])}
               />
-            </TabsContent>
-            <TabsContent value="route">
-              <FormRow label="Minimum routed margin %" id="route-margin">
+            </>
+          ) : null}
+          {tab === "route" ? (
+            <>
+              <FormRow label={t("route.minMargin")} id="route-margin">
                 {numericInput(
                   "route-margin",
                   draft.route.minimumMargin,
@@ -300,7 +330,7 @@ export function SettingsWorkspace() {
                   { max: "99.99", step: "0.1" },
                 )}
               </FormRow>
-              <FormRow label="Maximum lead time (hours)" id="route-lead">
+              <FormRow label={t("route.maxLead")} id="route-lead">
                 {numericInput(
                   "route-lead",
                   draft.route.maxLeadHours,
@@ -312,9 +342,9 @@ export function SettingsWorkspace() {
                 )}
               </FormRow>
               <FormRow
-                label="Supplier capacity requirement"
+                label={t("route.capacityRequired")}
                 id="route-capacity"
-                note="Capacity tetap wajib pada tahap execution."
+                note={t("route.capacityNote")}
               >
                 <Switch
                   id="route-capacity"
@@ -327,96 +357,96 @@ export function SettingsWorkspace() {
                   }
                 />
               </FormRow>
-            </TabsContent>
-            <TabsContent value="supplier">
-              {[...groupedSuppliers.entries()].map(
-                ([name, quotes], supplierIndex) => (
-                  <section
-                    key={name}
-                    className={
-                      supplierIndex > 0
-                        ? "mt-7 border-t border-line pt-6"
-                        : undefined
-                    }
+              <FormRow
+                label={t("route.lockRequired")}
+                note={t("route.lockNote")}
+              >
+                <Status tone="route">{tCommon("required")}</Status>
+              </FormRow>
+            </>
+          ) : null}
+          {tab === "supplier"
+            ? draft.supplier.quotes.map((quote, index) => (
+                <section
+                  key={quote.quote_id}
+                  className={
+                    index > 0 ? "mt-7 border-t border-line pt-6" : undefined
+                  }
+                >
+                  <h3 className="mt-0 mb-2.5 text-[1.1rem] font-semibold">
+                    {t("supplier.quoteHeading", {
+                      name: quote.name,
+                      gram: quote.gram,
+                    })}
+                  </h3>
+                  <FormRow
+                    label={t("supplier.active")}
+                    id={`supplier-active-${quote.quote_id}`}
                   >
-                    <h3 className="mt-0 mb-2.5 text-[1.1rem] font-semibold">
-                      {name}
-                    </h3>
-                    {quotes.map((quote) => (
-                      <div key={quote.quote_id} className="mb-4 last:mb-0">
-                        <h4 className="mt-0 mb-1 text-base font-semibold">
-                          {quote.gram}g
-                        </h4>
-                        <FormRow
-                          label="Active"
-                          id={`supplier-active-${quote.quote_id}`}
-                        >
-                          <Switch
-                            id={`supplier-active-${quote.quote_id}`}
-                            checked={quote.active}
-                            onCheckedChange={(value) =>
-                              setQuote(quote.quote_id, { active: value })
-                            }
-                          />
-                        </FormRow>
-                        <FormRow
-                          label="Capacity (gram)"
-                          id={`supplier-capacity-${quote.quote_id}`}
-                        >
-                          <Input
-                            id={`supplier-capacity-${quote.quote_id}`}
-                            type="number"
-                            min="0"
-                            value={quote.capacity}
-                            onChange={(event) =>
-                              setQuote(quote.quote_id, {
-                                capacity: Number(event.target.value),
-                              })
-                            }
-                          />
-                        </FormRow>
-                        <FormRow
-                          label="Lead time (hours)"
-                          id={`supplier-lead-${quote.quote_id}`}
-                        >
-                          <Input
-                            id={`supplier-lead-${quote.quote_id}`}
-                            type="number"
-                            min="0"
-                            value={quote.lead_time}
-                            onChange={(event) =>
-                              setQuote(quote.quote_id, {
-                                lead_time: Number(event.target.value),
-                              })
-                            }
-                          />
-                        </FormRow>
-                        <FormRow
-                          label="Quote expiry"
-                          id={`supplier-expiry-${quote.quote_id}`}
-                          note="UTC · sample quote expiry."
-                        >
-                          <Input
-                            id={`supplier-expiry-${quote.quote_id}`}
-                            type="datetime-local"
-                            value={quote.valid_until.slice(0, 16)}
-                            onChange={(event) =>
-                              setQuote(quote.quote_id, {
-                                valid_until: event.target.value
-                                  ? `${event.target.value}:00.000Z`
-                                  : "",
-                              })
-                            }
-                          />
-                        </FormRow>
-                      </div>
-                    ))}
-                  </section>
-                ),
-              )}
-            </TabsContent>
-            <TabsContent value="system">
-              <FormRow label="Business day start · WIB" id="day-start">
+                    <Switch
+                      id={`supplier-active-${quote.quote_id}`}
+                      checked={quote.active}
+                      onCheckedChange={(value) =>
+                        setQuote(quote.quote_id, { active: value })
+                      }
+                    />
+                  </FormRow>
+                  <FormRow
+                    label={t("supplier.capacity")}
+                    id={`supplier-capacity-${quote.quote_id}`}
+                  >
+                    <Input
+                      id={`supplier-capacity-${quote.quote_id}`}
+                      type="number"
+                      min="0"
+                      value={quote.capacity}
+                      onChange={(event) =>
+                        setQuote(quote.quote_id, {
+                          capacity: Number(event.target.value),
+                        })
+                      }
+                    />
+                  </FormRow>
+                  <FormRow
+                    label={t("supplier.leadTime")}
+                    id={`supplier-lead-${quote.quote_id}`}
+                  >
+                    <Input
+                      id={`supplier-lead-${quote.quote_id}`}
+                      type="number"
+                      min="0"
+                      value={quote.lead_time}
+                      onChange={(event) =>
+                        setQuote(quote.quote_id, {
+                          lead_time: Number(event.target.value),
+                        })
+                      }
+                    />
+                  </FormRow>
+                  <FormRow
+                    label={t("supplier.expiry")}
+                    id={`supplier-expiry-${quote.quote_id}`}
+                    note={t("supplier.expiryNote")}
+                  >
+                    <Input
+                      id={`supplier-expiry-${quote.quote_id}`}
+                      type="datetime-local"
+                      value={quote.valid_until.slice(0, 16)}
+                      onChange={(event) =>
+                        setQuote(quote.quote_id, {
+                          valid_until: event.target.value
+                            ? `${event.target.value}:00.000Z`
+                            : "",
+                        })
+                      }
+                    />
+                  </FormRow>
+                </section>
+              ))
+            : null}
+          {tab === "system" ? (
+            <>
+              <FormRow label={t("system.dayStart")} id="day-start">
                 <Input
                   id="day-start"
                   type="time"
@@ -433,9 +463,9 @@ export function SettingsWorkspace() {
                 />
               </FormRow>
               <FormRow
-                label="Refresh interval (seconds)"
+                label={t("system.refresh")}
                 id="refresh-seconds"
-                note="Refresh evaluasi; bukan koneksi feed live."
+                note={t("system.refreshNote")}
               >
                 {numericInput(
                   "refresh-seconds",
@@ -448,10 +478,7 @@ export function SettingsWorkspace() {
                   { min: "1" },
                 )}
               </FormRow>
-              <FormRow
-                label="Freshness threshold (minutes)"
-                id="stale-minutes"
-              >
+              <FormRow label={t("system.freshness")} id="stale-minutes">
                 {numericInput(
                   "stale-minutes",
                   draft.system.staleMinutes,
@@ -464,9 +491,9 @@ export function SettingsWorkspace() {
                 )}
               </FormRow>
               <FormRow
-                label="ANTAM official source"
+                label={t("system.antamSource")}
                 id="antam-source"
-                note="Official source only · no fallback."
+                note={t("system.antamSourceNote")}
               >
                 <a
                   href={draft.system.antamSource}
@@ -474,13 +501,13 @@ export function SettingsWorkspace() {
                   rel="noopener noreferrer"
                   className="text-ink underline"
                 >
-                  logammulia.com
+                  {t("system.antamLink")}
                 </a>
               </FormRow>
               <FormRow
-                label="XAU market awareness"
+                label={t("system.xau")}
                 id="xau-enabled"
-                note="XAU tidak masuk operational decision engine."
+                note={t("system.xauNote")}
               >
                 <Switch
                   id="xau-enabled"
@@ -493,27 +520,28 @@ export function SettingsWorkspace() {
                   }
                 />
               </FormRow>
-            </TabsContent>
-          </Card>
-          <div className="flex flex-wrap items-center justify-between gap-4.5">
-            <p className="m-0 text-[0.9375rem] text-muted-text">
-              Perubahan berlaku setelah Save. Pengaturan disimpan pada browser
-              ini.
+            </>
+          ) : null}
+        </Card>
+        {tab !== "dashboard" ? (
+          <div className="mt-[18px] flex flex-wrap items-center justify-between gap-[14px]">
+            <p className="m-0 text-[0.95rem] leading-[1.5] text-muted-text">
+              {t("footerNote")}
             </p>
             <div className="flex flex-wrap items-center gap-2">
-              <Button type="button" variant="outline" onClick={preview}>
-                Preview Policy Impact
-              </Button>
+              {tab === "margin" || tab === "route" ? (
+                <Button type="button" variant="outline" onClick={preview}>
+                  {t("previewImpact")}
+                </Button>
+              ) : null}
               <Button type="button" variant="outline" onClick={discard}>
-                Discard
+                {tCommon("discard")}
               </Button>
-              <Button type="button" onClick={persist}>
-                Save settings
-              </Button>
+              <Button type="submit">{tCommon("save")}</Button>
             </div>
           </div>
-        </form>
-      </Tabs>
+        ) : null}
+      </form>
     </div>
   );
 }
