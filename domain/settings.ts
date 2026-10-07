@@ -20,7 +20,6 @@ export interface SupplierPolicyQuote {
   active: boolean;
   capacity: number;
   lead_time: number;
-  valid_until: string;
 }
 
 export interface SupplierPolicy {

@@ -9,7 +9,6 @@ export interface SupplierQuoteRow {
   capacity: number;
   lead_time: number;
   quote_time: string;
-  valid_until: string;
   lock_available: boolean;
   lock_status: string;
 }

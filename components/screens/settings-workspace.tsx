@@ -201,8 +201,7 @@ export function SettingsWorkspace() {
         !Number.isFinite(quote.capacity) ||
         quote.capacity < 0 ||
         !Number.isFinite(quote.lead_time) ||
-        quote.lead_time < 0 ||
-        !Number.isFinite(Date.parse(quote.valid_until))
+        quote.lead_time < 0
       ) {
         showToast(t("toasts.supplierInvalid"));
         return;
@@ -453,24 +452,6 @@ export function SettingsWorkspace() {
                       onChange={(event) =>
                         setQuote(quote.quote_id, {
                           lead_time: Number(event.target.value),
-                        })
-                      }
-                    />
-                  </FormRow>
-                  <FormRow
-                    label={t("supplier.expiry")}
-                    id={`supplier-expiry-${quote.quote_id}`}
-                    note={t("supplier.expiryNote")}
-                  >
-                    <Input
-                      id={`supplier-expiry-${quote.quote_id}`}
-                      type="datetime-local"
-                      value={quote.valid_until.slice(0, 16)}
-                      onChange={(event) =>
-                        setQuote(quote.quote_id, {
-                          valid_until: event.target.value
-                            ? `${event.target.value}:00.000Z`
-                            : "",
                         })
                       }
                     />

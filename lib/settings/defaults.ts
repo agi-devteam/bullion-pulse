@@ -34,7 +34,6 @@ export function createDefaultPolicyDraft(
           active: true,
           capacity: 160,
           lead_time: 8,
-          valid_until: "2026-10-08T13:00:00.000Z",
         },
         {
           quote_id: "Q-KRISNA-25",
@@ -44,7 +43,6 @@ export function createDefaultPolicyDraft(
           active: true,
           capacity: 1075,
           lead_time: 8,
-          valid_until: "2026-10-08T13:00:00.000Z",
         },
       ],
     },

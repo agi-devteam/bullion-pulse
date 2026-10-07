@@ -209,7 +209,6 @@
       "capacity": "Capacity",
       "leadTime": "Lead time",
       "quoteTime": "Quote time",
-      "validUntil": "Valid until",
       "lockStatus": "Lock available / status"
     },
     "lockPair": "{available} / {status}",
@@ -265,7 +264,7 @@
       "routeInvalid": "Nilai route policy invalid",
       "repriceInvalid": "Nilai reprice policy invalid",
       "outOfRange": "Nilai policy di luar range",
-      "supplierInvalid": "Supplier capacity, lead time, dan expiry harus valid.",
+      "supplierInvalid": "Supplier capacity dan lead time harus valid.",
       "saved": "Pengaturan disimpan."
     },
     "dashboard": {
@@ -307,9 +306,7 @@
       "quoteHeading": "{name} · {gram}g",
       "active": "Aktif",
       "capacity": "Kapasitas (gram)",
-      "leadTime": "Lead time (jam)",
-      "expiry": "Kedaluwarsa quote",
-      "expiryNote": "UTC · sample quote expiry."
+      "leadTime": "Lead time (jam)"
     },
     "system": {
       "dayStart": "Awal hari bisnis · WIB",

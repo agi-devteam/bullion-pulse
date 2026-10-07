@@ -23,7 +23,6 @@ const EXCLUDED_STATUSES = [
 ] as const;
 
 const SNAPSHOT_AT = "2026-10-07T11:00:00.000Z";
-const QUOTE_UNTIL = "2026-10-08T13:00:00.000Z";
 
 function pad(value: number, width: number) {
   return String(value).padStart(width, "0");
@@ -301,7 +300,6 @@ export function getSupplierQuotes(): SupplierQuoteRow[] {
       capacity: 160,
       lead_time: 8,
       quote_time: SNAPSHOT_AT,
-      valid_until: QUOTE_UNTIL,
       lock_available: true,
       lock_status: "UNLOCKED",
     },
@@ -314,7 +312,6 @@ export function getSupplierQuotes(): SupplierQuoteRow[] {
       capacity: 1075,
       lead_time: 8,
       quote_time: SNAPSHOT_AT,
-      valid_until: QUOTE_UNTIL,
       lock_available: true,
       lock_status: "UNLOCKED",
     },

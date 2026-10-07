@@ -34,7 +34,6 @@ export function SuppliersWorkspace() {
           t("headers.capacity"),
           t("headers.leadTime"),
           t("headers.quoteTime"),
-          t("headers.validUntil"),
           t("headers.lockStatus"),
         ]}
         rows={quotes.map((quote) => [
@@ -47,7 +46,6 @@ export function SuppliersWorkspace() {
           tCommon("gramsUnit", { value: formatNumber(quote.capacity) }),
           t("leadHours", { hours: quote.lead_time }),
           formatStamp(quote.quote_time),
-          formatStamp(quote.valid_until),
           t("lockPair", {
             available: quote.lock_available
               ? tCommon("yes")

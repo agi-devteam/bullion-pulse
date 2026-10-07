@@ -209,7 +209,6 @@
       "capacity": "Capacity",
       "leadTime": "Lead time",
       "quoteTime": "Quote time",
-      "validUntil": "Valid until",
       "lockStatus": "Lock available / status"
     },
     "lockPair": "{available} / {status}",
@@ -265,7 +264,7 @@
       "routeInvalid": "Route policy values are invalid",
       "repriceInvalid": "Reprice policy values are invalid",
       "outOfRange": "Policy value out of range",
-      "supplierInvalid": "Supplier capacity, lead time, and expiry must be valid.",
+      "supplierInvalid": "Supplier capacity and lead time must be valid.",
       "saved": "Settings saved."
     },
     "dashboard": {
@@ -307,9 +306,7 @@
       "quoteHeading": "{name} · {gram}g",
       "active": "Active",
       "capacity": "Capacity (gram)",
-      "leadTime": "Lead time (hours)",
-      "expiry": "Quote expiry",
-      "expiryNote": "UTC · sample quote expiry."
+      "leadTime": "Lead time (hours)"
     },
     "system": {
       "dayStart": "Business day start · WIB",
