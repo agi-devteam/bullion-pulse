@@ -14,6 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/molecules/dropdown-menu";
 import { MarketStrip } from "@/components/molecules/market-strip";
+import { Toast } from "@/components/molecules/toast";
 import { EvidenceDialog } from "@/components/organisms/evidence-dialog";
 import { NavigationDrawer } from "@/components/organisms/navigation-drawer";
 import { Sheet, SheetTrigger } from "@/components/organisms/sheet";
@@ -32,6 +33,7 @@ export function AppShell({ children }: AppShellProps) {
   const navOpen = useUIStore((state) => state.navOpen);
   const setNavOpen = useUIStore((state) => state.setNavOpen);
   const setDialog = useUIStore((state) => state.setDialog);
+  const toast = useUIStore((state) => state.toast);
 
   useEffect(() => {
     setNavOpen(false);
@@ -134,6 +136,7 @@ export function AppShell({ children }: AppShellProps) {
         <NavigationDrawer />
       </Sheet>
       <EvidenceDialog />
+      <Toast message={toast} />
     </>
   );
 }

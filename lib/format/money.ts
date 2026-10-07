@@ -24,6 +24,14 @@ export function formatPercent(value: number, digits = 2): string {
   return `${value.toFixed(digits)}%`;
 }
 
+export function formatIdr(value: number | null | undefined): string {
+  if (value == null || !Number.isFinite(value)) {
+    return "—";
+  }
+
+  return `Rp${Math.round(value).toLocaleString("id-ID")}`;
+}
+
 export function formatRupiah(value: number | null | undefined): string {
   if (value == null || !Number.isFinite(value)) {
     return "Unavailable";
