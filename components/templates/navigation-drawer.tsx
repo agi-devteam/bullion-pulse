@@ -1,13 +1,17 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { Search } from "lucide-react";
 import {
   BrandPulse,
   NavigationIcon,
   NavigationToggleIcon,
 } from "@/components/atoms/navigation-icons";
 import { Button } from "@/components/atoms/button";
+import { Input } from "@/components/atoms/input";
 import {
   SheetClose,
   SheetContent,
@@ -20,6 +24,10 @@ import { cn } from "@/lib/utils";
 
 export function NavigationDrawer() {
   const pathname = usePathname();
+  const t = useTranslations("shell.drawer");
+  const tNav = useTranslations("nav");
+  const [search, setSearch] = useState("");
+  const needle = search.trim().toLowerCase();
 
   return (
     <SheetContent
@@ -33,9 +41,9 @@ export function NavigationDrawer() {
             <BrandPulse />
           </span>
           <span>
-            Bullion Pulse
+            {t("brand")}
             <small className="mt-0.75 block text-[0.8rem] font-normal text-muted-text">
-              Trading workspace
+              {t("brandTagline")}
             </small>
           </span>
         </SheetTitle>
@@ -44,7 +52,7 @@ export function NavigationDrawer() {
             <Button
               variant="ghost"
               size="icon"
-              aria-label="Ciutkan atau perluas sidebar"
+              aria-label={t("collapse")}
               className="size-11 min-h-11 min-w-11 flex-none rounded-[999px] border border-transparent text-muted-text hover:bg-track hover:text-ink"
             />
           }
@@ -52,44 +60,65 @@ export function NavigationDrawer() {
           <NavigationToggleIcon />
         </SheetClose>
         <SheetDescription className="sr-only">
-          Navigasi workspace
+          {t("description")}
         </SheetDescription>
       </SheetHeader>
+      <div className="flex min-h-12 items-center gap-2.5 rounded-[999px] bg-track px-4 text-muted-text">
+        <Search size={20} aria-hidden="true" />
+        <Input
+          aria-label={t("searchLabel")}
+          placeholder={t("searchPlaceholder")}
+          type="search"
+          value={search}
+          onChange={(event) => setSearch(event.target.value)}
+          className="min-h-0 border-0 bg-transparent px-0 py-0 text-[1.0625rem] shadow-none focus-visible:border-transparent focus-visible:ring-0"
+        />
+      </div>
       <nav
-        aria-label="Main navigation"
+        aria-label={t("mainNav")}
         className="flex flex-1 flex-col gap-1"
       >
-        {NAV_GROUPS.map((group) => (
-          <div key={group.id} className="contents">
-            <div className="mx-3.5 mt-3 mb-1.25 text-[0.8rem] font-semibold tracking-[0.08em] text-muted-text uppercase">
-              {group.title}
-            </div>
-            {group.items.map((id) => {
-              const item = NAV_ITEMS[id];
-              const active = isNavItemActive(item.href, pathname);
+        {NAV_GROUPS.map((group) => {
+          const items = group.items.filter((id) =>
+            tNav(id).toLowerCase().includes(needle),
+          );
 
-              return (
-                <Link
-                  key={id}
-                  href={item.href}
-                  aria-current={active ? "page" : undefined}
-                  className={cn(
-                    "flex min-h-12 items-center gap-3.5 rounded-[14px] px-3.5 text-[1.0625rem] font-medium hover:bg-track",
-                    active && "bg-track",
-                  )}
-                >
-                  <NavigationIcon name={id} />
-                  {item.label}
-                </Link>
-              );
-            })}
-          </div>
-        ))}
+          if (items.length === 0) {
+            return null;
+          }
+
+          return (
+            <div key={group.id} className="contents">
+              <div className="mx-3.5 mt-3 mb-1.25 text-[0.8rem] font-semibold tracking-[0.08em] text-muted-text uppercase">
+                {tNav(`groups.${group.titleKey}`)}
+              </div>
+              {items.map((id) => {
+                const item = NAV_ITEMS[id];
+                const active = isNavItemActive(item.href, pathname);
+
+                return (
+                  <Link
+                    key={id}
+                    href={item.href}
+                    aria-current={active ? "page" : undefined}
+                    className={cn(
+                      "flex min-h-12 items-center gap-3.5 rounded-[14px] px-3.5 text-[1.0625rem] font-medium hover:bg-track",
+                      active && "bg-track",
+                    )}
+                  >
+                    <NavigationIcon name={id} />
+                    {tNav(id)}
+                  </Link>
+                );
+              })}
+            </div>
+          );
+        })}
       </nav>
       <div className="mt-auto text-[0.9375rem] leading-[1.6] text-muted-text">
-        Mock workspace
+        {t("footerLine1")}
         <br />
-        Inventory Intelligence
+        {t("footerLine2")}
       </div>
     </SheetContent>
   );
