@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/atoms/button";
 import { Status } from "@/components/atoms/status";
 import { Card } from "@/components/molecules/card";
@@ -16,48 +17,51 @@ import {
 import { useUIStore } from "@/stores/use-ui-store";
 
 export function SuppliersWorkspace() {
+  const t = useTranslations("suppliers");
+  const tCommon = useTranslations("common");
   const quotes = getSupplierQuotes();
   const setSettingsTab = useUIStore((state) => state.setSettingsTab);
 
   return (
     <WorkspaceStack>
-      <NoticeBanner>
-        Supplier quotes adalah mock. Quote tidak sama dengan confirmed lock; GMI
-        internal price bukan supplier.
-      </NoticeBanner>
+      <NoticeBanner>{t("notice")}</NoticeBanner>
       <DataTable
         headers={[
-          "Supplier",
-          "Active",
-          "Gram",
-          "Quote / unit",
-          "Capacity",
-          "Lead time",
-          "Quote time",
-          "Valid until",
-          "Lock available / status",
+          t("headers.supplier"),
+          t("headers.active"),
+          t("headers.gram"),
+          t("headers.quoteUnit"),
+          t("headers.capacity"),
+          t("headers.leadTime"),
+          t("headers.quoteTime"),
+          t("headers.validUntil"),
+          t("headers.lockStatus"),
         ]}
         rows={quotes.map((quote) => [
           quote.name,
           <Status key="active" tone={quote.active ? "sell" : ""}>
-            {quote.active ? "ACTIVE" : "INACTIVE"}
+            {quote.active ? tCommon("active") : tCommon("inactive")}
           </Status>,
-          `${quote.gram}g`,
+          tCommon("gramsUnit", { value: quote.gram }),
           formatIdr(quote.quote_price),
-          `${formatNumber(quote.capacity)}g`,
-          `${quote.lead_time}h`,
+          tCommon("gramsUnit", { value: formatNumber(quote.capacity) }),
+          t("leadHours", { hours: quote.lead_time }),
           formatStamp(quote.quote_time),
           formatStamp(quote.valid_until),
-          `${quote.lock_available ? "Yes" : "No"} / ${quote.lock_status}`,
+          t("lockPair", {
+            available: quote.lock_available
+              ? tCommon("yes")
+              : tCommon("no"),
+            status: quote.lock_status,
+          }),
         ])}
       />
       <Card className="block p-6">
         <h2 className="mt-0 mb-4.5 text-[1.25rem] font-semibold">
-          Supplier directory
+          {t("directoryTitle")}
         </h2>
         <p className="m-0 mb-4 text-[0.9375rem] text-muted-text">
-          {SUPPLIER_DIRECTORY.join(" · ")}. Hanya SIMA dan KRISNA memiliki sample
-          quote pada snapshot ini.
+          {t("directoryNote", { names: SUPPLIER_DIRECTORY.join(" · ") })}
         </p>
         <Button
           variant="outline"
@@ -65,7 +69,7 @@ export function SuppliersWorkspace() {
           render={<Link href="/settings" />}
           onClick={() => setSettingsTab("supplier")}
         >
-          Supplier Policy
+          {t("policyButton")}
         </Button>
       </Card>
     </WorkspaceStack>

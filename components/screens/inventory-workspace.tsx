@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/atoms/button";
 import { Input } from "@/components/atoms/input";
 import { Status } from "@/components/atoms/status";
@@ -28,6 +29,8 @@ function decisionTone(decision: InventoryDecision | null, valid: boolean) {
 }
 
 export function InventoryWorkspace() {
+  const t = useTranslations("inventory");
+  const tCommon = useTranslations("common");
   const setDialog = useUIStore((state) => state.setDialog);
   const summary = getInventorySummary();
   const records = getInventoryRecords();
@@ -62,81 +65,81 @@ export function InventoryWorkspace() {
 
   return (
     <WorkspaceStack>
-      <div className="grid grid-cols-4 gap-3.5 max-[1100px]:grid-cols-2 max-[700px]:grid-cols-1">
+      <div className="grid grid-cols-4 gap-3.5 max-[1100px]:grid-cols-2">
         <Metric
-          label="READY / priced"
+          label={t("metrics.readyPriced")}
           value={`${formatNumber(summary.readyGrams)}g`}
-          note={`${formatNumber(summary.readyPcs)} pcs`}
+          note={tCommon("pcs", { count: formatNumber(summary.readyPcs) })}
         />
         <Metric
-          label="Excluded"
-          value={`${formatNumber(summary.excludedPcs)} pcs`}
-          note="Reserved, incoming, sold dan non-ready"
+          label={t("metrics.excluded")}
+          value={tCommon("pcs", { count: formatNumber(summary.excludedPcs) })}
+          note={t("metrics.excludedNote")}
         />
         <Metric
-          label="Invalid"
-          value={`${formatNumber(summary.invalidPcs)} pcs`}
-          note="Tidak masuk decision pool"
+          label={t("metrics.invalid")}
+          value={tCommon("pcs", { count: formatNumber(summary.invalidPcs) })}
+          note={t("metrics.invalidNote")}
         />
         <Metric
-          label="Unpriced READY"
-          value={`${formatNumber(summary.unpricedPcs)} pcs`}
-          note="Source harus valid"
+          label={t("metrics.unpricedReady")}
+          value={tCommon("pcs", { count: formatNumber(summary.unpricedPcs) })}
+          note={t("metrics.unpricedNote")}
         />
       </div>
       <PageToolbar>
         <div className="flex min-w-0 flex-1 flex-wrap items-center gap-3.5">
           <div className="min-w-40">
             <Choice
-              label="Channel"
+              label={t("filters.channel")}
               value={channel}
               onChange={(value) => {
                 setChannel(value as typeof channel);
                 setPage(0);
               }}
               options={[
-                ["all", "All channels"],
-                "B2C",
-                "B2B",
+                ["all", tCommon("channels.all")],
+                ["B2C", tCommon("channels.b2c")],
+                ["B2B", tCommon("channels.b2b")],
               ]}
             />
           </div>
           <div className="min-w-40">
             <Choice
-              label="Availability"
+              label={t("filters.availability")}
               value={status}
               onChange={(value) => {
                 setStatus(value as InventoryAvailabilityFilter);
                 setPage(0);
               }}
               options={[
-                ["READY", "READY / AVAILABLE"],
-                ["ALL", "All physical inventory"],
-                ["EXCLUDED", "Excluded inventory"],
-                ["INVALID", "Invalid records"],
+                ["READY", t("filters.availabilityReady")],
+                ["ALL", t("filters.availabilityAll")],
+                ["EXCLUDED", t("filters.availabilityExcluded")],
+                ["INVALID", t("filters.availabilityInvalid")],
               ]}
             />
           </div>
           <div className="min-w-40">
             <Choice
-              label="Decision"
+              label={t("filters.decision")}
               value={decision}
               onChange={(value) => {
                 setDecision(value as typeof decision);
                 setPage(0);
               }}
               options={[
-                ["all", "All decisions"],
-                "SELL READY",
-                "ROUTE ELIGIBLE",
-                "HOLD",
+                ["all", t("filters.decisionAll")],
+                ["SELL READY", tCommon("decisions.sellReady")],
+                ["ROUTE ELIGIBLE", tCommon("decisions.routeEligible")],
+                ["HOLD", tCommon("decisions.hold")],
               ]}
             />
           </div>
           <Input
             className="min-w-50 flex-1"
-            placeholder="Serial / stock ID / gramasi"
-            aria-label="Cari inventory"
+            placeholder={t("filters.searchPlaceholder")}
+            aria-label={t("filters.searchAria")}
             value={query}
             onChange={(event) => {
               setQuery(event.target.value);
@@ -147,34 +150,41 @@ export function InventoryWorkspace() {
       </PageToolbar>
       <DataTable
         headers={[
-          "Serial / Stock ID",
-          "Gram",
-          "Channel",
-          "Availability",
-          "Unit cost",
-          "Selling price",
-          "GP / Margin",
-          "Decision",
-          "Evidence",
+          t("headers.serialStockId"),
+          t("headers.gram"),
+          t("headers.channel"),
+          t("headers.availability"),
+          t("headers.unitCost"),
+          t("headers.sellingPrice"),
+          t("headers.gpMargin"),
+          t("headers.decision"),
+          t("headers.evidence"),
         ]}
         rows={pageRows.map((row) => [
           <span key={`${row.stock_id}-id`}>
             {row.serial}
             <br />
-            <small className="text-muted-text">{row.stock_id}</small>
+            <small className="text-[0.9375rem] leading-normal text-muted-text">
+              {row.stock_id}
+            </small>
           </span>,
           `${row.gram}g`,
           row.channel,
           <Status key="availability" tone={row.ready ? "sell" : ""}>
-            {row.reserved ? "RESERVED" : row.availability_status}
+            {row.reserved
+              ? tCommon("decisions.reserved")
+              : row.availability_status}
           </Status>,
           formatIdr(row.unit_cost > 0 ? row.unit_cost : null),
-          row.ready ? formatIdr(row.selling_price) : "—",
+          row.ready ? formatIdr(row.selling_price) : tCommon("emDash"),
           row.ready && row.direct_gp != null && row.direct_margin != null
             ? `${formatIdr(row.direct_gp)} / ${formatPercent(row.direct_margin)}`
-            : "—",
+            : tCommon("emDash"),
           <Status key="decision" tone={decisionTone(row.decision, row.valid)}>
-            {row.decision ?? (row.valid ? "EXCLUDED / UNPRICED" : "INVALID")}
+            {row.decision ??
+              (row.valid
+                ? tCommon("decisions.excludedUnpriced")
+                : tCommon("decisions.invalid"))}
           </Status>,
           <Button
             key="detail"
@@ -188,13 +198,17 @@ export function InventoryWorkspace() {
               })
             }
           >
-            Detail
+            {tCommon("detail")}
           </Button>,
         ])}
       />
       <PageToolbar>
         <span className="text-[0.9375rem] text-muted-text">
-          {formatNumber(rows.length)} records · halaman {current + 1} / {pages}
+          {tCommon("recordsPage", {
+            count: formatNumber(rows.length),
+            page: current + 1,
+            pages,
+          })}
         </span>
         <div className="flex flex-wrap items-center gap-2">
           <Button
@@ -202,14 +216,14 @@ export function InventoryWorkspace() {
             disabled={current === 0}
             onClick={() => setPage(current - 1)}
           >
-            Sebelumnya
+            {tCommon("previous")}
           </Button>
           <Button
             variant="outline"
             disabled={current + 1 >= pages}
             onClick={() => setPage(current + 1)}
           >
-            Berikutnya
+            {tCommon("next")}
           </Button>
         </div>
       </PageToolbar>

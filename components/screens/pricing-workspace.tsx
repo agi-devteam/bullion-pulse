@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 import { Status } from "@/components/atoms/status";
 import { Choice } from "@/components/molecules/choice";
 import { NoticeBanner } from "@/components/molecules/notice-banner";
@@ -17,7 +18,20 @@ function recommendationTone(value: string) {
   return "hold" as const;
 }
 
+function translateRecommendation(
+  value: string,
+  t: ReturnType<typeof useTranslations<"pricing">>,
+) {
+  if (value === "OK") return t("recommendation.ok");
+  if (value === "Unavailable") return t("recommendation.unavailable");
+  if (value === "THIN / REPRICE") return t("recommendation.thinReprice");
+  if (value === "REPRICE") return t("recommendation.reprice");
+  return value;
+}
+
 export function PricingWorkspace() {
+  const t = useTranslations("pricing");
+  const tCommon = useTranslations("common");
   const allRows = getPricingRows();
   const [channel, setChannel] = useState<PricingFilters["channel"]>("all");
   const [gram, setGram] = useState<PricingFilters["gram"]>("all");
@@ -34,33 +48,35 @@ export function PricingWorkspace() {
 
   return (
     <WorkspaceStack>
-      <NoticeBanner>
-        Minimum profitable price dan target-margin price memakai biaya READY
-        tertinggi per channel / gramasi. ANTAM official source: logammulia.com
-        saja. XAU tidak menjadi operational pricing benchmark.
-      </NoticeBanner>
+      <NoticeBanner>{t("notice")}</NoticeBanner>
       <PageToolbar>
         <div className="flex flex-wrap gap-3.5">
           <div className="min-w-40">
             <Choice
-              label="Channel pricing"
+              label={t("filters.channel")}
               value={channel}
               onChange={(value) => setChannel(value as PricingFilters["channel"])}
               options={[
-                ["all", "All channels"],
-                "B2C",
-                "B2B",
+                ["all", tCommon("channels.all")],
+                ["B2C", tCommon("channels.b2c")],
+                ["B2B", tCommon("channels.b2b")],
               ]}
             />
           </div>
           <div className="min-w-40">
             <Choice
-              label="Gramasi pricing"
+              label={t("filters.gram")}
               value={gram}
               onChange={(value) => setGram(value as PricingFilters["gram"])}
               options={[
-                ["all", "All gramasi"],
-                ...GRAMS.map((item) => [String(item), `${item}g`] as [string, string]),
+                ["all", t("filters.allGramasi")],
+                ...GRAMS.map(
+                  (item) =>
+                    [String(item), tCommon("gramsUnit", { value: item })] as [
+                      string,
+                      string,
+                    ],
+                ),
               ]}
             />
           </div>
@@ -68,29 +84,31 @@ export function PricingWorkspace() {
       </PageToolbar>
       <DataTable
         headers={[
-          "Channel",
-          "Gram",
-          "Pricelist",
-          "ANTAM · Mock",
-          "Gap vs ANTAM",
-          "Supplier / unit",
-          "Min profitable",
-          "Target-margin price",
-          "Policy",
-          "Recommendation",
+          t("headers.channel"),
+          t("headers.gram"),
+          t("headers.pricelist"),
+          t("headers.antamMock"),
+          t("headers.gapVsAntam"),
+          t("headers.supplierUnit"),
+          t("headers.minProfitable"),
+          t("headers.targetMarginPrice"),
+          t("headers.policy"),
+          t("headers.recommendation"),
         ]}
         rows={rows.map((row) => [
           row.channel,
-          `${row.gram}g`,
+          tCommon("gramsUnit", { value: row.gram }),
           formatIdr(row.pricelist),
           formatIdr(row.antam),
-          row.gapVsAntam == null ? "—" : formatPercent(row.gapVsAntam),
+          row.gapVsAntam == null
+            ? tCommon("emDash")
+            : formatPercent(row.gapVsAntam),
           row.supplierLabel,
           formatIdr(row.minProfitable),
           formatIdr(row.targetMarginPrice),
           formatPercent(row.policy),
           <Status key="rec" tone={recommendationTone(row.recommendation)}>
-            {row.recommendation}
+            {translateRecommendation(row.recommendation, t)}
           </Status>,
         ])}
       />

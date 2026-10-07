@@ -2,85 +2,95 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/atoms/button";
 import { Status } from "@/components/atoms/status";
-import { NoticeBanner } from "@/components/molecules/notice-banner";
 import { WorkspaceStack } from "@/components/molecules/page-toolbar";
 import { DataTable } from "@/components/organisms/data-table";
 import { getActionAlerts } from "@/lib/mocks/workspace";
 import { useUIStore } from "@/stores/use-ui-store";
 
+function actionLabel(
+  action: string,
+  tCommon: ReturnType<typeof useTranslations<"common">>,
+) {
+  if (action === "WATCH") return tCommon("actions.watch");
+  if (action === "REPRICE") return tCommon("actions.reprice");
+  if (action === "REVIEW DATA") return tCommon("actions.reviewData");
+  return action;
+}
+
 export function ActionsWorkspace() {
+  const t = useTranslations("actions");
+  const tCommon = useTranslations("common");
   const showToast = useUIStore((state) => state.showToast);
   const alerts = getActionAlerts();
   const [statuses, setStatuses] = useState<Record<string, string>>({});
 
   return (
     <WorkspaceStack>
-      <NoticeBanner>
-        V1 actions: WATCH, REPRICE, HOLD / WAIT, dan data exceptions. Tidak ada
-        instruksi LOCK tanpa demand.
-      </NoticeBanner>
       <DataTable
         headers={[
-          "Severity",
-          "Action",
-          "Channel / Gram",
-          "Quantity",
-          "Reason",
-          "Owner",
-          "Review",
+          t("headers.action"),
+          t("headers.channelGram"),
+          t("headers.quantity"),
+          t("headers.reason"),
+          t("headers.owner"),
+          t("headers.status"),
+          t("headers.review"),
         ]}
-        rows={alerts.map((alert) => [
-          <Status
-            key="severity"
-            tone={alert.severity === "attention" ? "route" : "hold"}
-          >
-            {alert.severity}
-          </Status>,
-          <Status
-            key="action"
-            tone={alert.action === "WATCH" ? "route" : "hold"}
-          >
-            {alert.action}
-          </Status>,
-          alert.channel
-            ? `${alert.channel}${alert.gram ? ` · ${alert.gram}g` : ""}`
-            : "—",
-          `${alert.quantity} pcs`,
-          <span
-            key="reason"
-            className="block min-w-57.5 max-w-110 whitespace-normal"
-          >
-            {alert.reason}
-          </span>,
-          alert.owner,
-          <div key="review" className="flex flex-wrap items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              nativeButton={false}
-              render={<Link href={alert.href} />}
+        rows={alerts.map((alert) => {
+          const status = statuses[alert.id] ?? alert.status;
+
+          return [
+            <Status
+              key="action"
+              tone={alert.action === "WATCH" ? "route" : "hold"}
             >
-              Review
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => {
-                setStatuses((current) => ({
-                  ...current,
-                  [alert.id]: "REVIEWED",
-                }));
-                showToast("Action reviewed.");
-              }}
+              {actionLabel(alert.action, tCommon)}
+            </Status>,
+            alert.channel
+              ? t("channelGram", {
+                  channel: alert.channel,
+                  gram: alert.gram ?? "",
+                })
+              : tCommon("emDash"),
+            tCommon("pcs", { count: alert.quantity }),
+            <span
+              key="reason"
+              className="block min-w-57.5 max-w-110 whitespace-normal"
             >
-              {statuses[alert.id] === "REVIEWED"
-                ? "Reviewed"
-                : "Mark reviewed"}
-            </Button>
-          </div>,
-        ])}
+              {t(`reasons.${alert.reasonKey}`)}
+            </span>,
+            t(`owners.${alert.ownerKey}`),
+            status === "REVIEWED"
+              ? tCommon("actions.reviewed")
+              : tCommon("actions.open"),
+            <div key="review" className="flex flex-wrap items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                nativeButton={false}
+                render={<Link href={alert.href} />}
+              >
+                {tCommon("review")}
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  setStatuses((current) => ({
+                    ...current,
+                    [alert.id]: "REVIEWED",
+                  }));
+                  showToast(t("toastReviewed"));
+                }}
+              >
+                {t("markReviewed")}
+              </Button>
+            </div>,
+          ];
+        })}
       />
     </WorkspaceStack>
   );
