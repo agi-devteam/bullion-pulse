@@ -1,3 +1,6 @@
+"use client";
+
+import { useTranslations } from "next-intl";
 import { TONE_FILL_CLASS } from "@/domain/intelligence";
 import type { DecisionBucket } from "@/domain/primitives";
 
@@ -10,12 +13,13 @@ export interface InventorySplitBarProps {
 const SEGMENTS: DecisionBucket[] = ["sell", "route", "hold"];
 
 export function InventorySplitBar({ sell, route, hold }: InventorySplitBarProps) {
+  const t = useTranslations("home.ready");
   const widths: Record<DecisionBucket, number> = { sell, route, hold };
 
   return (
     <div
-      className="flex h-4 gap-0.75 overflow-hidden rounded-lg bg-track"
-      aria-label="Inventory decision split"
+      className="flex h-4 gap-0.75 overflow-hidden rounded-sm bg-track"
+      aria-label={t("splitAria")}
     >
       {SEGMENTS.map((key) => (
         <span

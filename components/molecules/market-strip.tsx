@@ -1,14 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { MarketPill } from "@/components/molecules/market-pill";
 import { formatRupiah, formatUsd } from "@/lib/format/money";
 import { useMarketAntam, useMarketXau } from "@/lib/query/hooks";
 
-const MOCK_TITLE = "Mock data · bukan production live";
-
-function useWibClock() {
-  const [clock, setClock] = useState<string | null>(null);
+function useWibTime() {
+  const [time, setTime] = useState<string | null>(null);
 
   useEffect(() => {
     function tick() {
@@ -20,7 +19,7 @@ function useWibClock() {
         })
         .replace(".", ":");
 
-      setClock(`${formatted} WIB`);
+      setTime(formatted);
     }
 
     tick();
@@ -28,41 +27,47 @@ function useWibClock() {
     return () => window.clearInterval(interval);
   }, []);
 
-  return clock;
+  return time;
 }
 
 export function MarketStrip() {
+  const t = useTranslations("market");
   const xau = useMarketXau();
   const antam = useMarketAntam();
-  const clock = useWibClock();
+  const time = useWibTime();
+  const unavailable = t("unavailable");
+  const mockTooltip = t("mockTooltip");
 
   return (
     <div className="flex min-w-0 flex-wrap gap-2 min-[701px]:max-[1500px]:col-span-full min-[701px]:max-[1500px]:row-start-2 max-[1500px]:flex-nowrap max-[1500px]:overflow-x-auto max-[1500px]:scrollbar-none max-[700px]:order-3 max-[700px]:w-full [&::-webkit-scrollbar]:hidden">
       <MarketPill
-        label="XAU/USD"
-        value={xau.data ? formatUsd(xau.data.current) : "Unavailable"}
+        label={t("xauLabel")}
+        value={xau.data ? formatUsd(xau.data.current) : unavailable}
         change={xau.data?.change}
-        title={MOCK_TITLE}
+        title={mockTooltip}
       />
       <MarketPill
-        label="ANTAM Sell 1g"
+        label={t("antamSell1g")}
         value={
           antam.data?.sell[1] != null
             ? formatRupiah(antam.data.sell[1])
-            : "Unavailable"
+            : unavailable
         }
-        title={MOCK_TITLE}
+        title={mockTooltip}
       />
       <MarketPill
-        label="ANTAM Buyback"
+        label={t("antamBuyback")}
         value={
           antam.data?.buyback != null
             ? formatRupiah(antam.data.buyback)
-            : "Unavailable"
+            : unavailable
         }
-        title={MOCK_TITLE}
+        title={mockTooltip}
       />
-      <MarketPill value={clock ?? "Unavailable"} muted />
+      <MarketPill
+        value={time ? t("clockWib", { time }) : unavailable}
+        muted
+      />
     </div>
   );
 }

@@ -28,9 +28,9 @@ export function ProfitColumn({
       </div>
       <div
         className={cn(
-          "mono flex items-baseline whitespace-nowrap text-[2.25rem] font-normal leading-none",
+          "flex items-baseline whitespace-nowrap text-[2.25rem] font-normal leading-none",
           "before:invisible before:w-0 before:shrink-0 before:font-mono before:text-[3.75rem] before:leading-none before:content-['\\a0'] max-[700px]:before:hidden",
-          variant === "arbitrage" && "text-muted-text",
+          variant === "arbitrage" ? "text-muted-text" : "mono",
         )}
       >
         {compactRupiah(value)}

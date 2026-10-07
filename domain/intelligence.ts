@@ -24,11 +24,21 @@ export interface BucketData {
   denominations: BucketDenomination[];
 }
 
+export type PriorityTitleKey =
+  | "watch10Title"
+  | "watch25Title"
+  | "reprice50Title";
+
+export type PrioritySubtitleKey =
+  | "watch10Subtitle"
+  | "watch25Subtitle"
+  | "reprice50Subtitle";
+
 export interface PriorityAction {
   id: string;
   action: "WATCH" | "REPRICE";
-  title: string;
-  subtitle: string;
+  titleKey: PriorityTitleKey;
+  subtitleKey: PrioritySubtitleKey;
   href: string;
 }
 
@@ -45,18 +55,6 @@ export interface HomeIntelligence {
   policyFloor: { b2c: number; b2b: number };
   actions: PriorityAction[];
 }
-
-export const BUCKET_EVIDENCE_TITLE: Record<DecisionBucket, string> = {
-  sell: "SELL READY · Evidence",
-  route: "ROUTE ELIGIBLE · Evidence",
-  hold: "HOLD · Evidence",
-};
-
-export const DECISION_CAPTIONS: Record<DecisionBucket, string> = {
-  sell: "Ready to sell",
-  route: "Route eligible",
-  hold: "Protect margin",
-};
 
 export const TONE_FILL_CLASS: Record<DecisionBucket, string> = {
   sell: "bg-sell-f",

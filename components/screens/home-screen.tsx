@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { AppFooter } from "@/components/molecules/app-footer";
 import { Card } from "@/components/molecules/card";
 import { DecisionPanel } from "@/components/organisms/decision-panel";
@@ -14,6 +15,8 @@ import { useUIStore } from "@/stores/use-ui-store";
 const DECISION_BUCKETS: DecisionBucket[] = ["sell", "route", "hold"];
 
 export function HomeScreen() {
+  const t = useTranslations("home");
+  const tPriority = useTranslations("home.priority");
   const segment = useSettingsStore((state) => state.segment);
   const setDialog = useUIStore((state) => state.setDialog);
   const data = getHomeIntelligence(segment);
@@ -53,29 +56,32 @@ export function HomeScreen() {
       >
         <div className="flex items-baseline justify-between gap-3">
           <h2 id="priority-title" className="m-0 text-[1.25rem] font-bold">
-            Priority actions
+            {t("priorityTitle")}
           </h2>
           <Link href="/actions" className="text-base font-semibold text-ink">
-            Lihat semua →
+            {t("viewAll")}
           </Link>
         </div>
-        <div className="grid grid-cols-3 gap-4 max-[1000px]:grid-cols-1">
+        <div className="grid grid-cols-3 gap-4 max-[1000px]:grid-cols-1 max-[700px]:gap-2.5">
           {actions.map((action) => (
             <PriorityActionCard
               key={action.id}
               action={action.action}
-              title={action.title}
-              subtitle={action.subtitle}
+              title={tPriority(action.titleKey)}
+              subtitle={tPriority(action.subtitleKey)}
               href={action.href}
             />
           ))}
         </div>
       </section>
       <AppFooter
-        leftText={`Mock snapshot · ${data.snapshotDate}`}
-        rightText={`Sample data · ${data.invalidCount} invalid excluded · ${
-          data.isComplete ? "sources valid" : "sources need review"
-        }`}
+        leftText={t("footerSnapshot", { date: data.snapshotDate })}
+        rightText={t("footerSample", {
+          count: data.invalidCount,
+          sources: data.isComplete
+            ? t("sourcesValid")
+            : t("sourcesNeedReview"),
+        })}
       />
     </div>
   );

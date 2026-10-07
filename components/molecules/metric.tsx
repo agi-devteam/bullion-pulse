@@ -16,7 +16,7 @@ export function Metric({ label, value, note }: MetricProps) {
         {value}
       </strong>
       {note ? (
-        <div className="text-[0.875rem] leading-normal text-muted-text">{note}</div>
+        <div className="text-[0.9375rem] leading-normal text-muted-text">{note}</div>
       ) : null}
     </Card>
   );

@@ -10,8 +10,8 @@ export interface ActionAlert {
   channel: Channel | null;
   gram: Gram | null;
   quantity: number;
-  reason: string;
-  owner: string;
+  reasonKey: "watch10" | "watch25" | "reprice50" | "invalidRecord";
+  ownerKey: "routeDesk" | "pricing" | "dataHealth";
   status: "OPEN" | "REVIEWED";
   href: string;
 }

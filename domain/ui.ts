@@ -6,5 +6,6 @@ export type DialogPayload =
   | { kind: "inventory-unit"; stockId: string; serial?: string }
   | {
       kind: "policy-preview";
+      current: Record<DecisionBucket, number>;
       next: Record<DecisionBucket, number>;
     };

@@ -26,7 +26,7 @@ export function formatPercent(value: number, digits = 2): string {
 
 export function formatIdr(value: number | null | undefined): string {
   if (value == null || !Number.isFinite(value)) {
-    return "—";
+    return "Unavailable";
   }
 
   return `Rp${Math.round(value).toLocaleString("id-ID")}`;

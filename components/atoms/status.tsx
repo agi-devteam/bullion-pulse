@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 export interface StatusProps {
   children: ReactNode;
   tone?: "sell" | "route" | "hold" | "";
+  className?: string;
 }
 
 const toneClassName: Record<Exclude<StatusProps["tone"], undefined>, string> = {
@@ -14,9 +15,12 @@ const toneClassName: Record<Exclude<StatusProps["tone"], undefined>, string> = {
   hold: "bg-hold-bg text-hold-t",
 };
 
-export function Status({ children, tone = "" }: StatusProps) {
+export function Status({ children, tone = "", className }: StatusProps) {
   return (
-    <Badge variant="secondary" className={cn(toneClassName[tone])}>
+    <Badge
+      variant="secondary"
+      className={cn(toneClassName[tone], className)}
+    >
       {children}
     </Badge>
   );

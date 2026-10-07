@@ -1,11 +1,13 @@
 "use client";
 
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { XIcon } from "lucide-react";
 import type { ReactNode } from "react";
 import { Button } from "@/components/atoms/button";
 import { Evidence } from "@/components/molecules/evidence";
 import { Metric } from "@/components/molecules/metric";
+import { DataTable } from "@/components/organisms/data-table";
 import {
   Dialog,
   DialogClose,
@@ -14,7 +16,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/organisms/dialog";
-import { BUCKET_EVIDENCE_TITLE } from "@/domain/intelligence";
 import { formatIdr, compactRupiah, formatNumber, formatPercent } from "@/lib/format/money";
 import { getHomeIntelligence } from "@/lib/mocks/home-intelligence";
 import { getInventoryRecord } from "@/lib/mocks/workspace";
@@ -27,9 +28,10 @@ function DialogShell({
   children,
 }: {
   title: string;
-  description: string;
+  description?: string;
   children: ReactNode;
 }) {
+  const t = useTranslations("evidence");
   const setDialog = useUIStore((state) => state.setDialog);
 
   return (
@@ -40,7 +42,7 @@ function DialogShell({
             variant="ghost"
             size="icon-sm"
             className="absolute top-2 right-2"
-            aria-label="Close"
+            aria-label={t("close")}
           />
         }
         onClick={() => setDialog(null)}
@@ -49,9 +51,11 @@ function DialogShell({
       </DialogClose>
       <DialogHeader>
         <DialogTitle className="text-[1.15rem] font-semibold">{title}</DialogTitle>
-        <DialogDescription className="text-base text-muted-text">
-          {description}
-        </DialogDescription>
+        {description ? (
+          <DialogDescription className="text-base text-muted-text">
+            {description}
+          </DialogDescription>
+        ) : null}
       </DialogHeader>
       {children}
     </DialogContent>
@@ -62,6 +66,8 @@ export function EvidenceDialog() {
   const dialog = useUIStore((state) => state.dialog);
   const setDialog = useUIStore((state) => state.setDialog);
   const segment = useSettingsStore((state) => state.segment);
+  const t = useTranslations("evidence");
+  const tCommon = useTranslations("common");
   const home = getHomeIntelligence(segment);
   const open = dialog != null;
   const bucket = dialog?.kind === "bucket-evidence" ? dialog.bucket : null;
@@ -82,77 +88,105 @@ export function EvidenceDialog() {
     >
       {dialog?.kind === "inventory-unit" ? (
         <DialogShell
-          title={`Inventory evidence · ${dialog.serial ?? dialog.stockId}`}
-          description="Perhitungan dan bukti dari snapshot saat ini."
+          title={t("inventoryTitle", {
+            id: dialog.serial ?? dialog.stockId,
+          })}
+          description={t("sharedDescription")}
         >
           {unit ? (
             <Evidence
               rows={[
-                ["Stock ID", unit.stock_id],
-                ["Channel / Gramasi", `${unit.channel} · ${unit.gram}g`],
+                [t("rows.stockId"), unit.stock_id],
                 [
-                  "Production / Keeper",
+                  t("rows.channelGram"),
+                  `${unit.channel} · ${unit.gram}g`,
+                ],
+                [
+                  t("rows.productionKeeper"),
                   `${unit.production} · ${unit.stock_keeper}`,
                 ],
                 [
-                  "Availability",
-                  `${unit.availability_status} · reserved ${unit.reserved ? "Yes" : "No"}`,
+                  t("rows.availability"),
+                  t("rows.availabilityValue", {
+                    status: unit.availability_status,
+                    reserved: unit.reserved
+                      ? tCommon("yes")
+                      : tCommon("no"),
+                  }),
                 ],
-                ["HPP / unit", formatIdr(unit.unit_cost > 0 ? unit.unit_cost : null)],
-                ["Harga beli / unit", formatIdr(unit.purchase_price > 0 ? unit.purchase_price : null)],
-                ["Selling price", formatIdr(unit.selling_price)],
                 [
-                  "Total GP / Margin",
+                  t("rows.hppUnit"),
+                  formatIdr(unit.unit_cost > 0 ? unit.unit_cost : null),
+                ],
+                [
+                  t("rows.purchasePriceUnit"),
+                  formatIdr(
+                    unit.purchase_price > 0 ? unit.purchase_price : null,
+                  ),
+                ],
+                [t("rows.sellingPrice"), formatIdr(unit.selling_price)],
+                [
+                  t("rows.totalGpMargin"),
                   unit.direct_gp != null && unit.direct_margin != null
                     ? `${formatIdr(unit.direct_gp)} / ${formatPercent(unit.direct_margin)}`
-                    : "—",
+                    : tCommon("emDash"),
                 ],
-                ["Pasar saat beli", formatIdr(unit.market_at_purchase)],
-                ["Pasar kini", formatIdr(unit.market_at_sale)],
-                ["Prognosa · estimasi", formatIdr(unit.profit.prognosa)],
-                ["Investment · estimasi", formatIdr(unit.profit.investment)],
-                ["Arbitrage · estimasi", formatIdr(unit.profit.arbitrage)],
                 [
-                  "Policy",
+                  t("rows.marketAtPurchase"),
+                  formatIdr(unit.market_at_purchase),
+                ],
+                [t("rows.marketNowAntam"), formatIdr(unit.market_at_sale)],
+                [t("rows.prognosaEstimate"), formatIdr(unit.profit.prognosa)],
+                [
+                  t("rows.investmentEstimate"),
+                  formatIdr(unit.profit.investment),
+                ],
+                [
+                  t("rows.arbitrageEstimate"),
+                  formatIdr(unit.profit.arbitrage),
+                ],
+                [
+                  t("rows.policy"),
                   unit.policyMargin == null
-                    ? "—"
+                    ? tCommon("emDash")
                     : formatPercent(unit.policyMargin),
                 ],
                 [
-                  "Decision / Action",
-                  `${unit.decision ?? "EXCLUDED / UNPRICED"} · ${unit.recommended_action ?? "REVIEW"}`,
+                  t("rows.decisionAction"),
+                  `${unit.decision ?? tCommon("decisions.excludedUnpriced")} · ${unit.recommended_action ?? "REVIEW"}`,
                 ],
-                ["Reason", unit.reason ?? "Non-ready inventory / source belum valid"],
                 [
-                  "Replacement",
+                  t("rows.reason"),
+                  unit.reason ?? t("rows.defaultReason"),
+                ],
+                [
+                  t("rows.replacement"),
                   unit.supplier
                     ? `${unit.supplier.name} · ${formatIdr(unit.supplier.quote_price)}`
-                    : "Unavailable",
+                    : tCommon("unavailable"),
                 ],
               ]}
             />
           ) : (
-            <p className="text-muted-text">Record tidak ditemukan.</p>
+            <p className="text-muted-text">{t("recordMissing")}</p>
           )}
         </DialogShell>
       ) : dialog?.kind === "policy-preview" ? (
-        <DialogShell
-          title="Preview Policy Impact"
-          description="Simulasi sementara. Belum disimpan."
-        >
-          <div className="grid grid-cols-3 gap-3.5 max-[700px]:grid-cols-1">
-            {(["sell", "route", "hold"] as const).map((key) => (
-              <Metric
-                key={key}
-                label={key.toUpperCase()}
-                value={`${formatNumber(dialog.next[key])}g`}
-                note={`Saat ini ${formatNumber(home.buckets[key].grams)}g`}
-              />
-            ))}
-          </div>
-          <p className="m-0 text-[0.9375rem] text-muted-text">
-            READY = SELL READY + ROUTE ELIGIBLE + HOLD. Live tanpa source tidak
-            menggunakan mock fallback.
+        <DialogShell title={t("policyPreview.title")}>
+          <DataTable
+            headers={[
+              t("policyPreview.bucket"),
+              t("policyPreview.currentGram"),
+              t("policyPreview.previewGram"),
+            ]}
+            rows={(["sell", "route", "hold"] as const).map((key) => [
+              key.toUpperCase(),
+              formatNumber(dialog.current[key]),
+              formatNumber(dialog.next[key]),
+            ])}
+          />
+          <p className="m-0 text-[0.95rem] leading-[1.5] text-muted-text">
+            {t("policyPreview.footer")}
           </p>
         </DialogShell>
       ) : dialog?.kind === "ready-inventory" ||
@@ -160,24 +194,39 @@ export function EvidenceDialog() {
         <DialogShell
           title={
             bucket
-              ? BUCKET_EVIDENCE_TITLE[bucket]
-              : "Ready Inventory reconciliation"
+              ? t(`bucketTitles.${bucket}`)
+              : t("readyTitle")
           }
-          description="Perhitungan dan bukti dari snapshot saat ini."
+          description={t("sharedDescription")}
         >
           <Evidence
             rows={[
               [
-                "Ready Inventory",
+                t("rows.readyInventory"),
                 `${formatNumber(home.grams)}g · ${formatNumber(home.pcs)} pcs`,
               ],
-              ["SELL READY", `${formatNumber(home.buckets.sell.grams)}g`],
-              ["ROUTE ELIGIBLE", `${formatNumber(home.buckets.route.grams)}g`],
-              ["HOLD", `${formatNumber(home.buckets.hold.grams)}g`],
-              ["Prognosa", compactRupiah(profit.prognosa)],
-              ["Investment", compactRupiah(profit.investment)],
-              ["Arbitrage", compactRupiah(profit.arbitrage)],
-              ["Total laba", compactRupiah(profit.total)],
+              [
+                t("rows.sellReady"),
+                `${formatNumber(home.buckets.sell.grams)}g`,
+              ],
+              [
+                t("rows.routeEligible"),
+                `${formatNumber(home.buckets.route.grams)}g`,
+              ],
+              [
+                t("rows.hold"),
+                `${formatNumber(home.buckets.hold.grams)}g`,
+              ],
+              [t("rows.prognosaEstimate"), compactRupiah(profit.prognosa)],
+              [
+                t("rows.investmentEstimate"),
+                compactRupiah(profit.investment),
+              ],
+              [
+                t("rows.arbitrageEstimate"),
+                compactRupiah(profit.arbitrage),
+              ],
+              [t("rows.totalProfitHpp"), compactRupiah(profit.total)],
             ]}
           />
           <div className="flex flex-wrap items-center gap-2">
@@ -187,7 +236,7 @@ export function EvidenceDialog() {
               render={<Link href="/inventory" />}
               onClick={() => setDialog(null)}
             >
-              Lihat Inventory
+              {t("viewInventory")}
             </Button>
           </div>
         </DialogShell>
