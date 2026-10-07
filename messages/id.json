@@ -303,7 +303,6 @@
       "targetMarginValue": "Channel / Gramasi"
     },
     "supplier": {
-      "quoteHeading": "{name} · {gram}g",
       "active": "Aktif",
       "capacity": "Kapasitas (gram)",
       "leadTime": "Lead time (jam)"

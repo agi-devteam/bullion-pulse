@@ -6,6 +6,13 @@ import { Button } from "@/components/atoms/button";
 import { Input } from "@/components/atoms/input";
 import { Status } from "@/components/atoms/status";
 import { Switch } from "@/components/atoms/switch";
+import {
+  Accordion,
+  AccordionHeader,
+  AccordionItem,
+  AccordionPanel,
+  AccordionTrigger,
+} from "@/components/molecules/accordion";
 import { Card } from "@/components/molecules/card";
 import { Choice } from "@/components/molecules/choice";
 import { FormRow } from "@/components/molecules/form-row";
@@ -65,6 +72,147 @@ function numericInput(
       className={attrs.className}
       onChange={(event) => onChange(Number(event.target.value))}
     />
+  );
+}
+
+function groupQuotesBySupplier(quotes: SupplierPolicyQuote[]) {
+  const groups: {
+    supplierId: string;
+    name: string;
+    quotes: SupplierPolicyQuote[];
+  }[] = [];
+  const indexBySupplier = new Map<string, number>();
+
+  for (const quote of quotes) {
+    const existing = indexBySupplier.get(quote.supplier_id);
+    if (existing === undefined) {
+      indexBySupplier.set(quote.supplier_id, groups.length);
+      groups.push({
+        supplierId: quote.supplier_id,
+        name: quote.name,
+        quotes: [quote],
+      });
+      continue;
+    }
+    groups[existing].quotes.push(quote);
+  }
+
+  for (const group of groups) {
+    group.quotes.sort((a, b) => a.gram - b.gram);
+  }
+
+  return groups;
+}
+
+function SupplierPolicyAccordion({
+  quotes,
+  onQuoteChange,
+}: {
+  quotes: SupplierPolicyQuote[];
+  onQuoteChange: (
+    quoteId: string,
+    patch: Partial<SupplierPolicyQuote>,
+  ) => void;
+}) {
+  const t = useTranslations("settings");
+  const tCommon = useTranslations("common");
+  const groups = groupQuotesBySupplier(quotes);
+
+  return (
+    <Accordion
+      multiple
+      defaultValue={groups[0] ? [groups[0].supplierId] : []}
+      className="gap-3"
+    >
+      {groups.map((group) => (
+        <AccordionItem
+          key={group.supplierId}
+          value={group.supplierId}
+          className="overflow-hidden rounded-md border border-line border-b bg-bg"
+        >
+          <AccordionHeader>
+            <AccordionTrigger className="gap-4 px-4 py-3.5 text-[1.05rem] hover:bg-track/50">
+              <span className="flex min-w-0 flex-1 items-baseline gap-2.5">
+                <span>{group.name}</span>
+                <span className="text-[0.8125rem] font-normal text-muted-text">
+                  {tCommon("gramasiCount", { count: group.quotes.length })}
+                </span>
+              </span>
+            </AccordionTrigger>
+          </AccordionHeader>
+          <AccordionPanel contentClassName="space-y-2 bg-track/25 px-3 pb-3 pt-1">
+            <Accordion multiple defaultValue={[]} className="gap-2">
+              {group.quotes.map((quote) => (
+                <AccordionItem
+                  key={quote.quote_id}
+                  value={String(quote.gram)}
+                  className="overflow-hidden rounded-md border border-line border-b bg-surface"
+                >
+                  <AccordionHeader render={<h4 />}>
+                    <AccordionTrigger className="gap-3 px-3.5 py-3 text-[0.9375rem] hover:bg-track/40">
+                      <span className="flex min-w-0 flex-1 items-center gap-2.5">
+                        <span>{tCommon("gramsUnit", { value: quote.gram })}</span>
+                        <Status tone={quote.active ? "sell" : ""}>
+                          {quote.active
+                            ? tCommon("active")
+                            : tCommon("inactive")}
+                        </Status>
+                      </span>
+                    </AccordionTrigger>
+                  </AccordionHeader>
+                  <AccordionPanel contentClassName="px-3.5 pb-1 pt-0">
+                    <FormRow
+                      label={t("supplier.active")}
+                      id={`supplier-active-${quote.quote_id}`}
+                    >
+                      <Switch
+                        id={`supplier-active-${quote.quote_id}`}
+                        checked={quote.active}
+                        onCheckedChange={(value) =>
+                          onQuoteChange(quote.quote_id, { active: value })
+                        }
+                      />
+                    </FormRow>
+                    <FormRow
+                      label={t("supplier.capacity")}
+                      id={`supplier-capacity-${quote.quote_id}`}
+                    >
+                      <Input
+                        id={`supplier-capacity-${quote.quote_id}`}
+                        type="number"
+                        min="0"
+                        value={quote.capacity}
+                        onChange={(event) =>
+                          onQuoteChange(quote.quote_id, {
+                            capacity: Number(event.target.value),
+                          })
+                        }
+                      />
+                    </FormRow>
+                    <FormRow
+                      label={t("supplier.leadTime")}
+                      id={`supplier-lead-${quote.quote_id}`}
+                    >
+                      <Input
+                        id={`supplier-lead-${quote.quote_id}`}
+                        type="number"
+                        min="0"
+                        value={quote.lead_time}
+                        onChange={(event) =>
+                          onQuoteChange(quote.quote_id, {
+                            lead_time: Number(event.target.value),
+                          })
+                        }
+                      />
+                    </FormRow>
+                  </AccordionPanel>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </AccordionPanel>
+        </AccordionItem>
+      ))}
+    </Accordion>
   );
 }
 
@@ -398,67 +546,12 @@ export function SettingsWorkspace() {
               </FormRow>
             </>
           ) : null}
-          {tab === "supplier"
-            ? draft.supplier.quotes.map((quote, index) => (
-                <section
-                  key={quote.quote_id}
-                  className={
-                    index > 0 ? "mt-7 border-t border-line pt-6" : undefined
-                  }
-                >
-                  <h3 className="mt-0 mb-2.5 text-[1.1rem] font-semibold">
-                    {t("supplier.quoteHeading", {
-                      name: quote.name,
-                      gram: quote.gram,
-                    })}
-                  </h3>
-                  <FormRow
-                    label={t("supplier.active")}
-                    id={`supplier-active-${quote.quote_id}`}
-                  >
-                    <Switch
-                      id={`supplier-active-${quote.quote_id}`}
-                      checked={quote.active}
-                      onCheckedChange={(value) =>
-                        setQuote(quote.quote_id, { active: value })
-                      }
-                    />
-                  </FormRow>
-                  <FormRow
-                    label={t("supplier.capacity")}
-                    id={`supplier-capacity-${quote.quote_id}`}
-                  >
-                    <Input
-                      id={`supplier-capacity-${quote.quote_id}`}
-                      type="number"
-                      min="0"
-                      value={quote.capacity}
-                      onChange={(event) =>
-                        setQuote(quote.quote_id, {
-                          capacity: Number(event.target.value),
-                        })
-                      }
-                    />
-                  </FormRow>
-                  <FormRow
-                    label={t("supplier.leadTime")}
-                    id={`supplier-lead-${quote.quote_id}`}
-                  >
-                    <Input
-                      id={`supplier-lead-${quote.quote_id}`}
-                      type="number"
-                      min="0"
-                      value={quote.lead_time}
-                      onChange={(event) =>
-                        setQuote(quote.quote_id, {
-                          lead_time: Number(event.target.value),
-                        })
-                      }
-                    />
-                  </FormRow>
-                </section>
-              ))
-            : null}
+          {tab === "supplier" ? (
+            <SupplierPolicyAccordion
+              quotes={draft.supplier.quotes}
+              onQuoteChange={setQuote}
+            />
+          ) : null}
           {tab === "system" ? (
             <>
               <FormRow label={t("system.dayStart")} id="day-start">
