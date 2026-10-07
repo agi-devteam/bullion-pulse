@@ -24,6 +24,34 @@ export interface BucketData {
   denominations: BucketDenomination[];
 }
 
+export interface PriorityAction {
+  id: string;
+  action: "WATCH" | "REPRICE";
+  title: string;
+  subtitle: string;
+  href: string;
+}
+
+export interface HomeIntelligence {
+  isComplete: boolean;
+  snapshotDate: string;
+  invalidCount: number;
+  grams: number;
+  pcs: number;
+  profit: BucketProfit;
+  split: Record<DecisionBucket, number>;
+  buckets: Record<DecisionBucket, BucketData>;
+  routeSuppliers: SupplierSplit[];
+  policyFloor: { b2c: number; b2b: number };
+  actions: PriorityAction[];
+}
+
+export const BUCKET_EVIDENCE_TITLE: Record<DecisionBucket, string> = {
+  sell: "SELL READY · Evidence",
+  route: "ROUTE ELIGIBLE · Evidence",
+  hold: "HOLD · Evidence",
+};
+
 export const DECISION_CAPTIONS: Record<DecisionBucket, string> = {
   sell: "Ready to sell",
   route: "Route eligible",

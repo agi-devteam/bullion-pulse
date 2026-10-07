@@ -2,6 +2,7 @@ export { AppShell, type AppShellProps } from "@/components/organisms/app-shell";
 export { DataTable, type DataTableProps } from "@/components/organisms/data-table";
 export { DecisionPanel, type DecisionPanelProps } from "@/components/organisms/decision-panel";
 export { DenominationBarChart, type DenominationBarChartProps } from "@/components/organisms/denomination-bar-chart";
+export { EvidenceDialog } from "@/components/organisms/evidence-dialog";
 export {
   Dialog,
   DialogClose,
@@ -17,6 +18,7 @@ export {
 export { InventorySplitBar, type InventorySplitBarProps } from "@/components/organisms/inventory-split-bar";
 export { NavigationDrawer } from "@/components/organisms/navigation-drawer";
 export { PriorityActionCard, type PriorityActionCardProps } from "@/components/organisms/priority-action-card";
+export { ReadyInventoryCard, type ReadyInventoryCardProps } from "@/components/organisms/ready-inventory-card";
 export {
   Sheet,
   SheetClose,

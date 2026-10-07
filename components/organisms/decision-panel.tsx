@@ -101,7 +101,7 @@ export function DecisionPanel({
     <section
       className={cn(
         "flex min-w-0 cursor-pointer flex-col gap-3 px-7 py-6 focus-visible:outline-2 focus-visible:outline-offset-[-4px] focus-visible:outline-route-f",
-        "[&+&]:border-l [&+&]:border-line",
+        "[&+&]:border-l [&+&]:border-line max-[1000px]:[&+&]:border-t max-[1000px]:[&+&]:border-l-0",
       )}
       role="button"
       tabIndex={0}

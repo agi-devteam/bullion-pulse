@@ -14,6 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/molecules/dropdown-menu";
 import { MarketStrip } from "@/components/molecules/market-strip";
+import { EvidenceDialog } from "@/components/organisms/evidence-dialog";
 import { NavigationDrawer } from "@/components/organisms/navigation-drawer";
 import { Sheet, SheetTrigger } from "@/components/organisms/sheet";
 import { titleFromPathname } from "@/domain/navigation";
@@ -30,13 +31,16 @@ export function AppShell({ children }: AppShellProps) {
   const title = titleFromPathname(pathname);
   const navOpen = useUIStore((state) => state.navOpen);
   const setNavOpen = useUIStore((state) => state.setNavOpen);
+  const setDialog = useUIStore((state) => state.setDialog);
 
   useEffect(() => {
     setNavOpen(false);
-  }, [pathname, setNavOpen]);
+    setDialog(null);
+  }, [pathname, setNavOpen, setDialog]);
 
   return (
-    <Sheet open={navOpen} onOpenChange={setNavOpen}>
+    <>
+      <Sheet open={navOpen} onOpenChange={setNavOpen}>
       <div
         className={cn(
           "mx-auto w-full max-w-[1920px]",
@@ -127,7 +131,9 @@ export function AppShell({ children }: AppShellProps) {
         </header>
         <main>{children}</main>
       </div>
-      <NavigationDrawer />
-    </Sheet>
+        <NavigationDrawer />
+      </Sheet>
+      <EvidenceDialog />
+    </>
   );
 }
