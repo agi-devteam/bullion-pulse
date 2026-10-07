@@ -15,9 +15,9 @@ import {
 } from "@/components/molecules/dropdown-menu";
 import { MarketStrip } from "@/components/molecules/market-strip";
 import { Toast } from "@/components/molecules/toast";
-import { EvidenceDialog } from "@/components/organisms/evidence-dialog";
-import { NavigationDrawer } from "@/components/organisms/navigation-drawer";
 import { Sheet, SheetTrigger } from "@/components/organisms/sheet";
+import { EvidenceDialog } from "@/components/templates/evidence-dialog";
+import { NavigationDrawer } from "@/components/templates/navigation-drawer";
 import { titleFromPathname } from "@/domain/navigation";
 import { cn } from "@/lib/utils";
 import { useUIStore } from "@/stores/use-ui-store";
