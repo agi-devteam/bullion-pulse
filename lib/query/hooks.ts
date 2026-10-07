@@ -1,8 +1,9 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import type { DecisionBucket, Segment } from "@/domain/primitives";
 import type { InventoryFilters, PricingFilters } from "@/domain/filters";
+import type { AntamQuote, XauQuote } from "@/domain/market";
+import type { DecisionBucket, Segment } from "@/domain/primitives";
 import { queryKeys } from "@/lib/query/keys";
 
 class ApiNotImplementedError extends Error {
@@ -46,7 +47,7 @@ export function useInventory(filters: InventoryFilters) {
 }
 
 export function useMarketAntam() {
-  return useQuery({
+  return useQuery<AntamQuote>({
     queryKey: queryKeys.market.antam,
     queryFn: () => notImplemented("GET /api/market/antam"),
     enabled: false,
@@ -54,7 +55,7 @@ export function useMarketAntam() {
 }
 
 export function useMarketXau() {
-  return useQuery({
+  return useQuery<XauQuote>({
     queryKey: queryKeys.market.xau,
     queryFn: () => notImplemented("GET /api/market/xau"),
     enabled: false,

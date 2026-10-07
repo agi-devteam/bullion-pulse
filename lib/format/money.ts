@@ -23,3 +23,22 @@ export function formatNumber(value: number): string {
 export function formatPercent(value: number, digits = 2): string {
   return `${value.toFixed(digits)}%`;
 }
+
+export function formatRupiah(value: number | null | undefined): string {
+  if (value == null || !Number.isFinite(value)) {
+    return "Unavailable";
+  }
+
+  return `Rp${Math.round(value).toLocaleString("id-ID")}`;
+}
+
+export function formatUsd(value: number | null | undefined): string {
+  if (value == null || !Number.isFinite(value)) {
+    return "Unavailable";
+  }
+
+  return `$${value.toLocaleString("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })}`;
+}

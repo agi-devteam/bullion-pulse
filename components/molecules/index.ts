@@ -1,5 +1,6 @@
 export { AppFooter, type AppFooterProps } from "@/components/molecules/app-footer";
 export { Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/molecules/card";
+export { ChannelFilter } from "@/components/molecules/channel-filter";
 export { Choice, type ChoiceProps } from "@/components/molecules/choice";
 export {
   DropdownMenu,
@@ -21,6 +22,7 @@ export {
 export { Evidence, type EvidenceProps } from "@/components/molecules/evidence";
 export { FormRow, type FormRowProps } from "@/components/molecules/form-row";
 export { MarketPill, type MarketPillProps } from "@/components/molecules/market-pill";
+export { MarketStrip } from "@/components/molecules/market-strip";
 export { Metric, type MetricProps } from "@/components/molecules/metric";
 export { ProfitColumn, type ProfitColumnProps } from "@/components/molecules/profit-column";
 export {
