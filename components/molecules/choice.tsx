@@ -16,9 +16,18 @@ export interface ChoiceProps {
 }
 
 export function Choice({ label, value, onChange, options }: ChoiceProps) {
+  const normalized = options.map((option) => {
+    const [key, text] = Array.isArray(option) ? option : [option, option];
+    return { key, text };
+  });
+  const items = Object.fromEntries(
+    normalized.map(({ key, text }) => [key, text]),
+  ) as Record<string, string>;
+
   return (
     <Select
       value={value}
+      items={items}
       onValueChange={(next) => {
         if (next == null) return;
         onChange(String(next));
@@ -28,14 +37,11 @@ export function Choice({ label, value, onChange, options }: ChoiceProps) {
         <SelectValue />
       </SelectTrigger>
       <SelectContent>
-        {options.map((option) => {
-          const [key, text] = Array.isArray(option) ? option : [option, option];
-          return (
-            <SelectItem key={key} value={key}>
-              {text}
-            </SelectItem>
-          );
-        })}
+        {normalized.map(({ key, text }) => (
+          <SelectItem key={key} value={key}>
+            {text}
+          </SelectItem>
+        ))}
       </SelectContent>
     </Select>
   );
