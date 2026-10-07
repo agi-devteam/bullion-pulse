@@ -1,0 +1,372 @@
+{
+  "common": {
+    "emDash": "—",
+    "yes": "Yes",
+    "no": "No",
+    "all": "All",
+    "gram": "gram",
+    "gramsUnit": "{value}g",
+    "pcs": "{count} pcs",
+    "gramPcs": "gram · {pcs} pcs",
+    "gramasiCount": "· {count} denominations",
+    "recordsPage": "{count} records · page {page} / {pages}",
+    "previous": "Previous",
+    "next": "Next",
+    "detail": "Detail",
+    "review": "Review",
+    "close": "Close",
+    "unavailable": "Unavailable",
+    "required": "REQUIRED",
+    "active": "ACTIVE",
+    "inactive": "INACTIVE",
+    "emptyTable": "No matching data.",
+    "save": "Save settings",
+    "discard": "Discard",
+    "channel": "Channel",
+    "channels": {
+      "all": "All channels",
+      "b2c": "B2C",
+      "b2b": "B2B"
+    },
+    "decisions": {
+      "sellReady": "SELL READY",
+      "routeEligible": "ROUTE ELIGIBLE",
+      "hold": "HOLD",
+      "excludedUnpriced": "EXCLUDED / UNPRICED",
+      "invalid": "INVALID",
+      "reserved": "RESERVED"
+    },
+    "actions": {
+      "watch": "WATCH",
+      "reprice": "REPRICE",
+      "reviewData": "REVIEW DATA",
+      "reviewed": "REVIEWED",
+      "open": "OPEN"
+    }
+  },
+  "nav": {
+    "home": "Bullion Pulse",
+    "inventory": "Inventory",
+    "pricing": "Pricing",
+    "suppliers": "Suppliers",
+    "actions": "Actions & Alerts",
+    "settings": "Settings",
+    "groups": {
+      "main": "Main",
+      "operations": "Operations",
+      "system": "System"
+    }
+  },
+  "shell": {
+    "subtitle": "Inventory Intelligence",
+    "metadataDescription": "Inventory Intelligence · V1",
+    "openNav": "Show navigation",
+    "account": "Account",
+    "settingsMenu": "Settings",
+    "drawer": {
+      "brand": "Bullion Pulse",
+      "brandTagline": "Trading workspace",
+      "collapse": "Collapse or expand sidebar",
+      "description": "Workspace navigation",
+      "searchLabel": "Search pages",
+      "searchPlaceholder": "Search",
+      "mainNav": "Main navigation",
+      "footerLine1": "Mock workspace",
+      "footerLine2": "Inventory Intelligence"
+    }
+  },
+  "market": {
+    "segmentLabel": "Business segment",
+    "segmentAll": "All",
+    "segmentB2c": "B2C",
+    "segmentB2b": "B2B",
+    "xauLabel": "XAU/USD",
+    "antamSell1g": "ANTAM Sell 1g",
+    "antamBuyback": "ANTAM Buyback",
+    "mockTooltip": "Mock data · not production live",
+    "unavailable": "Unavailable",
+    "clockWib": "{time} WIB"
+  },
+  "home": {
+    "priorityTitle": "Priority actions",
+    "viewAll": "View all →",
+    "footerSnapshot": "Mock snapshot · {date}",
+    "footerSample": "Sample data · {count} invalid excluded · {sources}",
+    "sourcesValid": "sources valid",
+    "sourcesNeedReview": "sources need review",
+    "ready": {
+      "ariaEvidence": "View Ready Inventory evidence",
+      "title": "Ready Inventory · {channel}",
+      "channelAll": "All",
+      "unavailable": "Intelligence unavailable · inventory / pricelist not yet valid.",
+      "legendSell": "Sell-ready",
+      "legendRoute": "Route eligible",
+      "legendHold": "Hold",
+      "splitAria": "Inventory decision split"
+    },
+    "profit": {
+      "prognosa": "Prognosis profit",
+      "prognosaNote": "READY estimate · market at purchase − purchase price",
+      "investment": "Investment profit",
+      "investmentNote": "READY estimate · market at sale − market at purchase",
+      "arbitrage": "Arbitrage profit",
+      "arbitrageNote": "READY estimate · selling price − market at sale"
+    },
+    "decision": {
+      "captions": {
+        "sell": "Ready to sell",
+        "route": "Route eligible",
+        "hold": "Protect margin"
+      },
+      "ariaEvidence": "View {bucket} evidence",
+      "supplierAria": "ROUTE ELIGIBLE supplier candidates · not locked yet",
+      "chartTitle": "Breakdown by denomination (grams)",
+      "descIncomplete": "Sources not yet valid. Check Data Health & Audit.",
+      "descSell": "Prioritize inventory that meets margin policy.",
+      "descRoute": "Profitable replacement available. WATCH · wait for demand before lock.",
+      "descRouteEmpty": "No ROUTE ELIGIBLE inventory for this segment.",
+      "descHold": "Protect positions below policy. Review price before selling.",
+      "footerPrognosa": "Prognosis GP",
+      "footerRoute": "Waiting for demand · no lock yet",
+      "footerFloor": "Floor B2C {b2c}% · B2B {b2b}%"
+    },
+    "priority": {
+      "watch10Title": "Watch 10g route potential",
+      "watch10Subtitle": "160g eligible · replacement margin 1.82%",
+      "watch25Title": "Watch 25g route potential",
+      "watch25Subtitle": "1,075g eligible · replacement margin 2.10%",
+      "reprice50Title": "Reprice B2C 50g inventory",
+      "reprice50Subtitle": "Margin 0.70% · policy floor 3.00%"
+    }
+  },
+  "inventory": {
+    "metrics": {
+      "readyPriced": "READY / priced",
+      "excluded": "Excluded",
+      "excludedNote": "Reserved, incoming, sold, and non-ready",
+      "invalid": "Invalid",
+      "invalidNote": "Not included in the decision pool",
+      "unpricedReady": "Unpriced READY",
+      "unpricedNote": "Source must be valid"
+    },
+    "filters": {
+      "channel": "Channel",
+      "availability": "Availability",
+      "availabilityReady": "READY / AVAILABLE",
+      "availabilityAll": "All physical inventory",
+      "availabilityExcluded": "Excluded inventory",
+      "availabilityInvalid": "Invalid records",
+      "decision": "Decision",
+      "decisionAll": "All decisions",
+      "searchPlaceholder": "Serial / stock ID / gram",
+      "searchAria": "Search inventory"
+    },
+    "headers": {
+      "serialStockId": "Serial / Stock ID",
+      "gram": "Gram",
+      "channel": "Channel",
+      "availability": "Availability",
+      "unitCost": "Unit cost",
+      "sellingPrice": "Selling price",
+      "gpMargin": "GP / Margin",
+      "decision": "Decision",
+      "evidence": "Evidence"
+    }
+  },
+  "pricing": {
+    "notice": "Minimum profitable price and target-margin price use the highest READY cost per channel / denomination. ANTAM official source: logammulia.com only. XAU is not an operational pricing benchmark.",
+    "filters": {
+      "channel": "Channel pricing",
+      "gram": "Denomination pricing",
+      "allGramasi": "All denominations"
+    },
+    "headers": {
+      "channel": "Channel",
+      "gram": "Gram",
+      "pricelist": "Pricelist",
+      "antamMock": "ANTAM · Mock",
+      "gapVsAntam": "Gap vs ANTAM",
+      "supplierUnit": "Supplier / unit",
+      "minProfitable": "Min profitable",
+      "targetMarginPrice": "Target-margin price",
+      "policy": "Policy",
+      "recommendation": "Recommendation"
+    },
+    "recommendation": {
+      "ok": "OK",
+      "unavailable": "Unavailable",
+      "thinReprice": "THIN / REPRICE",
+      "reprice": "REPRICE"
+    }
+  },
+  "suppliers": {
+    "notice": "Supplier quotes are mock. A quote is not a confirmed lock; GMI internal price is not a supplier.",
+    "headers": {
+      "supplier": "Supplier",
+      "active": "Active",
+      "gram": "Gram",
+      "quoteUnit": "Quote / unit",
+      "capacity": "Capacity",
+      "leadTime": "Lead time",
+      "quoteTime": "Quote time",
+      "validUntil": "Valid until",
+      "lockStatus": "Lock available / status"
+    },
+    "lockPair": "{available} / {status}",
+    "directoryTitle": "Supplier directory",
+    "directoryNote": "{names}. Only SIMA and KRISNA have sample quotes in this snapshot.",
+    "policyButton": "Supplier Policy",
+    "leadHours": "{hours}h"
+  },
+  "actions": {
+    "headers": {
+      "action": "Action",
+      "channelGram": "Channel / Gram",
+      "quantity": "Quantity",
+      "reason": "Reason",
+      "owner": "Owner",
+      "status": "Status",
+      "review": "Review"
+    },
+    "markReviewed": "Mark reviewed",
+    "toastReviewed": "Action reviewed.",
+    "channelGram": "{channel} · {gram}g",
+    "reasons": {
+      "watch10": "Profitable replacement available at SIMA 10g. V1: WATCH and wait for demand before lock.",
+      "watch25": "Profitable replacement available at KRISNA 25g. V1: no LOCK instruction without demand.",
+      "reprice50": "Margin 0.70% is below B2C policy floor 3.00%. Review selling price.",
+      "invalidRecord": "One invalid record excluded from the decision pool. Check stock ID and denomination."
+    },
+    "owners": {
+      "routeDesk": "Route Desk",
+      "pricing": "Pricing",
+      "dataHealth": "Data Health & Audit"
+    }
+  },
+  "settings": {
+    "tabs": {
+      "dashboard": "Dashboard",
+      "margin": "Margin Policy",
+      "route": "Route Policy",
+      "reprice": "Reprice Policy",
+      "supplier": "Supplier Policy",
+      "system": "System / Market"
+    },
+    "tabsNav": "Settings categories",
+    "footerNote": "Changes apply after Save. Settings are stored in this browser.",
+    "previewImpact": "Preview Policy Impact",
+    "unsavedTitle": "Unsaved changes",
+    "unsavedDescription": "You have unsaved settings changes. Discard them to switch tabs?",
+    "unsavedStay": "Stay",
+    "unsavedDiscard": "Discard changes",
+    "toasts": {
+      "discarded": "Changes discarded.",
+      "marginRange": "Margin policy must be between 0–99.99%",
+      "routeInvalid": "Route policy values are invalid",
+      "repriceInvalid": "Reprice policy values are invalid",
+      "outOfRange": "Policy value out of range",
+      "supplierInvalid": "Supplier capacity, lead time, and expiry must be valid.",
+      "saved": "Settings saved."
+    },
+    "dashboard": {
+      "theme": "Theme",
+      "themeNote": "Theme controls live only in Settings.",
+      "themeSystem": "System",
+      "themeLight": "Light",
+      "themeDark": "Dark",
+      "language": "Language",
+      "languageNote": "UI language for this workspace.",
+      "languageId": "Indonesia (id)",
+      "languageEn": "English (en)"
+    },
+    "margin": {
+      "intro": "Margin = total GP ÷ selling price; not Prognosis alone.",
+      "gramasi": "Gramasi",
+      "b2cMin": "B2C minimum %",
+      "b2bMin": "B2B minimum %",
+      "b2cAria": "B2C {gram}g minimum margin",
+      "b2bAria": "B2B {gram}g minimum margin"
+    },
+    "route": {
+      "minMargin": "Minimum routed margin %",
+      "maxLead": "Maximum lead time (hours)",
+      "capacityRequired": "Supplier capacity requirement",
+      "capacityNote": "Capacity remains mandatory at execution.",
+      "lockRequired": "Supplier Lock Required Before Route Release",
+      "lockNote": "Hard rule; cannot be disabled."
+    },
+    "reprice": {
+      "enabled": "Enable REPRICE recommendation",
+      "priceGap": "Price-gap threshold %",
+      "antamGap": "ANTAM-gap threshold %",
+      "antamGapNote": "Used only when ANTAM is valid. No fallback.",
+      "targetMargin": "Target margin",
+      "targetMarginValue": "Channel / Gramasi"
+    },
+    "supplier": {
+      "quoteHeading": "{name} · {gram}g",
+      "active": "Active",
+      "capacity": "Capacity (gram)",
+      "leadTime": "Lead time (hours)",
+      "expiry": "Quote expiry",
+      "expiryNote": "UTC · sample quote expiry."
+    },
+    "system": {
+      "dayStart": "Business day start · WIB",
+      "refresh": "Refresh interval (seconds)",
+      "refreshNote": "Evaluation refresh; not a live feed connection.",
+      "freshness": "Freshness threshold (minutes)",
+      "antamSource": "ANTAM official source",
+      "antamSourceNote": "Official source only · no fallback.",
+      "antamLink": "logammulia.com",
+      "xau": "XAU market awareness",
+      "xauNote": "XAU is not part of the operational decision engine."
+    }
+  },
+  "evidence": {
+    "close": "Close",
+    "sharedDescription": "Calculations and evidence from the current snapshot.",
+    "recordMissing": "Record not found.",
+    "viewInventory": "View Inventory",
+    "inventoryTitle": "Inventory evidence · {id}",
+    "readyTitle": "Ready Inventory reconciliation",
+    "bucketTitles": {
+      "sell": "SELL READY · Evidence",
+      "route": "ROUTE ELIGIBLE · Evidence",
+      "hold": "HOLD · Evidence"
+    },
+    "policyPreview": {
+      "title": "Policy impact · unsaved",
+      "bucket": "Bucket",
+      "currentGram": "Current (gram)",
+      "previewGram": "Preview (gram)",
+      "footer": "Not saved yet. Close to return to the draft; Save settings to apply."
+    },
+    "rows": {
+      "stockId": "Stock ID",
+      "channelGram": "Channel / Denomination",
+      "productionKeeper": "Production / Keeper",
+      "availability": "Availability",
+      "availabilityValue": "{status} · reserved {reserved}",
+      "hppUnit": "Unit cost (HPP)",
+      "purchasePriceUnit": "Purchase price / unit",
+      "sellingPrice": "Selling price",
+      "totalGpMargin": "Total GP / Margin",
+      "marketAtPurchase": "Market at purchase · Mock",
+      "marketNowAntam": "Market now · ANTAM Mock",
+      "prognosaEstimate": "Prognosis · estimate",
+      "investmentEstimate": "Investment · estimate",
+      "arbitrageEstimate": "Arbitrage · estimate",
+      "policy": "Policy",
+      "decisionAction": "Decision / Action",
+      "reason": "Reason",
+      "replacement": "Replacement",
+      "defaultReason": "Non-ready inventory / source not yet valid",
+      "readyInventory": "Ready Inventory",
+      "sellReady": "SELL READY",
+      "routeEligible": "ROUTE ELIGIBLE",
+      "hold": "HOLD",
+      "totalProfitHpp": "Total profit · HPP basis"
+    }
+  }
+}

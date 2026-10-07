@@ -1,0 +1,372 @@
+{
+  "common": {
+    "emDash": "—",
+    "yes": "Ya",
+    "no": "Tidak",
+    "all": "Semua",
+    "gram": "gram",
+    "gramsUnit": "{value}g",
+    "pcs": "{count} pcs",
+    "gramPcs": "gram · {pcs} pcs",
+    "gramasiCount": "· {count} gramasi",
+    "recordsPage": "{count} records · halaman {page} / {pages}",
+    "previous": "Sebelumnya",
+    "next": "Berikutnya",
+    "detail": "Detail",
+    "review": "Tinjau",
+    "close": "Tutup",
+    "unavailable": "Tidak tersedia",
+    "required": "REQUIRED",
+    "active": "ACTIVE",
+    "inactive": "INACTIVE",
+    "emptyTable": "Tidak ada data yang sesuai.",
+    "save": "Simpan pengaturan",
+    "discard": "Buang",
+    "channel": "Channel",
+    "channels": {
+      "all": "Semua channel",
+      "b2c": "B2C",
+      "b2b": "B2B"
+    },
+    "decisions": {
+      "sellReady": "SELL READY",
+      "routeEligible": "ROUTE ELIGIBLE",
+      "hold": "HOLD",
+      "excludedUnpriced": "EXCLUDED / UNPRICED",
+      "invalid": "INVALID",
+      "reserved": "RESERVED"
+    },
+    "actions": {
+      "watch": "WATCH",
+      "reprice": "REPRICE",
+      "reviewData": "REVIEW DATA",
+      "reviewed": "REVIEWED",
+      "open": "OPEN"
+    }
+  },
+  "nav": {
+    "home": "Bullion Pulse",
+    "inventory": "Inventory",
+    "pricing": "Pricing",
+    "suppliers": "Supplier",
+    "actions": "Aksi & Peringatan",
+    "settings": "Pengaturan",
+    "groups": {
+      "main": "Utama",
+      "operations": "Operasi",
+      "system": "Sistem"
+    }
+  },
+  "shell": {
+    "subtitle": "Intelijen Inventory",
+    "metadataDescription": "Inventory Intelligence · V1",
+    "openNav": "Tampilkan navigasi",
+    "account": "Akun",
+    "settingsMenu": "Pengaturan",
+    "drawer": {
+      "brand": "Bullion Pulse",
+      "brandTagline": "Workspace trading",
+      "collapse": "Ciutkan atau perluas sidebar",
+      "description": "Navigasi workspace",
+      "searchLabel": "Cari halaman",
+      "searchPlaceholder": "Cari",
+      "mainNav": "Navigasi utama",
+      "footerLine1": "Workspace mock",
+      "footerLine2": "Intelijen Inventory"
+    }
+  },
+  "market": {
+    "segmentLabel": "Segmen bisnis",
+    "segmentAll": "Semua",
+    "segmentB2c": "B2C",
+    "segmentB2b": "B2B",
+    "xauLabel": "XAU/USD",
+    "antamSell1g": "ANTAM Sell 1g",
+    "antamBuyback": "ANTAM Buyback",
+    "mockTooltip": "Mock data · bukan production live",
+    "unavailable": "Unavailable",
+    "clockWib": "{time} WIB"
+  },
+  "home": {
+    "priorityTitle": "Aksi prioritas",
+    "viewAll": "Lihat semua →",
+    "footerSnapshot": "Mock snapshot · {date}",
+    "footerSample": "Sample data · {count} invalid excluded · {sources}",
+    "sourcesValid": "sources valid",
+    "sourcesNeedReview": "sources need review",
+    "ready": {
+      "ariaEvidence": "Lihat Ready Inventory evidence",
+      "title": "Ready Inventory · {channel}",
+      "channelAll": "All",
+      "unavailable": "Intelligence unavailable · inventory / pricelist belum valid.",
+      "legendSell": "Sell-ready",
+      "legendRoute": "Route eligible",
+      "legendHold": "Hold",
+      "splitAria": "Inventory decision split"
+    },
+    "profit": {
+      "prognosa": "Laba Prognosa",
+      "prognosaNote": "Estimasi READY · pasar saat beli − harga beli",
+      "investment": "Laba Investment",
+      "investmentNote": "Estimasi READY · pasar saat jual − pasar saat beli",
+      "arbitrage": "Laba Arbitrage",
+      "arbitrageNote": "Estimasi READY · harga jual − pasar saat jual"
+    },
+    "decision": {
+      "captions": {
+        "sell": "Ready to sell",
+        "route": "Route eligible",
+        "hold": "Protect margin"
+      },
+      "ariaEvidence": "Lihat evidence {bucket}",
+      "supplierAria": "Kandidat supplier ROUTE ELIGIBLE · belum locked",
+      "chartTitle": "Rincian per gramasi (gram)",
+      "descIncomplete": "Source belum valid. Periksa Data Health & Audit.",
+      "descSell": "Prioritaskan inventory yang memenuhi kebijakan margin.",
+      "descRoute": "Replacement profitable tersedia. WATCH · tunggu demand sebelum lock.",
+      "descRouteEmpty": "Tidak ada ROUTE ELIGIBLE untuk segmen ini.",
+      "descHold": "Lindungi posisi di bawah policy. Tinjau harga sebelum dijual.",
+      "footerPrognosa": "Prognosa GP",
+      "footerRoute": "Waiting for demand · no lock yet",
+      "footerFloor": "Floor B2C {b2c}% · B2B {b2b}%"
+    },
+    "priority": {
+      "watch10Title": "Watch 10g route potential",
+      "watch10Subtitle": "160g eligible · replacement margin 1.82%",
+      "watch25Title": "Watch 25g route potential",
+      "watch25Subtitle": "1,075g eligible · replacement margin 2.10%",
+      "reprice50Title": "Reprice B2C 50g inventory",
+      "reprice50Subtitle": "Margin 0.70% · policy floor 3.00%"
+    }
+  },
+  "inventory": {
+    "metrics": {
+      "readyPriced": "READY / priced",
+      "excluded": "Excluded",
+      "excludedNote": "Reserved, incoming, sold dan non-ready",
+      "invalid": "Invalid",
+      "invalidNote": "Tidak masuk decision pool",
+      "unpricedReady": "Unpriced READY",
+      "unpricedNote": "Source harus valid"
+    },
+    "filters": {
+      "channel": "Channel",
+      "availability": "Availability",
+      "availabilityReady": "READY / AVAILABLE",
+      "availabilityAll": "All physical inventory",
+      "availabilityExcluded": "Excluded inventory",
+      "availabilityInvalid": "Invalid records",
+      "decision": "Decision",
+      "decisionAll": "All decisions",
+      "searchPlaceholder": "Serial / stock ID / gramasi",
+      "searchAria": "Cari inventory"
+    },
+    "headers": {
+      "serialStockId": "Serial / Stock ID",
+      "gram": "Gram",
+      "channel": "Channel",
+      "availability": "Availability",
+      "unitCost": "Unit cost",
+      "sellingPrice": "Selling price",
+      "gpMargin": "GP / Margin",
+      "decision": "Decision",
+      "evidence": "Evidence"
+    }
+  },
+  "pricing": {
+    "notice": "Minimum profitable price dan target-margin price memakai biaya READY tertinggi per channel / gramasi. ANTAM official source: logammulia.com saja. XAU tidak menjadi operational pricing benchmark.",
+    "filters": {
+      "channel": "Channel pricing",
+      "gram": "Gramasi pricing",
+      "allGramasi": "All gramasi"
+    },
+    "headers": {
+      "channel": "Channel",
+      "gram": "Gram",
+      "pricelist": "Pricelist",
+      "antamMock": "ANTAM · Mock",
+      "gapVsAntam": "Gap vs ANTAM",
+      "supplierUnit": "Supplier / unit",
+      "minProfitable": "Min profitable",
+      "targetMarginPrice": "Target-margin price",
+      "policy": "Policy",
+      "recommendation": "Recommendation"
+    },
+    "recommendation": {
+      "ok": "OK",
+      "unavailable": "Unavailable",
+      "thinReprice": "THIN / REPRICE",
+      "reprice": "REPRICE"
+    }
+  },
+  "suppliers": {
+    "notice": "Supplier quotes adalah mock. Quote tidak sama dengan confirmed lock; GMI internal price bukan supplier.",
+    "headers": {
+      "supplier": "Supplier",
+      "active": "Active",
+      "gram": "Gram",
+      "quoteUnit": "Quote / unit",
+      "capacity": "Capacity",
+      "leadTime": "Lead time",
+      "quoteTime": "Quote time",
+      "validUntil": "Valid until",
+      "lockStatus": "Lock available / status"
+    },
+    "lockPair": "{available} / {status}",
+    "directoryTitle": "Supplier directory",
+    "directoryNote": "{names}. Hanya SIMA dan KRISNA memiliki sample quote pada snapshot ini.",
+    "policyButton": "Supplier Policy",
+    "leadHours": "{hours}h"
+  },
+  "actions": {
+    "headers": {
+      "action": "Aksi",
+      "channelGram": "Channel / Gram",
+      "quantity": "Kuantitas",
+      "reason": "Alasan",
+      "owner": "Pemilik",
+      "status": "Status",
+      "review": "Tinjau"
+    },
+    "markReviewed": "Tandai ditinjau",
+    "toastReviewed": "Aksi ditinjau.",
+    "channelGram": "{channel} · {gram}g",
+    "reasons": {
+      "watch10": "Replacement profitable tersedia pada SIMA 10g. V1: WATCH dan tunggu demand sebelum lock.",
+      "watch25": "Replacement profitable tersedia pada KRISNA 25g. V1: tidak ada instruksi LOCK tanpa demand.",
+      "reprice50": "Margin 0.70% berada di bawah policy floor B2C 3.00%. Tinjau harga jual.",
+      "invalidRecord": "Satu record invalid dikecualikan dari decision pool. Periksa stock ID dan gramasi."
+    },
+    "owners": {
+      "routeDesk": "Route Desk",
+      "pricing": "Pricing",
+      "dataHealth": "Data Health & Audit"
+    }
+  },
+  "settings": {
+    "tabs": {
+      "dashboard": "Dasbor",
+      "margin": "Kebijakan Margin",
+      "route": "Kebijakan Route",
+      "reprice": "Kebijakan Reprice",
+      "supplier": "Kebijakan Supplier",
+      "system": "Sistem / Pasar"
+    },
+    "tabsNav": "Kategori pengaturan",
+    "footerNote": "Perubahan berlaku setelah Save. Pengaturan disimpan pada browser ini.",
+    "previewImpact": "Pratinjau Dampak Kebijakan",
+    "unsavedTitle": "Perubahan belum disimpan",
+    "unsavedDescription": "Ada perubahan pengaturan yang belum disimpan. Buang perubahan untuk pindah tab?",
+    "unsavedStay": "Tetap di sini",
+    "unsavedDiscard": "Buang perubahan",
+    "toasts": {
+      "discarded": "Perubahan dibatalkan.",
+      "marginRange": "Margin policy harus berada di 0–99.99%",
+      "routeInvalid": "Nilai route policy invalid",
+      "repriceInvalid": "Nilai reprice policy invalid",
+      "outOfRange": "Nilai policy di luar range",
+      "supplierInvalid": "Supplier capacity, lead time, dan expiry harus valid.",
+      "saved": "Pengaturan disimpan."
+    },
+    "dashboard": {
+      "theme": "Tema",
+      "themeNote": "Kontrol tema hanya ada di Pengaturan.",
+      "themeSystem": "Sistem",
+      "themeLight": "Terang",
+      "themeDark": "Gelap",
+      "language": "Bahasa",
+      "languageNote": "Bahasa antarmuka untuk workspace ini.",
+      "languageId": "Indonesia (id)",
+      "languageEn": "English (en)"
+    },
+    "margin": {
+      "intro": "Margin = total GP ÷ harga jual; bukan hanya komponen Prognosa.",
+      "gramasi": "Gramasi",
+      "b2cMin": "B2C minimum %",
+      "b2bMin": "B2B minimum %",
+      "b2cAria": "B2C {gram}g minimum margin",
+      "b2bAria": "B2B {gram}g minimum margin"
+    },
+    "route": {
+      "minMargin": "Margin route minimum %",
+      "maxLead": "Lead time maksimum (jam)",
+      "capacityRequired": "Persyaratan kapasitas supplier",
+      "capacityNote": "Capacity tetap wajib pada tahap execution.",
+      "lockRequired": "Supplier Lock Wajib Sebelum Route Release",
+      "lockNote": "Hard rule; tidak dapat dinonaktifkan."
+    },
+    "reprice": {
+      "enabled": "Aktifkan rekomendasi REPRICE",
+      "priceGap": "Ambang price-gap %",
+      "antamGap": "Ambang ANTAM-gap %",
+      "antamGapNote": "Dipakai hanya jika ANTAM valid. Tidak ada fallback.",
+      "targetMargin": "Margin target",
+      "targetMarginValue": "Channel / Gramasi"
+    },
+    "supplier": {
+      "quoteHeading": "{name} · {gram}g",
+      "active": "Aktif",
+      "capacity": "Kapasitas (gram)",
+      "leadTime": "Lead time (jam)",
+      "expiry": "Kedaluwarsa quote",
+      "expiryNote": "UTC · sample quote expiry."
+    },
+    "system": {
+      "dayStart": "Awal hari bisnis · WIB",
+      "refresh": "Interval refresh (detik)",
+      "refreshNote": "Refresh evaluasi; bukan koneksi feed live.",
+      "freshness": "Ambang freshness (menit)",
+      "antamSource": "Sumber resmi ANTAM",
+      "antamSourceNote": "Official source only · no fallback.",
+      "antamLink": "logammulia.com",
+      "xau": "Kesadaran pasar XAU",
+      "xauNote": "XAU tidak masuk operational decision engine."
+    }
+  },
+  "evidence": {
+    "close": "Tutup",
+    "sharedDescription": "Perhitungan dan bukti dari snapshot saat ini.",
+    "recordMissing": "Record tidak ditemukan.",
+    "viewInventory": "Lihat Inventory",
+    "inventoryTitle": "Inventory evidence · {id}",
+    "readyTitle": "Ready Inventory reconciliation",
+    "bucketTitles": {
+      "sell": "SELL READY · Evidence",
+      "route": "ROUTE ELIGIBLE · Evidence",
+      "hold": "HOLD · Evidence"
+    },
+    "policyPreview": {
+      "title": "Policy impact · unsaved",
+      "bucket": "Bucket",
+      "currentGram": "Current (gram)",
+      "previewGram": "Preview (gram)",
+      "footer": "Belum disimpan. Close untuk kembali ke draft; Save settings untuk menerapkan."
+    },
+    "rows": {
+      "stockId": "Stock ID",
+      "channelGram": "Channel / Gramasi",
+      "productionKeeper": "Production / Keeper",
+      "availability": "Availability",
+      "availabilityValue": "{status} · reserved {reserved}",
+      "hppUnit": "HPP / unit",
+      "purchasePriceUnit": "Harga beli / unit",
+      "sellingPrice": "Selling price",
+      "totalGpMargin": "Total GP / Margin",
+      "marketAtPurchase": "Pasar saat beli · Mock",
+      "marketNowAntam": "Pasar kini · ANTAM Mock",
+      "prognosaEstimate": "Prognosa · estimasi",
+      "investmentEstimate": "Investment · estimasi",
+      "arbitrageEstimate": "Arbitrage · estimasi",
+      "policy": "Policy",
+      "decisionAction": "Decision / Action",
+      "reason": "Reason",
+      "replacement": "Replacement",
+      "defaultReason": "Non-ready inventory / source belum valid",
+      "readyInventory": "Ready Inventory",
+      "sellReady": "SELL READY",
+      "routeEligible": "ROUTE ELIGIBLE",
+      "hold": "HOLD",
+      "totalProfitHpp": "Total laba · HPP basis"
+    }
+  }
+}

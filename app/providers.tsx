@@ -3,6 +3,7 @@
 import { QueryClientProvider } from "@tanstack/react-query";
 import { useEffect, useState, type ReactNode } from "react";
 import { createQueryClient } from "@/lib/query/client";
+import { I18nProvider } from "@/lib/i18n/provider";
 import { useSettingsStore } from "@/stores/use-settings-store";
 
 function applyDocumentSettings() {
@@ -43,8 +44,10 @@ export function Providers({ children }: { children: ReactNode }) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeSync />
-      {children}
+      <I18nProvider>
+        <ThemeSync />
+        {children}
+      </I18nProvider>
     </QueryClientProvider>
   );
 }
