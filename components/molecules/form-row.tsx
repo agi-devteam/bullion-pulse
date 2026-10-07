@@ -36,7 +36,7 @@ export function FormRow({
       <div
         className={cn(
           "flex flex-none items-center justify-end max-[700px]:w-full [&_[data-slot=input]]:w-full [&_[data-slot=select-trigger]]:w-full",
-          controlWidth === 210 ? "w-[210px]" : "w-[120px]",
+          controlWidth === 210 ? "w-52.5" : "w-30",
         )}
       >
         {children}

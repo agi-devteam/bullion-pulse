@@ -216,7 +216,7 @@ export function SettingsWorkspace() {
   }
 
   return (
-    <div className="flex flex-col gap-[22px]">
+    <div className="flex flex-col gap-5.5">
       <nav aria-label={t("tabsNav")} className="flex flex-wrap gap-2">
         <Tabs
           value={tab}
@@ -227,7 +227,7 @@ export function SettingsWorkspace() {
         >
           <TabsList className="gap-2">
             {TAB_IDS.map((id) => (
-              <TabsTrigger key={id} value={id} className="min-h-[44px] py-0">
+              <TabsTrigger key={id} value={id} className="min-h-11 py-0">
                 {tabLabels[id]}
               </TabsTrigger>
             ))}
@@ -240,8 +240,8 @@ export function SettingsWorkspace() {
           persist();
         }}
       >
-        <Card className="policy-matrix block gap-0 p-[24px]">
-          <h2 className="mt-0 mb-[18px] text-[1.25rem] font-bold">
+        <Card className="policy-matrix block gap-0 p-6">
+          <h2 className="mt-0 mb-4.5 text-[1.25rem] font-bold">
             {tabLabels[tab]}
           </h2>
           {tab === "dashboard" ? (
@@ -291,7 +291,7 @@ export function SettingsWorkspace() {
           ) : null}
           {tab === "margin" ? (
             <>
-              <p className="mt-0 mb-[14px] text-[0.95rem] leading-[1.5] text-muted-text">
+              <p className="mt-0 mb-3.5 text-[0.95rem] leading-normal text-muted-text">
                 {t("margin.intro")}
               </p>
               <DataTable
@@ -558,8 +558,8 @@ export function SettingsWorkspace() {
           ) : null}
         </Card>
         {tab !== "dashboard" && isDirty() ? (
-          <div className="mt-[18px] flex flex-wrap items-center justify-between gap-[14px]">
-            <p className="m-0 text-[0.95rem] leading-[1.5] text-muted-text">
+          <div className="mt-4.5 flex flex-wrap items-center justify-between gap-3.5">
+            <p className="m-0 text-[0.95rem] leading-normal text-muted-text">
               {t("footerNote")}
             </p>
             <div className="flex flex-wrap items-center gap-2">

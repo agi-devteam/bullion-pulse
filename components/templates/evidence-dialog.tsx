@@ -185,7 +185,7 @@ export function EvidenceDialog() {
               formatNumber(dialog.next[key]),
             ])}
           />
-          <p className="m-0 text-[0.95rem] leading-[1.5] text-muted-text">
+          <p className="m-0 text-[0.95rem] leading-normal text-muted-text">
             {t("policyPreview.footer")}
           </p>
         </DialogShell>

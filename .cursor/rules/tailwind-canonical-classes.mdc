@@ -1,0 +1,32 @@
+---
+description: Prefer Tailwind canonical class names over equivalent arbitrary values
+globs: **/*.{tsx,ts,jsx,js,css}
+alwaysApply: false
+---
+
+# Tailwind canonical classes
+
+When writing or editing Tailwind classes, prefer the canonical utility from the design system over an equivalent arbitrary value.
+
+Examples:
+
+- `w-[300px]` → `w-75`
+- `p-[3px]` / `max-[700px]:p-[3px]` → `p-0.75` / `max-[700px]:p-0.75`
+- `gap-[18px]` → `gap-4.5`
+- `min-h-[44px]` → `min-h-11`
+- `rounded-[12px]` → `rounded-md` (project radius tokens)
+- `rounded-[20px]` → `rounded-lg`
+
+Do not introduce arbitrary `-[Npx]` / `-[Nrem]` spacing, sizing, or radius utilities when a scale class exists.
+
+After bulk class edits, run:
+
+```bash
+npm run lint:tailwind
+```
+
+To auto-rewrite violations:
+
+```bash
+npm run lint:tailwind:fix
+```

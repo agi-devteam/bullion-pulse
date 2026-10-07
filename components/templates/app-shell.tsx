@@ -121,7 +121,7 @@ export function AppShell({ children }: AppShellProps) {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent
                     align="end"
-                    className="w-[300px] rounded-lg border-line p-2 shadow-[0_16px_48px_#0003] max-[700px]:fixed max-[700px]:top-18 max-[700px]:right-3 max-[700px]:left-3 max-[700px]:w-auto"
+                    className="w-75 rounded-lg border-line p-2 shadow-[0_16px_48px_#0003] max-[700px]:fixed max-[700px]:top-18 max-[700px]:right-3 max-[700px]:left-3 max-[700px]:w-auto"
                   >
                     <DropdownMenuItem
                       className="min-h-12 gap-3.5 rounded-[14px] px-3.5 text-[1.0625rem]"

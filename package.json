@@ -6,7 +6,9 @@
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint && npm run lint:tailwind",
+    "lint:tailwind": "node scripts/check-canonical-tailwind.mjs",
+    "lint:tailwind:fix": "node scripts/check-canonical-tailwind.mjs --fix"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",
