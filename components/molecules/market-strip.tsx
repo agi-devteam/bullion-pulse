@@ -3,8 +3,8 @@
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { MarketPill } from "@/components/molecules/market-pill";
-import { formatRupiah, formatUsd } from "@/lib/format/money";
-import { useMarketAntam, useMarketXau } from "@/lib/query/hooks";
+import { formatRupiah } from "@/lib/format/money";
+import { useMarketAntam } from "@/lib/query/hooks";
 
 function useWibTime() {
   const [time, setTime] = useState<string | null>(null);
@@ -32,18 +32,12 @@ function useWibTime() {
 
 export function MarketStrip() {
   const t = useTranslations("market");
-  const xau = useMarketXau();
   const antam = useMarketAntam();
   const time = useWibTime();
   const unavailable = t("unavailable");
 
   return (
     <div className="flex min-w-0 flex-wrap gap-2 min-[701px]:max-[1500px]:col-span-full min-[701px]:max-[1500px]:row-start-2 max-[1500px]:flex-nowrap max-[1500px]:overflow-x-auto max-[1500px]:scrollbar-none max-[700px]:order-3 max-[700px]:w-full [&::-webkit-scrollbar]:hidden">
-      <MarketPill
-        label={t("xauLabel")}
-        value={xau.data ? formatUsd(xau.data.current) : unavailable}
-        change={xau.data?.change}
-      />
       <MarketPill
         label={t("antamSell1g")}
         value={

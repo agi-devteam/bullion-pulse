@@ -650,22 +650,6 @@ export function SettingsWorkspace() {
                   {t("system.antamLink")}
                 </a>
               </FormRow>
-              <FormRow
-                label={t("system.xau")}
-                id="xau-enabled"
-                note={t("system.xauNote")}
-              >
-                <Switch
-                  id="xau-enabled"
-                  checked={draft.system.xauEnabled}
-                  onCheckedChange={(value) =>
-                    updateDraft((current) => ({
-                      ...current,
-                      system: { ...current.system, xauEnabled: value },
-                    }))
-                  }
-                />
-              </FormRow>
             </>
           ) : null}
         </Card>

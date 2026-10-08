@@ -372,7 +372,6 @@ export function EvidenceDialog() {
                   count: formatNumber(home.unpricedPcs),
                 }),
               ],
-              [t("rows.xau"), t("rows.xauValue")],
             ]}
           />
           {bucket ? (

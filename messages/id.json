@@ -74,7 +74,6 @@
     "segmentAll": "Semua",
     "segmentB2c": "B2C",
     "segmentB2b": "B2B",
-    "xauLabel": "XAU/USD",
     "antamSell1g": "ANTAM Sell 1g",
     "antamBuyback": "ANTAM Buyback",
     "unavailable": "Unavailable",
@@ -166,7 +165,7 @@
     }
   },
   "pricing": {
-    "notice": "Minimum profitable price dan target-margin price memakai biaya READY tertinggi per channel / gramasi. ANTAM official source: logammulia.com saja. XAU tidak menjadi operational pricing benchmark.",
+    "notice": "Minimum profitable price dan target-margin price memakai biaya READY tertinggi per channel / gramasi. ANTAM official source: logammulia.com saja.",
     "filters": {
       "channel": "Channel pricing",
       "gram": "Gramasi pricing",
@@ -314,9 +313,7 @@
       "freshness": "Ambang freshness (menit)",
       "antamSource": "Sumber resmi ANTAM",
       "antamSourceNote": "Official source only · no fallback.",
-      "antamLink": "logammulia.com",
-      "xau": "Kesadaran pasar XAU",
-      "xauNote": "XAU tidak masuk operational decision engine."
+      "antamLink": "logammulia.com"
     }
   },
   "evidence": {
@@ -402,8 +399,6 @@
       "excludedInvalidValue": "{excluded} non-ready · {invalid} invalid",
       "readyWithoutSource": "Ready without valid source",
       "readyWithoutSourceValue": "{count} pcs · tidak masuk intelligence",
-      "xau": "XAU",
-      "xauValue": "Market context only · tidak memengaruhi classification",
       "totalProfitHpp": "Total laba · HPP basis"
     }
   }
