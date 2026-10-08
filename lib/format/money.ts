@@ -1,19 +1,27 @@
-export function compactRupiah(value: number | null | undefined): string {
+import type { Language } from "@/domain/primitives";
+
+export function compactRupiah(
+  value: number | null | undefined,
+  language: Language = "id",
+): string {
   if (value == null || !Number.isFinite(value)) {
     return "—";
   }
 
   const absolute = Math.abs(value);
+  const numberLocale = language === "en" ? "en-US" : "id-ID";
 
   if (absolute >= 1_000_000_000) {
-    return `Rp${(value / 1_000_000_000).toFixed(2)}M`;
+    const suffix = language === "en" ? "B" : "M";
+    return `Rp${(value / 1_000_000_000).toFixed(2)}${suffix}`;
   }
 
   if (absolute >= 1_000_000) {
-    return `Rp${(value / 1_000_000).toFixed(1)}Jt`;
+    const suffix = language === "en" ? "M" : "Jt";
+    return `Rp${(value / 1_000_000).toFixed(1)}${suffix}`;
   }
 
-  return `Rp${Math.round(value).toLocaleString("id-ID")}`;
+  return `Rp${Math.round(value).toLocaleString(numberLocale)}`;
 }
 
 export function formatNumber(value: number): string {

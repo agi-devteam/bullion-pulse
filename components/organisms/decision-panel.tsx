@@ -23,6 +23,7 @@ import {
 } from "@/lib/motion/delta-sentiment";
 import { useBubblePresence } from "@/lib/motion/use-bubble-presence";
 import { cn } from "@/lib/utils";
+import { useSettingsStore } from "@/stores/use-settings-store";
 
 export interface DecisionPanelProps {
   bucket: DecisionBucket;
@@ -43,6 +44,7 @@ export function DecisionPanel({
 }: DecisionPanelProps) {
   const t = useTranslations("home.decision");
   const tCommon = useTranslations("common");
+  const language = useSettingsStore((state) => state.language);
   const gramasiCount = data.denominations.filter((row) => row.grams > 0).length;
   const sentiment = sentimentForBucket(bucket);
   const gramsTarget = isComplete ? data.grams : null;
@@ -100,7 +102,7 @@ export function DecisionPanel({
               <AnimatedValue
                 value={data.profit.prognosa}
                 sentiment="good-up"
-                format={(value) => compactRupiah(value)}
+                format={(value) => compactRupiah(value, language)}
                 emptyLabel={tCommon("emDash")}
                 showBubble={false}
               />
