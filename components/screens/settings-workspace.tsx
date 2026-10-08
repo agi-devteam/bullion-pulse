@@ -34,9 +34,12 @@ import {
   type SettingsTab,
   type SupplierPolicyQuote,
 } from "@/domain/settings";
-import { getHomeIntelligence } from "@/lib/mocks/home-intelligence";
 import { clonePolicyDraft } from "@/lib/settings/defaults";
-import { useSaveSettings, useSettings } from "@/lib/query/hooks";
+import {
+  useIntelligence,
+  useSaveSettings,
+  useSettings,
+} from "@/lib/query/hooks";
 import { useSettingsStore } from "@/stores/use-settings-store";
 import { useUIStore } from "@/stores/use-ui-store";
 
@@ -228,6 +231,7 @@ export function SettingsWorkspace() {
   const setDialog = useUIStore((state) => state.setDialog);
   const showToast = useUIStore((state) => state.showToast);
   const settingsQuery = useSettings({ theme, language });
+  const intelligenceQuery = useIntelligence("all");
   const saveSettings = useSaveSettings();
   const [draft, setDraft] = useState<PolicyDraft | null>(null);
   const committed = useRef<PolicyDraft | null>(null);
@@ -318,11 +322,11 @@ export function SettingsWorkspace() {
   }
 
   function preview() {
-    const home = getHomeIntelligence("all");
+    const home = intelligenceQuery.data;
     const current = {
-      sell: home.buckets.sell.grams,
-      route: home.buckets.route.grams,
-      hold: home.buckets.hold.grams,
+      sell: home?.buckets.sell.grams ?? 0,
+      route: home?.buckets.route.grams ?? 0,
+      hold: home?.buckets.hold.grams ?? 0,
     };
     // Reference re-runs analyze(draft) vs analyze(saved). Until a policy
     // engine exists here, only approximate impact when the draft is dirty.

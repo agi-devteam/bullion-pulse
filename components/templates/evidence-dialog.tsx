@@ -18,9 +18,9 @@ import {
 import type { BucketProfit } from "@/domain/intelligence";
 import { findInventoryRecord } from "@/lib/api/inventories";
 import { formatIdr, formatNumber, formatPercent } from "@/lib/format/money";
-import { getHomeIntelligence } from "@/lib/mocks/home-intelligence";
+import { emptyHomeIntelligence } from "@/lib/intelligence/build-home";
 import { getActionAlerts } from "@/lib/mocks/workspace";
-import { useInventoryRecords } from "@/lib/query/hooks";
+import { useIntelligence, useInventoryRecords } from "@/lib/query/hooks";
 import { useSettingsStore } from "@/stores/use-settings-store";
 import { useUIStore } from "@/stores/use-ui-store";
 
@@ -138,7 +138,8 @@ export function EvidenceDialog() {
   const tInventory = useTranslations("inventory");
   const tActions = useTranslations("actions");
   const tCommon = useTranslations("common");
-  const home = getHomeIntelligence(segment);
+  const intelligenceQuery = useIntelligence(segment);
+  const home = intelligenceQuery.data ?? emptyHomeIntelligence(segment);
   const open = dialog != null;
   const bucket = dialog?.kind === "bucket-evidence" ? dialog.bucket : null;
   const profit = bucket ? home.buckets[bucket].profit : home.profit;

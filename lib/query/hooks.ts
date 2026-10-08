@@ -21,7 +21,7 @@ import {
   fetchPricingPricelistSources,
 } from "@/lib/api/pricelists";
 import { fetchSuppliers } from "@/lib/api/suppliers";
-import { getHomeIntelligence } from "@/lib/mocks/home-intelligence";
+import { buildHomeIntelligence } from "@/lib/intelligence/build-home";
 import { getActionAlerts } from "@/lib/mocks/workspace";
 import { buildPricingRows } from "@/lib/pricing/build-rows";
 import { queryKeys } from "@/lib/query/keys";
@@ -70,24 +70,6 @@ export function useSaveSettings() {
   });
 }
 
-export function useIntelligence(segment: Segment) {
-  const theme = useSettingsStore((state) => state.theme);
-  const language = useSettingsStore((state) => state.language);
-  const settingsQuery = useSettings({ theme, language });
-  const refreshSeconds =
-    settingsQuery.data?.system.refreshSeconds ?? DEFAULT_REFRESH_SECONDS;
-  const refetchIntervalMs =
-    Math.max(MIN_REFRESH_SECONDS, refreshSeconds) * 1000;
-
-  return useQuery({
-    queryKey: queryKeys.intelligence.bySegment(segment),
-    queryFn: () => Promise.resolve(getHomeIntelligence(segment)),
-    staleTime: Math.min(30 * 1000, refetchIntervalMs),
-    refetchInterval: refetchIntervalMs,
-    placeholderData: (previous) => previous,
-  });
-}
-
 export function useIntelligenceEvidence(
   bucket: DecisionBucket,
   segment: Segment,
@@ -111,6 +93,14 @@ export function useSuppliers(options?: { enabled?: boolean }) {
 }
 
 export function useMarketAntam() {
+  const theme = useSettingsStore((state) => state.theme);
+  const language = useSettingsStore((state) => state.language);
+  const settingsQuery = useSettings({ theme, language });
+  const refreshSeconds =
+    settingsQuery.data?.system.refreshSeconds ?? DEFAULT_REFRESH_SECONDS;
+  const refetchIntervalMs =
+    Math.max(MIN_REFRESH_SECONDS, refreshSeconds) * 1000;
+
   return useQuery<AntamQuote>({
     queryKey: queryKeys.market.antam,
     queryFn: async () => {
@@ -121,7 +111,8 @@ export function useMarketAntam() {
       }
       return { sell, buyback: null };
     },
-    staleTime: 60 * 1000,
+    staleTime: Math.min(30 * 1000, refetchIntervalMs),
+    refetchInterval: refetchIntervalMs,
   });
 }
 
@@ -132,10 +123,15 @@ export function useInventoryRecords(options?: { enabled?: boolean }) {
   const settingsQuery = useSettings({ theme, language });
   const suppliersQuery = useSuppliers();
   const antamQuery = useMarketAntam();
+  const refreshSeconds =
+    settingsQuery.data?.system.refreshSeconds ?? DEFAULT_REFRESH_SECONDS;
+  const refetchIntervalMs =
+    Math.max(MIN_REFRESH_SECONDS, refreshSeconds) * 1000;
   const inventoryQuery = useQuery({
     queryKey: queryKeys.inventory.all,
     queryFn: fetchInventories,
-    staleTime: 60 * 1000,
+    staleTime: Math.min(30 * 1000, refetchIntervalMs),
+    refetchInterval: refetchIntervalMs,
     enabled: options?.enabled ?? true,
   });
 
@@ -171,6 +167,32 @@ export function useInventoryRecords(options?: { enabled?: boolean }) {
       inventoryQuery.isFetching ||
       settingsQuery.isFetching ||
       antamQuery.isFetching,
+  };
+}
+
+export function useIntelligence(segment: Segment) {
+  const theme = useSettingsStore((state) => state.theme);
+  const language = useSettingsStore((state) => state.language);
+  const settingsQuery = useSettings({ theme, language });
+  const inventoryQuery = useInventoryRecords();
+
+  const data = useMemo(() => {
+    if (!inventoryQuery.data) return undefined;
+    return buildHomeIntelligence({
+      inventory: inventoryQuery.data,
+      policy: settingsQuery.data,
+      segment,
+    });
+  }, [inventoryQuery.data, settingsQuery.data, segment]);
+
+  return {
+    ...inventoryQuery,
+    data,
+    dataUpdatedAt: inventoryQuery.dataUpdatedAt,
+    isPending: inventoryQuery.isPending || settingsQuery.isPending,
+    isFetching: inventoryQuery.isFetching || settingsQuery.isFetching,
+    isError: inventoryQuery.isError,
+    error: inventoryQuery.error,
   };
 }
 

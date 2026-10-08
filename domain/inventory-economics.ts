@@ -3,6 +3,20 @@ import type { Gram } from "@/domain/primitives";
 
 export type AntamSellByGram = Partial<Record<Gram | number, number>>;
 
+export function unitGrossProfit(unit: InventoryRecord): number | null {
+  if (
+    unit.sellingPrice != null &&
+    Number.isFinite(unit.sellingPrice) &&
+    unit.unitCost > 0
+  ) {
+    return unit.sellingPrice - unit.unitCost;
+  }
+  if (unit.directGp != null && Number.isFinite(unit.directGp)) {
+    return unit.directGp;
+  }
+  return null;
+}
+
 export function enrichInventoryEconomics(
   records: InventoryRecord[],
   antamSellByGram: AntamSellByGram,
@@ -19,12 +33,15 @@ export function enrichInventoryEconomics(
         ? unit.sellingPrice - marketAtSale
         : null;
 
+    const total = unit.valid ? unitGrossProfit(unit) : null;
+
     return {
       ...unit,
       marketAtSale,
       profit: {
         ...unit.profit,
         arbitrage,
+        total,
       },
     };
   });

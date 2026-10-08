@@ -65,6 +65,11 @@ export function mapInventoryRow(dto: InventoryRowDto): InventoryRecord {
       ? ""
       : String(dto.production);
 
+  const grossProfit =
+    sellingPrice != null && unitCost > 0
+      ? sellingPrice - unitCost
+      : directGp;
+
   return {
     stockId,
     serial,
@@ -75,7 +80,7 @@ export function mapInventoryRow(dto: InventoryRowDto): InventoryRecord {
     unitCost,
     purchasePrice: unitCost,
     sellingPrice,
-    directGp: valid ? directGp : null,
+    directGp: valid ? (directGp ?? grossProfit) : null,
     directMargin: valid ? directMargin : null,
     decision: null,
     recommendedAction: null,
@@ -87,7 +92,7 @@ export function mapInventoryRow(dto: InventoryRowDto): InventoryRecord {
       prognosa: null,
       investment: null,
       arbitrage: null,
-      total: valid && directGp != null ? directGp : null,
+      total: valid && grossProfit != null ? grossProfit : null,
     },
     reason: null,
     supplier: null,
