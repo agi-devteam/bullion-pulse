@@ -1,9 +1,11 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { AnimatedValue } from "@/components/molecules/animated-value";
 import { TONE_FILL_CLASS } from "@/domain/intelligence";
 import type { DecisionBucket } from "@/domain/primitives";
 import { formatNumber } from "@/lib/format/money";
+import { sentimentForBucket } from "@/lib/motion/delta-sentiment";
 
 export interface DenominationBarChartProps {
   rows: { gram: number; value: number }[];
@@ -14,6 +16,7 @@ export function DenominationBarChart({ rows, tone }: DenominationBarChartProps) 
   const t = useTranslations("home.decision");
   const tCommon = useTranslations("common");
   const max = Math.max(...rows.map((row) => row.value), 1);
+  const sentiment = sentimentForBucket(tone);
 
   return (
     <div className="mt-3 flex flex-col border-t border-line pt-4">
@@ -30,12 +33,21 @@ export function DenominationBarChart({ rows, tone }: DenominationBarChartProps) 
           </span>
           <span className="h-2 overflow-hidden rounded bg-track">
             <span
-              className={`block h-full rounded ${TONE_FILL_CLASS[tone]}`}
+              className={`motion-bar-fill block h-full rounded ${TONE_FILL_CLASS[tone]}`}
               style={{ width: `${(row.value / max) * 100}%` }}
             />
           </span>
           <span className="mono text-right">
-            {row.value ? formatNumber(row.value) : tCommon("emDash")}
+            {row.value ? (
+              <AnimatedValue
+                value={row.value}
+                sentiment={sentiment}
+                format={formatNumber}
+                showBubble={false}
+              />
+            ) : (
+              tCommon("emDash")
+            )}
           </span>
         </div>
       ))}

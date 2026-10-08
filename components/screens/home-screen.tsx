@@ -36,6 +36,7 @@ export function HomeScreen() {
       <ReadyInventoryCard
         data={data}
         segment={segment}
+        updatedAt={intelligenceQuery.dataUpdatedAt}
         onOpenEvidence={() => setDialog({ kind: "ready-inventory" })}
       />
       <Card className="overflow-hidden p-0 py-0 [--card-spacing:0px]">

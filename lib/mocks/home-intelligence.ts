@@ -222,14 +222,116 @@ function scaleHomeIntelligence(
   };
 }
 
+function randomFactor(min = 0.9, max = 1.1): number {
+  return min + Math.random() * (max - min);
+}
+
+function randomizeHomeIntelligence(base: HomeIntelligence): HomeIntelligence {
+  const sellFactor = randomFactor();
+  const routeFactor = randomFactor();
+  const holdFactor = randomFactor();
+  const sellGrams = Math.round(base.buckets.sell.grams * sellFactor);
+  const routeGrams = Math.round(base.buckets.route.grams * routeFactor);
+  const holdGrams = Math.round(base.buckets.hold.grams * holdFactor);
+  const totalGrams = sellGrams + routeGrams + holdGrams;
+
+  return {
+    ...base,
+    grams: totalGrams,
+    pcs: Math.round(base.pcs * randomFactor()),
+    profit: {
+      prognosa: scaleAmount(base.profit.prognosa, randomFactor()),
+      investment: scaleAmount(base.profit.investment, randomFactor()),
+      arbitrage: scaleAmount(base.profit.arbitrage, randomFactor()),
+      total: scaleAmount(base.profit.total, randomFactor()),
+    },
+    split: {
+      sell: totalGrams ? Number(((sellGrams / totalGrams) * 100).toFixed(1)) : 0,
+      route: totalGrams
+        ? Number(((routeGrams / totalGrams) * 100).toFixed(1))
+        : 0,
+      hold: totalGrams ? Number(((holdGrams / totalGrams) * 100).toFixed(1)) : 0,
+    },
+    buckets: {
+      sell: {
+        ...base.buckets.sell,
+        grams: sellGrams,
+        pcs: Math.round(base.buckets.sell.pcs * sellFactor),
+        profit: {
+          prognosa: scaleAmount(base.buckets.sell.profit.prognosa, sellFactor),
+          investment: scaleAmount(
+            base.buckets.sell.profit.investment,
+            sellFactor,
+          ),
+          arbitrage: scaleAmount(
+            base.buckets.sell.profit.arbitrage,
+            sellFactor,
+          ),
+          total: scaleAmount(base.buckets.sell.profit.total, sellFactor),
+        },
+        denominations: base.buckets.sell.denominations.map((row) => ({
+          ...row,
+          grams: Math.round(row.grams * sellFactor),
+        })),
+      },
+      route: {
+        ...base.buckets.route,
+        grams: routeGrams,
+        pcs: Math.round(base.buckets.route.pcs * routeFactor),
+        profit: {
+          prognosa: scaleAmount(base.buckets.route.profit.prognosa, routeFactor),
+          investment: scaleAmount(
+            base.buckets.route.profit.investment,
+            routeFactor,
+          ),
+          arbitrage: scaleAmount(
+            base.buckets.route.profit.arbitrage,
+            routeFactor,
+          ),
+          total: scaleAmount(base.buckets.route.profit.total, routeFactor),
+        },
+        denominations: base.buckets.route.denominations.map((row) => ({
+          ...row,
+          grams: Math.round(row.grams * routeFactor),
+        })),
+      },
+      hold: {
+        ...base.buckets.hold,
+        grams: holdGrams,
+        pcs: Math.round(base.buckets.hold.pcs * holdFactor),
+        profit: {
+          prognosa: scaleAmount(base.buckets.hold.profit.prognosa, holdFactor),
+          investment: scaleAmount(
+            base.buckets.hold.profit.investment,
+            holdFactor,
+          ),
+          arbitrage: scaleAmount(
+            base.buckets.hold.profit.arbitrage,
+            holdFactor,
+          ),
+          total: scaleAmount(base.buckets.hold.profit.total, holdFactor),
+        },
+        denominations: base.buckets.hold.denominations.map((row) => ({
+          ...row,
+          grams: Math.round(row.grams * holdFactor),
+        })),
+      },
+    },
+    routeSuppliers: base.routeSuppliers.map((supplier) => ({
+      ...supplier,
+      grams: Math.round(supplier.grams * routeFactor),
+    })),
+  };
+}
+
 export function getHomeIntelligence(segment: Segment): HomeIntelligence {
   if (segment === "b2c") {
-    return scaleHomeIntelligence(ALL, 0.62);
+    return randomizeHomeIntelligence(scaleHomeIntelligence(ALL, 0.62));
   }
 
   if (segment === "b2b") {
-    return scaleHomeIntelligence(ALL, 0.38);
+    return randomizeHomeIntelligence(scaleHomeIntelligence(ALL, 0.38));
   }
 
-  return ALL;
+  return randomizeHomeIntelligence(ALL);
 }

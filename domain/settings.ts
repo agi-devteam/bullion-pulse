@@ -34,10 +34,8 @@ export interface SystemSettings {
   xauEnabled: boolean;
 }
 
-/** Minimum allowed evaluation refresh interval (seconds). */
 export const MIN_REFRESH_SECONDS = 5;
 
-/** Default evaluation refresh interval (seconds). */
 export const DEFAULT_REFRESH_SECONDS = 60;
 
 export interface DisplaySettings {

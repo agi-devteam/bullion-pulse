@@ -1,13 +1,27 @@
 "use client";
 
-import type { KeyboardEvent } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type KeyboardEvent,
+} from "react";
 import { useTranslations } from "next-intl";
 import { ArrowUpRight, ChevronRight } from "lucide-react";
 import { Status } from "@/components/atoms/status";
+import { AnimatedValue } from "@/components/molecules/animated-value";
+import { DeltaBubble } from "@/components/molecules/delta-bubble";
 import { DenominationBarChart } from "@/components/organisms/denomination-bar-chart";
 import type { BucketData, SupplierSplit } from "@/domain/intelligence";
 import type { DecisionBucket } from "@/domain/primitives";
 import { compactRupiah, formatNumber } from "@/lib/format/money";
+import {
+  BUCKET_FLASH_CLASS,
+  sentimentForBucket,
+  toneForDelta,
+} from "@/lib/motion/delta-sentiment";
+import { useBubblePresence } from "@/lib/motion/use-bubble-presence";
 import { cn } from "@/lib/utils";
 
 export interface DecisionPanelProps {
@@ -30,6 +44,35 @@ export function DecisionPanel({
   const t = useTranslations("home.decision");
   const tCommon = useTranslations("common");
   const gramasiCount = data.denominations.filter((row) => row.grams > 0).length;
+  const sentiment = sentimentForBucket(bucket);
+  const gramsTarget = isComplete ? data.grams : null;
+  const [flashingPanel, setFlashingPanel] = useState(false);
+  const [gramsDelta, setGramsDelta] = useState(0);
+  const flashTimer = useRef(0);
+  const gramsTone = toneForDelta(gramsDelta, sentiment);
+  const gramsActive = gramsDelta !== 0 && gramsTone !== "neutral";
+  const gramsBubble = useBubblePresence(
+    gramsActive,
+    gramsActive
+      ? `${gramsDelta > 0 ? "+" : ""}${formatNumber(Math.round(gramsDelta))}g`
+      : "",
+    gramsActive ? gramsTone : "neutral",
+  );
+
+  const onGramsDelta = useCallback((delta: number) => {
+    setGramsDelta(delta);
+    if (delta === 0) return;
+    setFlashingPanel(true);
+    window.clearTimeout(flashTimer.current);
+    flashTimer.current = window.setTimeout(() => setFlashingPanel(false), 1_200);
+  }, []);
+
+  useEffect(
+    () => () => {
+      window.clearTimeout(flashTimer.current);
+    },
+    [],
+  );
 
   function descriptionFor() {
     if (!isComplete) {
@@ -53,9 +96,17 @@ export function DecisionPanel({
         <span>
           {t("footerPrognosa")}{" "}
           <b className="mono font-bold">
-            {isComplete
-              ? compactRupiah(data.profit.prognosa)
-              : tCommon("emDash")}
+            {isComplete ? (
+              <AnimatedValue
+                value={data.profit.prognosa}
+                sentiment="good-up"
+                format={(value) => compactRupiah(value)}
+                emptyLabel={tCommon("emDash")}
+                showBubble={false}
+              />
+            ) : (
+              tCommon("emDash")
+            )}
           </b>
         </span>
       );
@@ -88,6 +139,7 @@ export function DecisionPanel({
         "flex min-w-0 cursor-pointer flex-col gap-3 px-7 py-6 focus-visible:outline-2 focus-visible:-outline-offset-4 focus-visible:outline-route-f",
         "[&+&]:border-l [&+&]:border-line max-[1000px]:p-5.5 max-[1000px]:[&+&]:border-t max-[1000px]:[&+&]:border-l-0",
         "max-[700px]:px-4.5 max-[700px]:py-5 min-[2560px]:px-8.5 min-[2560px]:py-7.5",
+        flashingPanel ? BUCKET_FLASH_CLASS[bucket] : null,
       )}
       role="button"
       tabIndex={0}
@@ -104,13 +156,30 @@ export function DecisionPanel({
         </Status>
         <ArrowUpRight size={20} aria-hidden="true" />
       </div>
-      <h2 className="mt-1.5 text-[clamp(3rem,5vw,4.5rem)] leading-[0.95] font-bold tracking-tighter text-ink max-[700px]:text-[3.3rem] max-[480px]:text-[2.9rem]">
-        {bucket.toUpperCase()}
-      </h2>
+      <div className="mt-1.5 flex flex-wrap items-center gap-3 max-[480px]:gap-2.5">
+        <h2 className="m-0 text-[clamp(3rem,5vw,4.5rem)] leading-[0.95] font-bold tracking-tighter text-ink max-[700px]:text-[3.3rem] max-[480px]:text-[2.9rem]">
+          {bucket.toUpperCase()}
+        </h2>
+        {gramsBubble ? (
+          <DeltaBubble
+            label={gramsBubble.label}
+            tone={gramsBubble.tone}
+            placement="inline"
+            exiting={gramsBubble.exiting}
+          />
+        ) : null}
+      </div>
       <div className="flex flex-wrap items-baseline gap-x-4 gap-y-2">
         <div className="inline-flex shrink-0 items-baseline gap-1.5">
           <strong className="mono text-[2.25rem] font-normal tracking-[-0.02em] max-[480px]:text-[1.9rem]">
-            {isComplete ? formatNumber(data.grams) : tCommon("emDash")}
+            <AnimatedValue
+              value={gramsTarget}
+              sentiment={sentiment}
+              showBubble={false}
+              format={(value) => formatNumber(Math.round(value))}
+              emptyLabel={tCommon("emDash")}
+              onDeltaChange={onGramsDelta}
+            />
           </strong>
           <span className="text-base text-muted-text">
             {tCommon("gram")}
@@ -133,7 +202,12 @@ export function DecisionPanel({
               >
                 <b className="font-semibold text-route-t">{supplier.name}</b>
                 <span className="mono shrink-0 text-ink">
-                  {formatNumber(supplier.grams)}g
+                  <AnimatedValue
+                    value={supplier.grams}
+                    sentiment="bad-up"
+                    format={(value) => `${formatNumber(Math.round(value))}g`}
+                    showBubble={false}
+                  />
                 </span>
               </span>
             ))}

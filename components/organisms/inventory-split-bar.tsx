@@ -24,7 +24,7 @@ export function InventorySplitBar({ sell, route, hold }: InventorySplitBarProps)
       {SEGMENTS.map((key) => (
         <span
           key={key}
-          className={TONE_FILL_CLASS[key]}
+          className={`motion-bar-fill ${TONE_FILL_CLASS[key]}`}
           style={{ width: `${Math.max(widths[key], 0)}%` }}
         />
       ))}

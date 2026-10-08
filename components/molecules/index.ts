@@ -6,9 +6,12 @@ export {
   AccordionTrigger,
 } from "@/components/molecules/accordion";
 export { Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/molecules/card";
+export { AnimatedValue, type AnimatedValueProps } from "@/components/molecules/animated-value";
 export { ChannelFilter } from "@/components/molecules/channel-filter";
 export { Choice, type ChoiceProps } from "@/components/molecules/choice";
 export { ChoiceSkeleton } from "@/components/molecules/choice-skeleton";
+export { DeltaBubble, type DeltaBubbleProps } from "@/components/molecules/delta-bubble";
+export { LiveUpdated, type LiveUpdatedProps } from "@/components/molecules/live-updated";
 export {
   DropdownMenu,
   DropdownMenuCheckboxItem,

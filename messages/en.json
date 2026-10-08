@@ -83,6 +83,12 @@
   "home": {
     "priorityTitle": "Priority actions",
     "viewAll": "View all →",
+    "live": {
+      "updated": "Updated · {relative}",
+      "justNow": "just now",
+      "secondsAgo": "{count}s ago",
+      "minutesAgo": "{count}m ago"
+    },
     "ready": {
       "ariaEvidence": "View Ready Inventory evidence",
       "title": "Ready Inventory · {channel}",

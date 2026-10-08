@@ -83,6 +83,12 @@
   "home": {
     "priorityTitle": "Aksi prioritas",
     "viewAll": "Lihat semua →",
+    "live": {
+      "updated": "Diperbarui · {relative}",
+      "justNow": "baru saja",
+      "secondsAgo": "{count} dtk lalu",
+      "minutesAgo": "{count} mnt lalu"
+    },
     "ready": {
       "ariaEvidence": "Lihat Ready Inventory evidence",
       "title": "Ready Inventory · {channel}",
