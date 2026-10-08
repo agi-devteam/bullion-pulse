@@ -1,17 +1,27 @@
 import type { Channel, Gram } from "@/domain/primitives";
 
-export type ActionType = "WATCH" | "REPRICE" | "REVIEW DATA";
+export type ActionType = "WATCH";
 export type ActionSeverity = "attention" | "risk";
+export type ActionStatus = "OPEN" | "WATCHED";
+export type ActionReasonKey = "watch10" | "watch25";
+
+export interface ActionAlertSupplier {
+  name: string;
+  quotePrice: number;
+  capacity: number;
+  leadTime: number;
+}
 
 export interface ActionAlert {
   id: string;
   severity: ActionSeverity;
   action: ActionType;
-  channel: Channel | null;
-  gram: Gram | null;
+  channel: Channel;
+  gram: Gram;
   quantity: number;
-  reasonKey: "watch10" | "watch25" | "reprice50" | "invalidRecord";
-  ownerKey: "routeDesk" | "pricing" | "dataHealth";
-  status: "OPEN" | "REVIEWED";
-  href: string;
+  grams: number;
+  reasonKey: ActionReasonKey;
+  status: ActionStatus;
+  createdAt: string;
+  supplier: ActionAlertSupplier | null;
 }

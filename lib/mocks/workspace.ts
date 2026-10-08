@@ -140,7 +140,7 @@ function buildInventory(): InventoryRecord[] {
     );
   }
 
-  for (let i = 0; i < 8; i += 1) {
+  for (let i = 0; i < 43; i += 1) {
     rows.push(
       makeRecord({
         index: index++,
@@ -328,11 +328,20 @@ export const SUPPLIER_DIRECTORY = [
 
 export function getActionAlerts(): ActionAlert[] {
   const watch10 = INVENTORY.filter(
-    (row) => row.decision === "ROUTE ELIGIBLE" && row.gram === 10,
-  ).length;
+    (row) =>
+      row.decision === "ROUTE ELIGIBLE" &&
+      row.channel === "B2C" &&
+      row.gram === 10,
+  );
   const watch25 = INVENTORY.filter(
-    (row) => row.decision === "ROUTE ELIGIBLE" && row.gram === 25,
-  ).length;
+    (row) =>
+      row.decision === "ROUTE ELIGIBLE" &&
+      row.channel === "B2C" &&
+      row.gram === 25,
+  );
+  const quotes = getSupplierQuotes();
+  const sima = quotes.find((quote) => quote.name === "SIMA");
+  const krisna = quotes.find((quote) => quote.name === "KRISNA");
 
   return [
     {
@@ -341,11 +350,20 @@ export function getActionAlerts(): ActionAlert[] {
       action: "WATCH",
       channel: "B2C",
       gram: 10,
-      quantity: watch10,
+      quantity: watch10.length,
+      grams: watch10.length * 10,
       reasonKey: "watch10",
-      ownerKey: "routeDesk",
       status: "OPEN",
-      href: "/actions",
+      createdAt: SNAPSHOT_AT,
+      supplier:
+        sima && sima.quote_price != null
+          ? {
+              name: sima.name,
+              quotePrice: sima.quote_price,
+              capacity: sima.capacity,
+              leadTime: sima.lead_time,
+            }
+          : null,
     },
     {
       id: "WATCH-B2C-25",
@@ -353,35 +371,20 @@ export function getActionAlerts(): ActionAlert[] {
       action: "WATCH",
       channel: "B2C",
       gram: 25,
-      quantity: watch25,
+      quantity: watch25.length,
+      grams: watch25.length * 25,
       reasonKey: "watch25",
-      ownerKey: "routeDesk",
       status: "OPEN",
-      href: "/actions",
-    },
-    {
-      id: "REPRICE-B2C-50",
-      severity: "risk",
-      action: "REPRICE",
-      channel: "B2C",
-      gram: 50,
-      quantity: 1,
-      reasonKey: "reprice50",
-      ownerKey: "pricing",
-      status: "OPEN",
-      href: "/pricing",
-    },
-    {
-      id: "REVIEW-INVALID",
-      severity: "risk",
-      action: "REVIEW DATA",
-      channel: "B2C",
-      gram: 10,
-      quantity: 1,
-      reasonKey: "invalidRecord",
-      ownerKey: "dataHealth",
-      status: "OPEN",
-      href: "/inventory",
+      createdAt: SNAPSHOT_AT,
+      supplier:
+        krisna && krisna.quote_price != null
+          ? {
+              name: krisna.name,
+              quotePrice: krisna.quote_price,
+              capacity: krisna.capacity,
+              leadTime: krisna.lead_time,
+            }
+          : null,
     },
   ];
 }

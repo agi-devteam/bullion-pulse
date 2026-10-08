@@ -18,7 +18,7 @@ import {
 } from "@/components/organisms/dialog";
 import { formatIdr, compactRupiah, formatNumber, formatPercent } from "@/lib/format/money";
 import { getHomeIntelligence } from "@/lib/mocks/home-intelligence";
-import { getInventoryRecord } from "@/lib/mocks/workspace";
+import { getActionAlerts, getInventoryRecord } from "@/lib/mocks/workspace";
 import { useSettingsStore } from "@/stores/use-settings-store";
 import { useUIStore } from "@/stores/use-ui-store";
 
@@ -65,8 +65,11 @@ function DialogShell({
 export function EvidenceDialog() {
   const dialog = useUIStore((state) => state.dialog);
   const setDialog = useUIStore((state) => state.setDialog);
+  const setActionStatus = useUIStore((state) => state.setActionStatus);
+  const showToast = useUIStore((state) => state.showToast);
   const segment = useSettingsStore((state) => state.segment);
   const t = useTranslations("evidence");
+  const tActions = useTranslations("actions");
   const tCommon = useTranslations("common");
   const home = getHomeIntelligence(segment);
   const open = dialog != null;
@@ -75,6 +78,10 @@ export function EvidenceDialog() {
   const unit =
     dialog?.kind === "inventory-unit"
       ? getInventoryRecord(dialog.stockId)
+      : undefined;
+  const actionAlert =
+    dialog?.kind === "action-alert"
+      ? getActionAlerts().find((alert) => alert.id === dialog.alertId)
       : undefined;
 
   return (
@@ -188,6 +195,70 @@ export function EvidenceDialog() {
           <p className="m-0 text-[0.95rem] leading-normal text-muted-text">
             {t("policyPreview.footer")}
           </p>
+        </DialogShell>
+      ) : dialog?.kind === "action-alert" ? (
+        <DialogShell
+          title={
+            actionAlert?.channel && actionAlert.gram != null
+              ? t("actionAlert.title", {
+                  action: actionAlert.action,
+                  channel: actionAlert.channel,
+                  gram: actionAlert.gram,
+                })
+              : t("actionAlert.fallbackTitle")
+          }
+          description={
+            actionAlert
+              ? tActions(`reasons.${actionAlert.reasonKey}`)
+              : undefined
+          }
+        >
+          {actionAlert?.supplier ? (
+            <>
+              <Evidence
+                rows={[
+                  [
+                    t("actionAlert.eligibleInventory"),
+                    t("actionAlert.eligibleValue", {
+                      pcs: formatNumber(actionAlert.quantity),
+                      grams: formatNumber(actionAlert.grams),
+                    }),
+                  ],
+                  [
+                    t("actionAlert.supplierQuote"),
+                    t("actionAlert.supplierQuoteValue", {
+                      name: actionAlert.supplier.name,
+                      price: formatIdr(actionAlert.supplier.quotePrice),
+                    }),
+                  ],
+                  [
+                    t("actionAlert.capacityLead"),
+                    t("actionAlert.capacityLeadValue", {
+                      capacity: formatNumber(actionAlert.supplier.capacity),
+                      hours: actionAlert.supplier.leadTime,
+                    }),
+                  ],
+                  [
+                    t("rows.decisionAction"),
+                    t("actionAlert.watchAction"),
+                  ],
+                ]}
+              />
+              <div className="flex flex-wrap items-center gap-2">
+                <Button
+                  onClick={() => {
+                    setActionStatus(actionAlert.id, "WATCHED");
+                    setDialog(null);
+                    showToast(tActions("toastWatched"));
+                  }}
+                >
+                  {tActions("markWatched")}
+                </Button>
+              </div>
+            </>
+          ) : (
+            <p className="text-muted-text">{t("recordMissing")}</p>
+          )}
         </DialogShell>
       ) : dialog?.kind === "ready-inventory" ||
         dialog?.kind === "bucket-evidence" ? (

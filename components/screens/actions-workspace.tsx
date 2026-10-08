@@ -1,94 +1,84 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/atoms/button";
 import { Status } from "@/components/atoms/status";
 import { WorkspaceStack } from "@/components/molecules/page-toolbar";
 import { DataTable } from "@/components/organisms/data-table";
+import type { ActionStatus } from "@/domain/actions";
+import { formatStamp } from "@/lib/format/datetime";
+import { formatNumber } from "@/lib/format/money";
 import { getActionAlerts } from "@/lib/mocks/workspace";
 import { useUIStore } from "@/stores/use-ui-store";
 
-function actionLabel(
-  action: string,
+function statusLabel(
+  status: ActionStatus,
   tCommon: ReturnType<typeof useTranslations<"common">>,
 ) {
-  if (action === "WATCH") return tCommon("actions.watch");
-  if (action === "REPRICE") return tCommon("actions.reprice");
-  if (action === "REVIEW DATA") return tCommon("actions.reviewData");
-  return action;
+  if (status === "WATCHED") return tCommon("actions.watched");
+  return tCommon("actions.open");
+}
+
+function severityTone(severity: "attention" | "risk") {
+  return severity === "risk" ? ("hold" as const) : ("route" as const);
 }
 
 export function ActionsWorkspace() {
   const t = useTranslations("actions");
   const tCommon = useTranslations("common");
-  const showToast = useUIStore((state) => state.showToast);
+  const setDialog = useUIStore((state) => state.setDialog);
+  const actionStatuses = useUIStore((state) => state.actionStatuses);
   const alerts = getActionAlerts();
-  const [statuses, setStatuses] = useState<Record<string, string>>({});
 
   return (
     <WorkspaceStack>
       <DataTable
         headers={[
+          t("headers.severity"),
           t("headers.action"),
           t("headers.channelGram"),
           t("headers.quantity"),
           t("headers.reason"),
-          t("headers.owner"),
+          t("headers.createdAt"),
           t("headers.status"),
-          t("headers.review"),
+          t("headers.evidence"),
         ]}
         rows={alerts.map((alert) => {
-          const status = statuses[alert.id] ?? alert.status;
+          const status = actionStatuses[alert.id] ?? alert.status;
+          const watched = status === "WATCHED";
 
           return [
-            <Status
-              key="action"
-              tone={alert.action === "WATCH" ? "route" : "hold"}
-            >
-              {actionLabel(alert.action, tCommon)}
+            <Status key="severity" tone={severityTone(alert.severity)}>
+              {t(`severity.${alert.severity}`)}
             </Status>,
-            alert.channel
-              ? t("channelGram", {
-                  channel: alert.channel,
-                  gram: alert.gram ?? "",
-                })
-              : tCommon("emDash"),
-            tCommon("pcs", { count: alert.quantity }),
+            tCommon("actions.watch"),
+            t("channelGram", {
+              channel: alert.channel,
+              gram: alert.gram,
+            }),
+            tCommon("pcs", { count: formatNumber(alert.quantity) }),
             <span
               key="reason"
               className="block min-w-57.5 max-w-110 whitespace-normal"
             >
               {t(`reasons.${alert.reasonKey}`)}
             </span>,
-            t(`owners.${alert.ownerKey}`),
-            status === "REVIEWED"
-              ? tCommon("actions.reviewed")
-              : tCommon("actions.open"),
-            <div key="review" className="flex flex-wrap items-center gap-2">
+            formatStamp(alert.createdAt),
+            <Status key="status" tone={watched ? "route" : ""}>
+              {statusLabel(status, tCommon)}
+            </Status>,
+            watched ? null : (
               <Button
+                key="evidence"
                 variant="outline"
                 size="sm"
-                nativeButton={false}
-                render={<Link href={alert.href} />}
+                onClick={() =>
+                  setDialog({ kind: "action-alert", alertId: alert.id })
+                }
               >
-                {tCommon("review")}
+                {tCommon("actions.watch")}
               </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => {
-                  setStatuses((current) => ({
-                    ...current,
-                    [alert.id]: "REVIEWED",
-                  }));
-                  showToast(t("toastReviewed"));
-                }}
-              >
-                {t("markReviewed")}
-              </Button>
-            </div>,
+            ),
           ];
         })}
       />

@@ -1,12 +1,15 @@
 "use client";
 
 import { create } from "zustand";
+import type { ActionStatus } from "@/domain/actions";
 import type { SettingsTab } from "@/domain/settings";
 import type { DialogPayload } from "@/domain/ui";
 
 export interface UIState {
   dialog: DialogPayload | null;
   setDialog: (dialog: DialogPayload | null) => void;
+  actionStatuses: Record<string, ActionStatus>;
+  setActionStatus: (id: string, status: ActionStatus) => void;
   toast: string;
   showToast: (message: string) => void;
   clearToast: () => void;
@@ -19,6 +22,11 @@ export interface UIState {
 export const useUIStore = create<UIState>()((set) => ({
   dialog: null,
   setDialog: (dialog) => set({ dialog }),
+  actionStatuses: {},
+  setActionStatus: (id, status) =>
+    set((state) => ({
+      actionStatuses: { ...state.actionStatuses, [id]: status },
+    })),
   toast: "",
   showToast: (message) => set({ toast: message }),
   clearToast: () => set({ toast: "" }),

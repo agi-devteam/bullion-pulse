@@ -38,9 +38,7 @@
     },
     "actions": {
       "watch": "WATCH",
-      "reprice": "REPRICE",
-      "reviewData": "REVIEW DATA",
-      "reviewed": "REVIEWED",
+      "watched": "WATCHED",
       "open": "OPEN"
     }
   },
@@ -217,27 +215,25 @@
   },
   "actions": {
     "headers": {
+      "severity": "Severity",
       "action": "Action",
       "channelGram": "Channel / Gram",
       "quantity": "Quantity",
       "reason": "Reason",
-      "owner": "Owner",
+      "createdAt": "Created at",
       "status": "Status",
-      "review": "Review"
+      "evidence": "Evidence"
     },
-    "markReviewed": "Mark reviewed",
-    "toastReviewed": "Action reviewed.",
-    "channelGram": "{channel} · {gram}g",
+    "markWatched": "Mark watched",
+    "toastWatched": "Position marked as watched · no supplier lock.",
+    "channelGram": "{channel} {gram}g",
+    "severity": {
+      "attention": "attention",
+      "risk": "risk"
+    },
     "reasons": {
-      "watch10": "Profitable replacement available at SIMA 10g. V1: WATCH and wait for demand before lock.",
-      "watch25": "Profitable replacement available at KRISNA 25g. V1: no LOCK instruction without demand.",
-      "reprice50": "Margin 0.70% is below B2C policy floor 3.00%. Review selling price.",
-      "invalidRecord": "One invalid record excluded from the decision pool. Check stock ID and denomination."
-    },
-    "owners": {
-      "routeDesk": "Route Desk",
-      "pricing": "Pricing",
-      "dataHealth": "Data Health & Audit"
+      "watch10": "Existing margin 0.70%; replacement 1.82%. Waiting for demand.",
+      "watch25": "Existing margin 0.70%; replacement 1.83%. Waiting for demand."
     }
   },
   "settings": {
@@ -324,6 +320,17 @@
     "viewInventory": "View Inventory",
     "inventoryTitle": "Inventory evidence · {id}",
     "readyTitle": "Ready Inventory reconciliation",
+    "actionAlert": {
+      "title": "{action} · {channel} {gram}g",
+      "fallbackTitle": "Action evidence",
+      "eligibleInventory": "Eligible inventory",
+      "eligibleValue": "{pcs} pcs / {grams}g",
+      "supplierQuote": "Supplier quote",
+      "supplierQuoteValue": "{name} · {price} / unit",
+      "capacityLead": "Capacity / lead time",
+      "capacityLeadValue": "{capacity}g · {hours}h",
+      "watchAction": "WATCH · Waiting for demand · no lock yet"
+    },
     "bucketTitles": {
       "sell": "SELL READY · Evidence",
       "route": "ROUTE ELIGIBLE · Evidence",

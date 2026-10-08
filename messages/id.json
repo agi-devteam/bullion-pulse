@@ -38,9 +38,7 @@
     },
     "actions": {
       "watch": "WATCH",
-      "reprice": "REPRICE",
-      "reviewData": "REVIEW DATA",
-      "reviewed": "REVIEWED",
+      "watched": "WATCHED",
       "open": "OPEN"
     }
   },
@@ -217,27 +215,25 @@
   },
   "actions": {
     "headers": {
+      "severity": "Severity",
       "action": "Aksi",
       "channelGram": "Channel / Gram",
       "quantity": "Kuantitas",
       "reason": "Alasan",
-      "owner": "Pemilik",
+      "createdAt": "Dibuat pada",
       "status": "Status",
-      "review": "Tinjau"
+      "evidence": "Evidence"
     },
-    "markReviewed": "Tandai ditinjau",
-    "toastReviewed": "Aksi ditinjau.",
-    "channelGram": "{channel} · {gram}g",
+    "markWatched": "Mark watched",
+    "toastWatched": "Posisi ditandai watched · tanpa lock supplier.",
+    "channelGram": "{channel} {gram}g",
+    "severity": {
+      "attention": "attention",
+      "risk": "risk"
+    },
     "reasons": {
-      "watch10": "Replacement profitable tersedia pada SIMA 10g. V1: WATCH dan tunggu demand sebelum lock.",
-      "watch25": "Replacement profitable tersedia pada KRISNA 25g. V1: tidak ada instruksi LOCK tanpa demand.",
-      "reprice50": "Margin 0.70% berada di bawah policy floor B2C 3.00%. Tinjau harga jual.",
-      "invalidRecord": "Satu record invalid dikecualikan dari decision pool. Periksa stock ID dan gramasi."
-    },
-    "owners": {
-      "routeDesk": "Route Desk",
-      "pricing": "Pricing",
-      "dataHealth": "Data Health & Audit"
+      "watch10": "Existing margin 0.70%; replacement 1.82%. Waiting for demand.",
+      "watch25": "Existing margin 0.70%; replacement 1.83%. Waiting for demand."
     }
   },
   "settings": {
@@ -324,6 +320,17 @@
     "viewInventory": "Lihat Inventory",
     "inventoryTitle": "Inventory evidence · {id}",
     "readyTitle": "Ready Inventory reconciliation",
+    "actionAlert": {
+      "title": "{action} · {channel} {gram}g",
+      "fallbackTitle": "Evidence aksi",
+      "eligibleInventory": "Eligible inventory",
+      "eligibleValue": "{pcs} pcs / {grams}g",
+      "supplierQuote": "Supplier quote",
+      "supplierQuoteValue": "{name} · {price} / unit",
+      "capacityLead": "Capacity / lead time",
+      "capacityLeadValue": "{capacity}g · {hours}h",
+      "watchAction": "WATCH · Waiting for demand · no lock yet"
+    },
     "bucketTitles": {
       "sell": "SELL READY · Evidence",
       "route": "ROUTE ELIGIBLE · Evidence",
