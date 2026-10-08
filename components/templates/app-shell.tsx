@@ -70,12 +70,12 @@ export function AppShell({ children }: AppShellProps) {
             <SheetTrigger
               render={
                 <Button
-                  variant="ghost"
+                  variant="outline"
                   size="icon"
                   aria-label={t("openNav")}
                   className={cn(
-                    "size-11 min-h-11 min-w-11 flex-none rounded-[999px] border border-transparent text-muted-text hover:bg-track hover:text-ink",
-                    isHome && "border-line max-[700px]:size-10 max-[700px]:min-h-10 max-[700px]:min-w-10",
+                    "size-11 min-h-11 min-w-11 flex-none rounded-[999px] border-transparent bg-surface text-muted-text hover:bg-track hover:text-ink",
+                    isHome && "max-[700px]:size-10 max-[700px]:min-h-10 max-[700px]:min-w-10",
                   )}
                 />
               }
