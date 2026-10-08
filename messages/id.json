@@ -316,12 +316,36 @@
     }
   },
   "evidence": {
-    "close": "Tutup",
+    "close": "Tutup detail",
     "sharedDescription": "Perhitungan dan bukti dari snapshot saat ini.",
+    "formulaDescription": "READY INVENTORY = SELL READY + ROUTE ELIGIBLE + HOLD",
     "recordMissing": "Record tidak ditemukan.",
     "viewInventory": "Lihat Inventory",
     "inventoryTitle": "Inventory evidence · {id}",
     "readyTitle": "Ready Inventory reconciliation",
+    "profitTitle": "Estimasi laba · READY inventory",
+    "profitIntro": "Pasar memakai benchmark ANTAM logammulia.com · Mock. Rata-rata per gram: snapshot saat beli {purchase}; pasar kini {current}. Stok belum terjual: pasar kini dan pricelist kini dipakai sebagai estimasi saat jual. Angka ini belum realized.",
+    "profitFooter": "Jumlah Prognosa + Investment + Arbitrage = harga jual − harga beli. Di mock ini harga beli = HPP, sehingga jumlahnya sama dengan Total laba. Total laba selalu memakai HPP. Perhitungan per unit dijumlahkan; kontribusi negatif tetap dihitung. Margin policy memakai Total laba ÷ harga jual.",
+    "profitTable": {
+      "component": "Komponen",
+      "formula": "Rumus",
+      "total": "Total",
+      "prognosa": "Prognosa",
+      "prognosaFormula": "Pasar saat beli − harga beli",
+      "investment": "Investment",
+      "investmentFormula": "Pasar saat jual − pasar saat beli",
+      "arbitrage": "Arbitrage",
+      "arbitrageFormula": "Harga jual − pasar saat jual",
+      "totalProfit": "Total laba",
+      "totalFormula": "Harga jual − HPP"
+    },
+    "bucketTable": {
+      "channel": "Channel",
+      "gram": "Gram",
+      "qty": "Qty",
+      "reason": "Reason",
+      "qtyValue": "{count} pcs"
+    },
     "actionAlert": {
       "title": "{action} · {channel} {gram}g",
       "fallbackTitle": "Evidence aksi",
@@ -331,12 +355,13 @@
       "supplierQuoteValue": "{name} · {price} / unit",
       "capacityLead": "Capacity / lead time",
       "capacityLeadValue": "{capacity}g · {hours}h",
+      "action": "Action",
       "watchAction": "WATCH · Waiting for demand · no lock yet"
     },
     "bucketTitles": {
-      "sell": "SELL READY · Evidence",
-      "route": "ROUTE ELIGIBLE · Evidence",
-      "hold": "HOLD · Evidence"
+      "sell": "SELL evidence",
+      "route": "ROUTE evidence",
+      "hold": "HOLD evidence"
     },
     "policyPreview": {
       "title": "Policy impact · unsaved",
@@ -355,8 +380,8 @@
       "purchasePriceUnit": "Harga beli / unit",
       "sellingPrice": "Selling price",
       "totalGpMargin": "Total GP / Margin",
-      "marketAtPurchase": "Pasar saat beli",
-      "marketNowAntam": "Pasar kini · ANTAM",
+      "marketAtPurchase": "Pasar saat beli · Mock / unit",
+      "marketNowAntam": "Pasar kini · ANTAM Mock / unit",
       "prognosaEstimate": "Prognosa · estimasi",
       "investmentEstimate": "Investment · estimasi",
       "arbitrageEstimate": "Arbitrage · estimasi",
@@ -365,10 +390,16 @@
       "reason": "Reason",
       "replacement": "Replacement",
       "defaultReason": "Non-ready inventory / source belum valid",
-      "readyInventory": "Ready Inventory",
+      "readyInventory": "Ready inventory · priced",
       "sellReady": "SELL READY",
       "routeEligible": "ROUTE ELIGIBLE",
       "hold": "HOLD",
+      "excludedInvalid": "Excluded / invalid",
+      "excludedInvalidValue": "{excluded} non-ready · {invalid} invalid",
+      "readyWithoutSource": "Ready without valid source",
+      "readyWithoutSourceValue": "{count} pcs · tidak masuk intelligence",
+      "xau": "XAU",
+      "xauValue": "Market context only · tidak memengaruhi classification",
       "totalProfitHpp": "Total laba · HPP basis"
     }
   }

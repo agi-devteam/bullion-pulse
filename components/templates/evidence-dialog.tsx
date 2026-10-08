@@ -6,7 +6,6 @@ import { XIcon } from "lucide-react";
 import type { ReactNode } from "react";
 import { Button } from "@/components/atoms/button";
 import { Evidence } from "@/components/molecules/evidence";
-import { Metric } from "@/components/molecules/metric";
 import { DataTable } from "@/components/organisms/data-table";
 import {
   Dialog,
@@ -16,8 +15,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/organisms/dialog";
+import type { BucketProfit } from "@/domain/intelligence";
 import { findInventoryRecord } from "@/lib/api/inventories";
-import { formatIdr, compactRupiah, formatNumber, formatPercent } from "@/lib/format/money";
+import { formatIdr, formatNumber, formatPercent } from "@/lib/format/money";
 import { getHomeIntelligence } from "@/lib/mocks/home-intelligence";
 import { getActionAlerts } from "@/lib/mocks/workspace";
 import { useInventoryRecords } from "@/lib/query/hooks";
@@ -64,6 +64,70 @@ function DialogShell({
   );
 }
 
+function ProfitEvidence({
+  profit,
+  marketAvgAtPurchase,
+  marketAvgNow,
+}: {
+  profit: BucketProfit;
+  marketAvgAtPurchase: number;
+  marketAvgNow: number;
+}) {
+  const t = useTranslations("evidence");
+
+  return (
+    <div className="flex flex-col gap-3.5">
+      <h3 className="m-0 text-[1.05rem] font-semibold">{t("profitTitle")}</h3>
+      <p className="m-0 text-[0.95rem] leading-normal text-muted-text">
+        {t("profitIntro", {
+          purchase: formatIdr(marketAvgAtPurchase),
+          current: formatIdr(marketAvgNow),
+        })}
+      </p>
+      <DataTable
+        headers={[
+          t("profitTable.component"),
+          t("profitTable.formula"),
+          t("profitTable.total"),
+        ]}
+        rows={[
+          [
+            t("profitTable.prognosa"),
+            t("profitTable.prognosaFormula"),
+            <span key="prognosa" className="font-mono">
+              {formatIdr(profit.prognosa)}
+            </span>,
+          ],
+          [
+            t("profitTable.investment"),
+            t("profitTable.investmentFormula"),
+            <span key="investment" className="font-mono">
+              {formatIdr(profit.investment)}
+            </span>,
+          ],
+          [
+            t("profitTable.arbitrage"),
+            t("profitTable.arbitrageFormula"),
+            <span key="arbitrage" className="font-mono">
+              {formatIdr(profit.arbitrage)}
+            </span>,
+          ],
+          [
+            t("profitTable.totalProfit"),
+            t("profitTable.totalFormula"),
+            <span key="total" className="font-mono">
+              {formatIdr(profit.total)}
+            </span>,
+          ],
+        ]}
+      />
+      <p className="m-0 text-[0.95rem] leading-normal text-muted-text">
+        {t("profitFooter")}
+      </p>
+    </div>
+  );
+}
+
 export function EvidenceDialog() {
   const dialog = useUIStore((state) => state.dialog);
   const setDialog = useUIStore((state) => state.setDialog);
@@ -104,7 +168,6 @@ export function EvidenceDialog() {
           title={t("inventoryTitle", {
             id: dialog.serial ?? dialog.stockId,
           })}
-          description={t("sharedDescription")}
         >
           {unit ? (
             <Evidence
@@ -247,7 +310,7 @@ export function EvidenceDialog() {
                     }),
                   ],
                   [
-                    t("rows.decisionAction"),
+                    t("actionAlert.action"),
                     t("actionAlert.watchAction"),
                   ],
                 ]}
@@ -276,7 +339,7 @@ export function EvidenceDialog() {
               ? t(`bucketTitles.${bucket}`)
               : t("readyTitle")
           }
-          description={t("sharedDescription")}
+          description={t("formulaDescription")}
         >
           <Evidence
             rows={[
@@ -296,17 +359,44 @@ export function EvidenceDialog() {
                 t("rows.hold"),
                 `${formatNumber(home.buckets.hold.grams)}g`,
               ],
-              [t("rows.prognosaEstimate"), compactRupiah(profit.prognosa)],
               [
-                t("rows.investmentEstimate"),
-                compactRupiah(profit.investment),
+                t("rows.excludedInvalid"),
+                t("rows.excludedInvalidValue", {
+                  excluded: formatNumber(home.excludedPcs),
+                  invalid: formatNumber(home.invalidCount),
+                }),
               ],
               [
-                t("rows.arbitrageEstimate"),
-                compactRupiah(profit.arbitrage),
+                t("rows.readyWithoutSource"),
+                t("rows.readyWithoutSourceValue", {
+                  count: formatNumber(home.unpricedPcs),
+                }),
               ],
-              [t("rows.totalProfitHpp"), compactRupiah(profit.total)],
+              [t("rows.xau"), t("rows.xauValue")],
             ]}
+          />
+          {bucket ? (
+            <DataTable
+              headers={[
+                t("bucketTable.channel"),
+                t("bucketTable.gram"),
+                t("bucketTable.qty"),
+                t("bucketTable.reason"),
+              ]}
+              rows={home.buckets[bucket].evidenceRows.map((row) => [
+                row.channel,
+                `${row.gram}g`,
+                t("bucketTable.qtyValue", {
+                  count: formatNumber(row.qty),
+                }),
+                row.reason,
+              ])}
+            />
+          ) : null}
+          <ProfitEvidence
+            profit={profit}
+            marketAvgAtPurchase={home.marketAvgAtPurchase}
+            marketAvgNow={home.marketAvgNow}
           />
           <div className="flex flex-wrap items-center gap-2">
             <Button

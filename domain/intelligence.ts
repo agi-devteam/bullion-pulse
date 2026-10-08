@@ -1,4 +1,4 @@
-import type { DecisionBucket, Gram } from "@/domain/primitives";
+import type { Channel, DecisionBucket, Gram } from "@/domain/primitives";
 
 export interface BucketProfit {
   prognosa: number | null;
@@ -12,6 +12,13 @@ export interface BucketDenomination {
   grams: number;
 }
 
+export interface BucketEvidenceRow {
+  channel: Channel;
+  gram: Gram | number;
+  qty: number;
+  reason: string;
+}
+
 export interface SupplierSplit {
   name: string;
   grams: number;
@@ -22,6 +29,7 @@ export interface BucketData {
   pcs: number;
   profit: BucketProfit;
   denominations: BucketDenomination[];
+  evidenceRows: BucketEvidenceRow[];
 }
 
 export type PriorityTitleKey = "watch10Title" | "watch25Title";
@@ -40,6 +48,10 @@ export interface HomeIntelligence {
   isComplete: boolean;
   snapshotDate: string;
   invalidCount: number;
+  excludedPcs: number;
+  unpricedPcs: number;
+  marketAvgAtPurchase: number;
+  marketAvgNow: number;
   grams: number;
   pcs: number;
   profit: BucketProfit;

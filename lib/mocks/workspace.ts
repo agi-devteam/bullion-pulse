@@ -82,7 +82,15 @@ function makeRecord(input: {
     directGp: ready ? gp : null,
     directMargin: ready ? margin : null,
     decision: ready ? (input.decision ?? "SELL READY") : null,
-    recommendedAction: input.action ?? (input.decision === "HOLD" ? "REPRICE" : input.decision === "ROUTE ELIGIBLE" ? "WATCH" : "HOLD / WAIT"),
+    recommendedAction:
+      input.action ??
+      (input.decision === "HOLD"
+        ? "REPRICE"
+        : input.decision === "ROUTE ELIGIBLE"
+          ? "WATCH"
+          : input.decision === "SELL READY"
+            ? "SELL READY"
+            : "REVIEW"),
     production: "2026",
     stockKeeper: "Vault Jakarta",
     marketAtPurchase: marketBuy,
@@ -120,6 +128,10 @@ function buildInventory(): InventoryRecord[] {
           channel,
           costRatio: channel === "B2B" ? 0.975 : 0.97,
           decision: "SELL READY",
+          reason:
+            channel === "B2B"
+              ? "Margin 2.50% ≥ policy 2.50%"
+              : "Margin 3.00% ≥ policy 3.00%",
         }),
       );
     }

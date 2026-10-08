@@ -316,12 +316,36 @@
     }
   },
   "evidence": {
-    "close": "Close",
+    "close": "Close detail",
     "sharedDescription": "Calculations and evidence from the current snapshot.",
+    "formulaDescription": "READY INVENTORY = SELL READY + ROUTE ELIGIBLE + HOLD",
     "recordMissing": "Record not found.",
     "viewInventory": "View Inventory",
     "inventoryTitle": "Inventory evidence · {id}",
     "readyTitle": "Ready Inventory reconciliation",
+    "profitTitle": "Profit estimate · READY inventory",
+    "profitIntro": "Market uses ANTAM logammulia.com benchmark · Mock. Average per gram: snapshot at purchase {purchase}; market now {current}. Unsold stock: market now and current pricelist are used as sale estimates. These figures are unrealized.",
+    "profitFooter": "Prognosis + Investment + Arbitrage = selling price − purchase price. In this mock, purchase price = HPP, so the sum equals Total profit. Total profit always uses HPP. Per-unit calculations are summed; negative contributions still count. Margin policy uses Total profit ÷ selling price.",
+    "profitTable": {
+      "component": "Component",
+      "formula": "Formula",
+      "total": "Total",
+      "prognosa": "Prognosis",
+      "prognosaFormula": "Market at purchase − purchase price",
+      "investment": "Investment",
+      "investmentFormula": "Market at sale − market at purchase",
+      "arbitrage": "Arbitrage",
+      "arbitrageFormula": "Selling price − market at sale",
+      "totalProfit": "Total profit",
+      "totalFormula": "Selling price − HPP"
+    },
+    "bucketTable": {
+      "channel": "Channel",
+      "gram": "Gram",
+      "qty": "Qty",
+      "reason": "Reason",
+      "qtyValue": "{count} pcs"
+    },
     "actionAlert": {
       "title": "{action} · {channel} {gram}g",
       "fallbackTitle": "Action evidence",
@@ -331,12 +355,13 @@
       "supplierQuoteValue": "{name} · {price} / unit",
       "capacityLead": "Capacity / lead time",
       "capacityLeadValue": "{capacity}g · {hours}h",
+      "action": "Action",
       "watchAction": "WATCH · Waiting for demand · no lock yet"
     },
     "bucketTitles": {
-      "sell": "SELL READY · Evidence",
-      "route": "ROUTE ELIGIBLE · Evidence",
-      "hold": "HOLD · Evidence"
+      "sell": "SELL evidence",
+      "route": "ROUTE evidence",
+      "hold": "HOLD evidence"
     },
     "policyPreview": {
       "title": "Policy impact · unsaved",
@@ -351,12 +376,12 @@
       "productionKeeper": "Production / Keeper",
       "availability": "Availability",
       "availabilityValue": "{status} · reserved {reserved}",
-      "hppUnit": "Unit cost (HPP)",
+      "hppUnit": "HPP / unit",
       "purchasePriceUnit": "Purchase price / unit",
       "sellingPrice": "Selling price",
       "totalGpMargin": "Total GP / Margin",
-      "marketAtPurchase": "Market at purchase",
-      "marketNowAntam": "Market now · ANTAM",
+      "marketAtPurchase": "Market at purchase · Mock / unit",
+      "marketNowAntam": "Market now · ANTAM Mock / unit",
       "prognosaEstimate": "Prognosis · estimate",
       "investmentEstimate": "Investment · estimate",
       "arbitrageEstimate": "Arbitrage · estimate",
@@ -365,10 +390,16 @@
       "reason": "Reason",
       "replacement": "Replacement",
       "defaultReason": "Non-ready inventory / source not yet valid",
-      "readyInventory": "Ready Inventory",
+      "readyInventory": "Ready inventory · priced",
       "sellReady": "SELL READY",
       "routeEligible": "ROUTE ELIGIBLE",
       "hold": "HOLD",
+      "excludedInvalid": "Excluded / invalid",
+      "excludedInvalidValue": "{excluded} non-ready · {invalid} invalid",
+      "readyWithoutSource": "Ready without valid source",
+      "readyWithoutSourceValue": "{count} pcs · not in intelligence",
+      "xau": "XAU",
+      "xauValue": "Market context only · does not affect classification",
       "totalProfitHpp": "Total profit · HPP basis"
     }
   }
