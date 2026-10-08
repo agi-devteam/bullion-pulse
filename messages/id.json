@@ -15,6 +15,7 @@
     "detail": "Detail",
     "review": "Tinjau",
     "close": "Tutup",
+    "ok": "OK",
     "unavailable": "Tidak tersedia",
     "required": "REQUIRED",
     "active": "ACTIVE",
@@ -253,6 +254,8 @@
     "unsavedDescription": "Ada perubahan pengaturan yang belum disimpan. Buang perubahan untuk pindah tab?",
     "unsavedStay": "Tetap di sini",
     "unsavedDiscard": "Buang perubahan",
+    "refreshTooLowTitle": "Interval refresh terlalu rendah",
+    "refreshTooLowDescription": "Interval refresh minimal {min} detik.",
     "toasts": {
       "discarded": "Perubahan dibatalkan.",
       "marginRange": "Margin policy harus berada di 0–99.99%",
@@ -306,7 +309,7 @@
     "system": {
       "dayStart": "Awal hari bisnis · WIB",
       "refresh": "Interval refresh (detik)",
-      "refreshNote": "Refresh evaluasi; bukan koneksi feed live.",
+      "refreshNote": "Refresh evaluasi dashboard; minimum 5 detik. Bukan koneksi feed live.",
       "freshness": "Ambang freshness (menit)",
       "antamSource": "Sumber resmi ANTAM",
       "antamSourceNote": "Official source only · no fallback.",

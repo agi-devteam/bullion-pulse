@@ -28,10 +28,11 @@ import {
 } from "@/components/organisms/dialog";
 import { SettingsWorkspaceSkeleton } from "@/components/screens/settings-workspace-skeleton";
 import { GRAMS, type Language, type Theme } from "@/domain/primitives";
-import type {
-  PolicyDraft,
-  SettingsTab,
-  SupplierPolicyQuote,
+import {
+  MIN_REFRESH_SECONDS,
+  type PolicyDraft,
+  type SettingsTab,
+  type SupplierPolicyQuote,
 } from "@/domain/settings";
 import { getHomeIntelligence } from "@/lib/mocks/home-intelligence";
 import { clonePolicyDraft } from "@/lib/settings/defaults";
@@ -231,6 +232,7 @@ export function SettingsWorkspace() {
   const [draft, setDraft] = useState<PolicyDraft | null>(null);
   const committed = useRef<PolicyDraft | null>(null);
   const [pendingTab, setPendingTab] = useState<SettingsTab | null>(null);
+  const [refreshAlertOpen, setRefreshAlertOpen] = useState(false);
 
   useEffect(() => {
     if (!settingsQuery.data || committed.current != null) return;
@@ -358,8 +360,11 @@ export function SettingsWorkspace() {
       return;
     }
 
-    if (draft.system.refreshSeconds < 1 || draft.system.staleMinutes < 1) {
-      showToast(t("toasts.outOfRange"));
+    if (
+      !Number.isFinite(draft.system.refreshSeconds) ||
+      draft.system.refreshSeconds < MIN_REFRESH_SECONDS
+    ) {
+      setRefreshAlertOpen(true);
       return;
     }
 
@@ -628,19 +633,7 @@ export function SettingsWorkspace() {
                       ...current,
                       system: { ...current.system, refreshSeconds: value },
                     })),
-                  { min: "1" },
-                )}
-              </FormRow>
-              <FormRow label={t("system.freshness")} id="stale-minutes">
-                {numericInput(
-                  "stale-minutes",
-                  draft.system.staleMinutes,
-                  (value) =>
-                    updateDraft((current) => ({
-                      ...current,
-                      system: { ...current.system, staleMinutes: value },
-                    })),
-                  { min: "1" },
+                  { min: String(MIN_REFRESH_SECONDS) },
                 )}
               </FormRow>
               <FormRow
@@ -728,6 +721,26 @@ export function SettingsWorkspace() {
             </Button>
             <Button type="button" onClick={discardAndSwitch}>
               {t("unsavedDiscard")}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={refreshAlertOpen} onOpenChange={setRefreshAlertOpen}>
+        <DialogContent className="sm:max-w-md" showCloseButton={false}>
+          <DialogHeader>
+            <DialogTitle className="text-[1.15rem] font-semibold">
+              {t("refreshTooLowTitle")}
+            </DialogTitle>
+            <DialogDescription className="text-base text-muted-text">
+              {t("refreshTooLowDescription", {
+                min: MIN_REFRESH_SECONDS,
+              })}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="border-0 bg-transparent p-0 sm:justify-end">
+            <Button type="button" onClick={() => setRefreshAlertOpen(false)}>
+              {tCommon("ok")}
             </Button>
           </DialogFooter>
         </DialogContent>

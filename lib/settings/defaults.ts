@@ -1,8 +1,9 @@
 import { GRAMS, type Gram } from "@/domain/primitives";
-import type {
-  DisplaySettings,
-  MarginByGram,
-  PolicyDraft,
+import {
+  DEFAULT_REFRESH_SECONDS,
+  type DisplaySettings,
+  type MarginByGram,
+  type PolicyDraft,
 } from "@/domain/settings";
 
 function marginByGram(value: number): MarginByGram {
@@ -48,7 +49,7 @@ export function createDefaultPolicyDraft(
     },
     system: {
       businessDayStart: "08:00",
-      refreshSeconds: 60,
+      refreshSeconds: DEFAULT_REFRESH_SECONDS,
       staleMinutes: 30,
       antamSource: "https://www.logammulia.com/",
       xauEnabled: true,

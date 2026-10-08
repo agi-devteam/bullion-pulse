@@ -4,7 +4,12 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { InventoryFilters, PricingFilters } from "@/domain/filters";
 import type { AntamQuote, XauQuote } from "@/domain/market";
 import type { DecisionBucket, Segment } from "@/domain/primitives";
-import type { DisplaySettings, PolicyDraft } from "@/domain/settings";
+import {
+  DEFAULT_REFRESH_SECONDS,
+  MIN_REFRESH_SECONDS,
+  type DisplaySettings,
+  type PolicyDraft,
+} from "@/domain/settings";
 import { fetchInventories } from "@/lib/api/inventories";
 import { fetchPolicyDraft, persistPolicyDraft } from "@/lib/api/policies";
 import { getHomeIntelligence } from "@/lib/mocks/home-intelligence";
@@ -14,6 +19,7 @@ import {
   getSupplierQuotes,
 } from "@/lib/mocks/workspace";
 import { queryKeys } from "@/lib/query/keys";
+import { useSettingsStore } from "@/stores/use-settings-store";
 
 class ApiNotImplementedError extends Error {
   constructor(readonly endpoint: string) {
@@ -26,11 +32,43 @@ function notImplemented(endpoint: string): Promise<never> {
   return Promise.reject(new ApiNotImplementedError(endpoint));
 }
 
+export function useSettings(display: DisplaySettings) {
+  return useQuery({
+    queryKey: queryKeys.settings,
+    queryFn: () => fetchPolicyDraft(display),
+    staleTime: 60 * 1000,
+    refetchInterval: false,
+  });
+}
+
+export function useSaveSettings() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (draft: PolicyDraft) => persistPolicyDraft(draft),
+    onSuccess: (_result, draft) => {
+      queryClient.setQueryData<PolicyDraft>(queryKeys.settings, draft);
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.intelligence.all,
+      });
+    },
+  });
+}
+
 export function useIntelligence(segment: Segment) {
+  const theme = useSettingsStore((state) => state.theme);
+  const language = useSettingsStore((state) => state.language);
+  const settingsQuery = useSettings({ theme, language });
+  const refreshSeconds =
+    settingsQuery.data?.system.refreshSeconds ?? DEFAULT_REFRESH_SECONDS;
+  const refetchIntervalMs =
+    Math.max(MIN_REFRESH_SECONDS, refreshSeconds) * 1000;
+
   return useQuery({
     queryKey: queryKeys.intelligence.bySegment(segment),
     queryFn: () => Promise.resolve(getHomeIntelligence(segment)),
-    staleTime: 60 * 1000,
+    staleTime: Math.min(30 * 1000, refetchIntervalMs),
+    refetchInterval: refetchIntervalMs,
     placeholderData: (previous) => previous,
   });
 }
@@ -100,25 +138,5 @@ export function useActions() {
     queryKey: queryKeys.actions,
     queryFn: () => Promise.resolve(getActionAlerts()),
     staleTime: 60 * 1000,
-  });
-}
-
-export function useSettings(display: DisplaySettings) {
-  return useQuery({
-    queryKey: queryKeys.settings,
-    queryFn: () => fetchPolicyDraft(display),
-    staleTime: 60 * 1000,
-    refetchInterval: false,
-  });
-}
-
-export function useSaveSettings() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (draft: PolicyDraft) => persistPolicyDraft(draft),
-    onSuccess: (_result, draft) => {
-      queryClient.setQueryData<PolicyDraft>(queryKeys.settings, draft);
-    },
   });
 }

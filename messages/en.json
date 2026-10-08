@@ -15,6 +15,7 @@
     "detail": "Detail",
     "review": "Review",
     "close": "Close",
+    "ok": "OK",
     "unavailable": "Unavailable",
     "required": "REQUIRED",
     "active": "ACTIVE",
@@ -253,6 +254,8 @@
     "unsavedDescription": "You have unsaved settings changes. Discard them to switch tabs?",
     "unsavedStay": "Stay",
     "unsavedDiscard": "Discard changes",
+    "refreshTooLowTitle": "Refresh interval too low",
+    "refreshTooLowDescription": "Refresh interval must be at least {min} seconds.",
     "toasts": {
       "discarded": "Changes discarded.",
       "marginRange": "Margin policy must be between 0–99.99%",
@@ -306,7 +309,7 @@
     "system": {
       "dayStart": "Business day start · WIB",
       "refresh": "Refresh interval (seconds)",
-      "refreshNote": "Evaluation refresh; not a live feed connection.",
+      "refreshNote": "Dashboard evaluation refresh; minimum 5 seconds. Not a live feed connection.",
       "freshness": "Freshness threshold (minutes)",
       "antamSource": "ANTAM official source",
       "antamSourceNote": "Official source only · no fallback.",
