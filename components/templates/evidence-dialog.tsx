@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useState, type ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import { XIcon } from "lucide-react";
-import type { ReactNode } from "react";
 import { Button } from "@/components/atoms/button";
 import { Evidence } from "@/components/molecules/evidence";
 import { DataTable } from "@/components/organisms/data-table";
@@ -15,7 +15,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/organisms/dialog";
-import type { BucketProfit } from "@/domain/intelligence";
+import type { BucketEvidenceRow, BucketProfit } from "@/domain/intelligence";
+import type { DecisionBucket } from "@/domain/primitives";
 import { findInventoryRecord } from "@/lib/api/inventories";
 import { formatIdr, formatNumber, formatPercent } from "@/lib/format/money";
 import { emptyHomeIntelligence } from "@/lib/intelligence/build-home";
@@ -23,6 +24,58 @@ import { getActionAlerts } from "@/lib/mocks/workspace";
 import { useIntelligence, useInventoryRecords } from "@/lib/query/hooks";
 import { useSettingsStore } from "@/stores/use-settings-store";
 import { useUIStore } from "@/stores/use-ui-store";
+
+const BUCKET_EVIDENCE_PREVIEW = 10;
+
+function BucketEvidenceTable({
+  bucket,
+  rows,
+}: {
+  bucket: DecisionBucket;
+  rows: BucketEvidenceRow[];
+}) {
+  const t = useTranslations("evidence");
+  const [expanded, setExpanded] = useState(false);
+
+  useEffect(() => {
+    setExpanded(false);
+  }, [bucket]);
+
+  const remaining = Math.max(0, rows.length - BUCKET_EVIDENCE_PREVIEW);
+  const visibleRows = expanded ? rows : rows.slice(0, BUCKET_EVIDENCE_PREVIEW);
+
+  return (
+    <DataTable
+      headers={[
+        t("bucketTable.channel"),
+        t("bucketTable.gram"),
+        t("bucketTable.qty"),
+        t("bucketTable.reason"),
+      ]}
+      rows={visibleRows.map((row) => [
+        row.channel,
+        `${row.gram}g`,
+        t("bucketTable.qtyValue", {
+          count: formatNumber(row.qty),
+        }),
+        row.reason,
+      ])}
+      footer={
+        remaining > 0 ? (
+          <button
+            type="button"
+            className="flex w-full items-center justify-center bg-surface px-4 py-3.5 text-[0.8rem] font-semibold tracking-[0.04em] text-muted-text uppercase transition-colors hover:bg-track hover:text-ink"
+            onClick={() => setExpanded((value) => !value)}
+          >
+            {expanded
+              ? t("bucketTable.seeLess")
+              : t("bucketTable.seeMore", { count: formatNumber(remaining) })}
+          </button>
+        ) : null
+      }
+    />
+  );
+}
 
 function DialogShell({
   title,
@@ -368,21 +421,9 @@ export function EvidenceDialog() {
             ]}
           />
           {bucket ? (
-            <DataTable
-              headers={[
-                t("bucketTable.channel"),
-                t("bucketTable.gram"),
-                t("bucketTable.qty"),
-                t("bucketTable.reason"),
-              ]}
-              rows={home.buckets[bucket].evidenceRows.map((row) => [
-                row.channel,
-                `${row.gram}g`,
-                t("bucketTable.qtyValue", {
-                  count: formatNumber(row.qty),
-                }),
-                row.reason,
-              ])}
+            <BucketEvidenceTable
+              bucket={bucket}
+              rows={home.buckets[bucket].evidenceRows}
             />
           ) : null}
           <ProfitEvidence

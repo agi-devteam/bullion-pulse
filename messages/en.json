@@ -349,7 +349,9 @@
       "gram": "Gram",
       "qty": "Qty",
       "reason": "Reason",
-      "qtyValue": "{count} pcs"
+      "qtyValue": "{count} pcs",
+      "seeMore": "See all ({count} items)",
+      "seeLess": "See less"
     },
     "actionAlert": {
       "title": "{action} · {channel} {gram}g",

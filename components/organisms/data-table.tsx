@@ -14,9 +14,10 @@ import {
 export interface DataTableProps {
   headers: string[];
   rows: ReactNode[][];
+  footer?: ReactNode;
 }
 
-export function DataTable({ headers, rows }: DataTableProps) {
+export function DataTable({ headers, rows, footer }: DataTableProps) {
   const t = useTranslations("common");
 
   return (
@@ -50,6 +51,9 @@ export function DataTable({ headers, rows }: DataTableProps) {
           )}
         </TableBody>
       </Table>
+      {footer ? (
+        <div className="border-t border-line">{footer}</div>
+      ) : null}
     </div>
   );
 }
