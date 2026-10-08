@@ -48,14 +48,17 @@ function emptyBucket(): BucketData {
 
 function sumNullable(values: Array<number | null>): number | null {
   if (values.length === 0) return 0;
-  if (values.some((value) => value == null)) return null;
-  return values.reduce<number>((sum, value) => sum + (value as number), 0);
+  const present = values.filter(
+    (value): value is number => value != null && Number.isFinite(value),
+  );
+  if (present.length === 0) return null;
+  return present.reduce((sum, value) => sum + value, 0);
 }
 
 function aggregateProfit(units: InventoryRecord[]): BucketProfit {
   return {
-    prognosa: null,
-    investment: null,
+    prognosa: sumNullable(units.map((unit) => unit.profit.prognosa)),
+    investment: sumNullable(units.map((unit) => unit.profit.investment)),
     arbitrage: sumNullable(units.map((unit) => unit.profit.arbitrage)),
     total: sumNullable(units.map((unit) => unitGrossProfit(unit))),
   };
@@ -133,9 +136,12 @@ function policyFloorFromDraft(policy: PolicyDraft | null | undefined): {
   return { b2c: minFor("B2C"), b2b: minFor("B2B") };
 }
 
-function averageMarketNow(units: InventoryRecord[]): number {
+function averageMarket(
+  units: InventoryRecord[],
+  pick: (unit: InventoryRecord) => number | null,
+): number {
   const prices = units
-    .map((unit) => unit.marketAtSale)
+    .map(pick)
     .filter((value): value is number => value != null && value > 0);
   if (prices.length === 0) return 0;
   return Math.round(
@@ -215,8 +221,11 @@ export function buildHomeIntelligence(
     invalidCount: invalid.length,
     excludedPcs: invalid.length,
     unpricedPcs: unpriced.length,
-    marketAvgAtPurchase: 0,
-    marketAvgNow: averageMarketNow(decided),
+    marketAvgAtPurchase: averageMarket(
+      decided,
+      (unit) => unit.marketAtPurchase,
+    ),
+    marketAvgNow: averageMarket(decided, (unit) => unit.marketAtSale),
     grams,
     pcs,
     profit: aggregateProfit(decided),

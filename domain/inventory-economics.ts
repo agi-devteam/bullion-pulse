@@ -33,6 +33,11 @@ export function enrichInventoryEconomics(
         ? unit.sellingPrice - marketAtSale
         : null;
 
+    const investment =
+      marketAtSale != null && unit.marketAtPurchase != null
+        ? marketAtSale - unit.marketAtPurchase
+        : null;
+
     const total = unit.valid ? unitGrossProfit(unit) : null;
 
     return {
@@ -40,6 +45,7 @@ export function enrichInventoryEconomics(
       marketAtSale,
       profit: {
         ...unit.profit,
+        investment,
         arbitrage,
         total,
       },

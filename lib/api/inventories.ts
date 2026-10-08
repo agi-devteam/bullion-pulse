@@ -15,6 +15,9 @@ export interface InventoryRowDto {
   sellingPrice: number | null;
   directGp: number | null;
   marginPercentage: number | null;
+  price?: number | null;
+  prognosa?: number | null;
+  purchaseDate?: number | string | null;
 }
 
 function isGram(value: number): value is Gram {
@@ -70,6 +73,18 @@ export function mapInventoryRow(dto: InventoryRowDto): InventoryRecord {
       ? sellingPrice - unitCost
       : directGp;
 
+  const marketAtPurchase =
+    typeof dto.price === "number" && Number.isFinite(dto.price) && dto.price > 0
+      ? dto.price
+      : null;
+
+  const prognosa =
+    typeof dto.prognosa === "number" && Number.isFinite(dto.prognosa)
+      ? dto.prognosa
+      : marketAtPurchase != null && unitCost > 0
+        ? marketAtPurchase - unitCost
+        : null;
+
   return {
     stockId,
     serial,
@@ -86,10 +101,10 @@ export function mapInventoryRow(dto: InventoryRowDto): InventoryRecord {
     recommendedAction: null,
     production,
     stockKeeper: dto.stockKeeper ?? "",
-    marketAtPurchase: null,
+    marketAtPurchase,
     marketAtSale: null,
     profit: {
-      prognosa: null,
+      prognosa: valid ? prognosa : null,
       investment: null,
       arbitrage: null,
       total: valid && grossProfit != null ? grossProfit : null,
