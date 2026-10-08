@@ -5,6 +5,7 @@ import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/atoms/button";
 import { Status } from "@/components/atoms/status";
+import { Card } from "@/components/molecules/card";
 import { Choice } from "@/components/molecules/choice";
 import {
   PageToolbar,
@@ -23,22 +24,38 @@ export function SuppliersWorkspace() {
   const suppliersQuery = useSuppliers();
   const setSettingsTab = useUIStore((state) => state.setSettingsTab);
   const [supplier, setSupplier] = useState("all");
+  const quotes = suppliersQuery.data ?? [];
 
   const supplierOptions = useMemo(() => {
-    const quotes = suppliersQuery.data ?? [];
     const names = [...new Set(quotes.map((quote) => quote.name))].sort();
     return [
       ["all", t("filters.allSuppliers")] as [string, string],
       ...names.map((name) => [name, name] as [string, string]),
     ];
-  }, [suppliersQuery.data, t]);
+  }, [quotes, t]);
 
   const rows = useMemo(() => {
-    const quotes = suppliersQuery.data ?? [];
     return quotes.filter(
       (quote) => supplier === "all" || quote.name === supplier,
     );
-  }, [suppliersQuery.data, supplier]);
+  }, [quotes, supplier]);
+
+  if (suppliersQuery.isError && quotes.length === 0) {
+    return (
+      <Card className="block gap-0 p-6">
+        <p className="m-0 mb-4 text-[0.95rem] text-muted-text">
+          {t("loadFailed")}
+        </p>
+        <Button
+          type="button"
+          onClick={() => void suppliersQuery.refetch()}
+          disabled={suppliersQuery.isFetching}
+        >
+          {suppliersQuery.isFetching ? t("loading") : tCommon("retry")}
+        </Button>
+      </Card>
+    );
+  }
 
   if (suppliersQuery.isPending) {
     return <SuppliersWorkspaceSkeleton />;
