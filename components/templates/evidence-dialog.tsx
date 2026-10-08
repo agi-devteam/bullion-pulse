@@ -16,9 +16,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/organisms/dialog";
+import { findInventoryRecord } from "@/lib/api/inventories";
 import { formatIdr, compactRupiah, formatNumber, formatPercent } from "@/lib/format/money";
 import { getHomeIntelligence } from "@/lib/mocks/home-intelligence";
-import { getActionAlerts, getInventoryRecord } from "@/lib/mocks/workspace";
+import { getActionAlerts } from "@/lib/mocks/workspace";
+import { useInventoryRecords } from "@/lib/query/hooks";
 import { useSettingsStore } from "@/stores/use-settings-store";
 import { useUIStore } from "@/stores/use-ui-store";
 
@@ -69,15 +71,19 @@ export function EvidenceDialog() {
   const showToast = useUIStore((state) => state.showToast);
   const segment = useSettingsStore((state) => state.segment);
   const t = useTranslations("evidence");
+  const tInventory = useTranslations("inventory");
   const tActions = useTranslations("actions");
   const tCommon = useTranslations("common");
   const home = getHomeIntelligence(segment);
   const open = dialog != null;
   const bucket = dialog?.kind === "bucket-evidence" ? dialog.bucket : null;
   const profit = bucket ? home.buckets[bucket].profit : home.profit;
+  const inventoryQuery = useInventoryRecords({
+    enabled: dialog?.kind === "inventory-unit",
+  });
   const unit =
     dialog?.kind === "inventory-unit"
-      ? getInventoryRecord(dialog.stockId)
+      ? findInventoryRecord(inventoryQuery.data, dialog.stockId)
       : undefined;
   const actionAlert =
     dialog?.kind === "action-alert"
@@ -110,7 +116,7 @@ export function EvidenceDialog() {
                 ],
                 [
                   t("rows.productionKeeper"),
-                  `${unit.production} · ${unit.stockKeeper}`,
+                  `${unit.production || tCommon("emDash")} · ${unit.stockKeeper}`,
                 ],
                 [
                   t("rows.availability"),
@@ -174,6 +180,8 @@ export function EvidenceDialog() {
                 ],
               ]}
             />
+          ) : inventoryQuery.isFetching ? (
+            <p className="text-muted-text">{tInventory("loading")}</p>
           ) : (
             <p className="text-muted-text">{t("recordMissing")}</p>
           )}

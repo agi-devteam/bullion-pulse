@@ -5,17 +5,16 @@ import { useTranslations } from "next-intl";
 import { Button } from "@/components/atoms/button";
 import { Input } from "@/components/atoms/input";
 import { Status } from "@/components/atoms/status";
+import { Card } from "@/components/molecules/card";
 import { Choice } from "@/components/molecules/choice";
 import { Metric } from "@/components/molecules/metric";
 import { PageToolbar, WorkspaceStack } from "@/components/molecules/page-toolbar";
 import { DataTable } from "@/components/organisms/data-table";
 import type { InventoryAvailabilityFilter } from "@/domain/filters";
 import type { InventoryDecision } from "@/domain/primitives";
+import { summarizeInventory } from "@/lib/api/inventories";
 import { formatIdr, formatNumber, formatPercent } from "@/lib/format/money";
-import {
-  getInventoryRecords,
-  getInventorySummary,
-} from "@/lib/mocks/workspace";
+import { useInventoryRecords } from "@/lib/query/hooks";
 import { useUIStore } from "@/stores/use-ui-store";
 
 const PAGE_SIZE = 40;
@@ -32,8 +31,9 @@ export function InventoryWorkspace() {
   const t = useTranslations("inventory");
   const tCommon = useTranslations("common");
   const setDialog = useUIStore((state) => state.setDialog);
-  const summary = getInventorySummary();
-  const records = getInventoryRecords();
+  const inventoryQuery = useInventoryRecords();
+  const records = inventoryQuery.data ?? [];
+  const summary = useMemo(() => summarizeInventory(records), [records]);
   const [channel, setChannel] = useState<"all" | "B2C" | "B2B">("all");
   const [status, setStatus] = useState<InventoryAvailabilityFilter>("READY");
   const [decision, setDecision] = useState<"all" | InventoryDecision>("all");
@@ -62,6 +62,31 @@ export function InventoryWorkspace() {
   const pages = Math.max(1, Math.ceil(rows.length / PAGE_SIZE));
   const current = Math.min(page, pages - 1);
   const pageRows = rows.slice(current * PAGE_SIZE, current * PAGE_SIZE + PAGE_SIZE);
+
+  if (inventoryQuery.isError && records.length === 0) {
+    return (
+      <Card className="block gap-0 p-6">
+        <p className="m-0 mb-4 text-[0.95rem] text-muted-text">
+          {t("loadFailed")}
+        </p>
+        <Button
+          type="button"
+          onClick={() => void inventoryQuery.refetch()}
+          disabled={inventoryQuery.isFetching}
+        >
+          {inventoryQuery.isFetching ? t("loading") : tCommon("retry")}
+        </Button>
+      </Card>
+    );
+  }
+
+  if (inventoryQuery.isLoading && records.length === 0) {
+    return (
+      <Card className="block gap-0 p-6">
+        <p className="m-0 text-[0.95rem] text-muted-text">{t("loading")}</p>
+      </Card>
+    );
+  }
 
   return (
     <WorkspaceStack>

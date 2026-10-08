@@ -1,9 +1,12 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { InventoryFilters, PricingFilters } from "@/domain/filters";
 import type { AntamQuote, XauQuote } from "@/domain/market";
 import type { DecisionBucket, Segment } from "@/domain/primitives";
+import type { DisplaySettings, PolicyDraft } from "@/domain/settings";
+import { fetchInventories } from "@/lib/api/inventories";
+import { fetchPolicyDraft, persistPolicyDraft } from "@/lib/api/policies";
 import { queryKeys } from "@/lib/query/keys";
 
 class ApiNotImplementedError extends Error {
@@ -38,12 +41,18 @@ export function useIntelligenceEvidence(
   });
 }
 
-export function useInventory(filters: InventoryFilters) {
+/** Fetches full `GET /inventories` list. Filters are applied client-side. */
+export function useInventoryRecords(options?: { enabled?: boolean }) {
   return useQuery({
-    queryKey: queryKeys.inventory.list(filters),
-    queryFn: () => notImplemented("GET /api/inventory"),
-    enabled: false,
+    queryKey: queryKeys.inventory.all,
+    queryFn: fetchInventories,
+    staleTime: 60 * 1000,
+    enabled: options?.enabled ?? true,
   });
+}
+
+export function useInventory(_filters?: InventoryFilters) {
+  return useInventoryRecords();
 }
 
 export function useMarketAntam() {
@@ -86,12 +95,22 @@ export function useActions() {
   });
 }
 
-export function useSettings() {
+export function useSettings(display: DisplaySettings) {
   return useQuery({
     queryKey: queryKeys.settings,
-    queryFn: () => notImplemented("GET /api/settings"),
-    enabled: false,
-    staleTime: Infinity,
+    queryFn: () => fetchPolicyDraft(display),
+    staleTime: 60 * 1000,
     refetchInterval: false,
+  });
+}
+
+export function useSaveSettings() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (draft: PolicyDraft) => persistPolicyDraft(draft),
+    onSuccess: (_result, draft) => {
+      queryClient.setQueryData<PolicyDraft>(queryKeys.settings, draft);
+    },
   });
 }

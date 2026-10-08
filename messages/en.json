@@ -22,6 +22,7 @@
     "emptyTable": "No matching data.",
     "save": "Save settings",
     "discard": "Discard",
+    "retry": "Retry",
     "channel": "Channel",
     "channels": {
       "all": "All channels",
@@ -135,6 +136,8 @@
     }
   },
   "inventory": {
+    "loading": "Loading inventory from server…",
+    "loadFailed": "Could not load inventory from the server.",
     "metrics": {
       "readyPriced": "READY / priced",
       "excluded": "Excluded",
@@ -247,7 +250,10 @@
       "system": "System / Market"
     },
     "tabsNav": "Settings categories",
-    "footerNote": "Changes apply after Save. Settings are stored in this browser.",
+    "footerNote": "Changes apply after Save. Margin, route, and system policies sync to the server.",
+    "loading": "Loading settings from server…",
+    "saving": "Saving…",
+    "loadFailed": "Could not load settings from the server.",
     "previewImpact": "Preview Policy Impact",
     "unsavedTitle": "Unsaved changes",
     "unsavedDescription": "You have unsaved settings changes. Discard them to switch tabs?",
@@ -260,6 +266,7 @@
       "repriceInvalid": "Reprice policy values are invalid",
       "outOfRange": "Policy value out of range",
       "supplierInvalid": "Supplier capacity and lead time must be valid.",
+      "saveFailed": "Could not save settings to the server.",
       "saved": "Settings saved."
     },
     "dashboard": {

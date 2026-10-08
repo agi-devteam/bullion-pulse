@@ -22,6 +22,7 @@
     "emptyTable": "Tidak ada data yang sesuai.",
     "save": "Simpan pengaturan",
     "discard": "Buang",
+    "retry": "Coba lagi",
     "channel": "Channel",
     "channels": {
       "all": "Semua channel",
@@ -135,6 +136,8 @@
     }
   },
   "inventory": {
+    "loading": "Memuat inventory dari server…",
+    "loadFailed": "Tidak dapat memuat inventory dari server.",
     "metrics": {
       "readyPriced": "READY / priced",
       "excluded": "Excluded",
@@ -247,7 +250,10 @@
       "system": "Sistem / Pasar"
     },
     "tabsNav": "Kategori pengaturan",
-    "footerNote": "Perubahan berlaku setelah Save. Pengaturan disimpan pada browser ini.",
+    "footerNote": "Perubahan berlaku setelah Save. Kebijakan margin, route, dan sistem disinkronkan ke server.",
+    "loading": "Memuat pengaturan dari server…",
+    "saving": "Menyimpan…",
+    "loadFailed": "Tidak dapat memuat pengaturan dari server.",
     "previewImpact": "Pratinjau Dampak Kebijakan",
     "unsavedTitle": "Perubahan belum disimpan",
     "unsavedDescription": "Ada perubahan pengaturan yang belum disimpan. Buang perubahan untuk pindah tab?",
@@ -260,6 +266,7 @@
       "repriceInvalid": "Nilai reprice policy invalid",
       "outOfRange": "Nilai policy di luar range",
       "supplierInvalid": "Supplier capacity dan lead time harus valid.",
+      "saveFailed": "Tidak dapat menyimpan pengaturan ke server.",
       "saved": "Pengaturan disimpan."
     },
     "dashboard": {

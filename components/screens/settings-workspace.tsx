@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/atoms/button";
 import { Input } from "@/components/atoms/input";
@@ -33,10 +33,8 @@ import type {
   SupplierPolicyQuote,
 } from "@/domain/settings";
 import { getHomeIntelligence } from "@/lib/mocks/home-intelligence";
-import {
-  clonePolicyDraft,
-  createDefaultPolicyDraft,
-} from "@/lib/settings/defaults";
+import { clonePolicyDraft } from "@/lib/settings/defaults";
+import { useSaveSettings, useSettings } from "@/lib/query/hooks";
 import { useSettingsStore } from "@/stores/use-settings-store";
 import { useUIStore } from "@/stores/use-ui-store";
 
@@ -227,11 +225,21 @@ export function SettingsWorkspace() {
   const setTab = useUIStore((state) => state.setSettingsTab);
   const setDialog = useUIStore((state) => state.setDialog);
   const showToast = useUIStore((state) => state.showToast);
-  const [draft, setDraft] = useState<PolicyDraft>(() =>
-    createDefaultPolicyDraft({ theme, language }),
-  );
-  const committed = useRef(clonePolicyDraft(draft));
+  const settingsQuery = useSettings({ theme, language });
+  const saveSettings = useSaveSettings();
+  const [draft, setDraft] = useState<PolicyDraft | null>(null);
+  const committed = useRef<PolicyDraft | null>(null);
   const [pendingTab, setPendingTab] = useState<SettingsTab | null>(null);
+
+  useEffect(() => {
+    if (!settingsQuery.data || committed.current != null) return;
+    const next = clonePolicyDraft({
+      ...settingsQuery.data,
+      display: { theme, language },
+    });
+    setDraft(next);
+    committed.current = clonePolicyDraft(next);
+  }, [settingsQuery.data, theme, language]);
 
   const tabLabels: Record<SettingsTab, string> = {
     dashboard: t("tabs.dashboard"),
@@ -242,21 +250,28 @@ export function SettingsWorkspace() {
   };
 
   function isDirty() {
+    if (!draft || !committed.current) return false;
     return JSON.stringify(draft) !== JSON.stringify(committed.current);
+  }
+
+  function updateDraft(updater: (current: PolicyDraft) => PolicyDraft) {
+    setDraft((current) => (current ? updater(current) : current));
   }
 
   function commitDisplay<K extends keyof PolicyDraft["display"]>(
     key: K,
     value: PolicyDraft["display"][K],
   ) {
-    setDraft((current) => ({
+    updateDraft((current) => ({
       ...current,
       display: { ...current.display, [key]: value },
     }));
-    committed.current = {
-      ...committed.current,
-      display: { ...committed.current.display, [key]: value },
-    };
+    if (committed.current) {
+      committed.current = {
+        ...committed.current,
+        display: { ...committed.current.display, [key]: value },
+      };
+    }
   }
 
   function requestTabChange(next: SettingsTab) {
@@ -269,7 +284,7 @@ export function SettingsWorkspace() {
   }
 
   function discardAndSwitch() {
-    if (!pendingTab) return;
+    if (!pendingTab || !committed.current) return;
     const next = clonePolicyDraft(committed.current);
     setDraft(next);
     setTheme(next.display.theme);
@@ -280,7 +295,7 @@ export function SettingsWorkspace() {
   }
 
   function setQuote(quoteId: string, patch: Partial<SupplierPolicyQuote>) {
-    setDraft((current) => ({
+    updateDraft((current) => ({
       ...current,
       supplier: {
         quotes: current.supplier.quotes.map((quote) =>
@@ -291,6 +306,7 @@ export function SettingsWorkspace() {
   }
 
   function discard() {
+    if (!committed.current) return;
     const next = clonePolicyDraft(committed.current);
     setDraft(next);
     setTheme(next.display.theme);
@@ -317,7 +333,9 @@ export function SettingsWorkspace() {
     setDialog({ kind: "policy-preview", current, next });
   }
 
-  function persist() {
+  async function persist() {
+    if (!draft || saveSettings.isPending) return;
+
     for (const gram of GRAMS) {
       for (const channel of ["B2C", "B2B"] as const) {
         const value = draft.margin.minimumMargin[channel][gram];
@@ -356,10 +374,40 @@ export function SettingsWorkspace() {
       }
     }
 
-    committed.current = clonePolicyDraft(draft);
-    setTheme(draft.display.theme);
-    setLanguage(draft.display.language);
-    showToast(t("toasts.saved"));
+    try {
+      await saveSettings.mutateAsync(draft);
+      committed.current = clonePolicyDraft(draft);
+      setTheme(draft.display.theme);
+      setLanguage(draft.display.language);
+      showToast(t("toasts.saved"));
+    } catch {
+      showToast(t("toasts.saveFailed"));
+    }
+  }
+
+  if (!draft) {
+    if (settingsQuery.isError) {
+      return (
+        <Card className="policy-matrix block gap-0 p-6">
+          <p className="m-0 mb-4 text-[0.95rem] text-muted-text">
+            {t("loadFailed")}
+          </p>
+          <Button
+            type="button"
+            onClick={() => void settingsQuery.refetch()}
+            disabled={settingsQuery.isFetching}
+          >
+            {settingsQuery.isFetching ? t("loading") : tCommon("retry")}
+          </Button>
+        </Card>
+      );
+    }
+
+    return (
+      <Card className="policy-matrix block gap-0 p-6">
+        <p className="m-0 text-[0.95rem] text-muted-text">{t("loading")}</p>
+      </Card>
+    );
   }
 
   return (
@@ -384,7 +432,7 @@ export function SettingsWorkspace() {
       <form
         onSubmit={(event: FormEvent) => {
           event.preventDefault();
-          persist();
+          void persist();
         }}
       >
         <Card className="policy-matrix block gap-0 p-6">
@@ -453,7 +501,7 @@ export function SettingsWorkspace() {
                     `margin-B2C-${gram}`,
                     draft.margin.minimumMargin.B2C[gram],
                     (value) =>
-                      setDraft((current) => ({
+                      updateDraft((current) => ({
                         ...current,
                         margin: {
                           minimumMargin: {
@@ -475,7 +523,7 @@ export function SettingsWorkspace() {
                     `margin-B2B-${gram}`,
                     draft.margin.minimumMargin.B2B[gram],
                     (value) =>
-                      setDraft((current) => ({
+                      updateDraft((current) => ({
                         ...current,
                         margin: {
                           minimumMargin: {
@@ -504,7 +552,7 @@ export function SettingsWorkspace() {
                   "route-margin",
                   draft.route.minimumMargin,
                   (value) =>
-                    setDraft((current) => ({
+                    updateDraft((current) => ({
                       ...current,
                       route: { ...current.route, minimumMargin: value },
                     })),
@@ -516,7 +564,7 @@ export function SettingsWorkspace() {
                   "route-lead",
                   draft.route.maxLeadHours,
                   (value) =>
-                    setDraft((current) => ({
+                    updateDraft((current) => ({
                       ...current,
                       route: { ...current.route, maxLeadHours: value },
                     })),
@@ -531,7 +579,7 @@ export function SettingsWorkspace() {
                   id="route-capacity"
                   checked={draft.route.capacityRequired}
                   onCheckedChange={(value) =>
-                    setDraft((current) => ({
+                    updateDraft((current) => ({
                       ...current,
                       route: { ...current.route, capacityRequired: value },
                     }))
@@ -560,7 +608,7 @@ export function SettingsWorkspace() {
                   type="time"
                   value={draft.system.businessDayStart}
                   onChange={(event) =>
-                    setDraft((current) => ({
+                    updateDraft((current) => ({
                       ...current,
                       system: {
                         ...current.system,
@@ -579,7 +627,7 @@ export function SettingsWorkspace() {
                   "refresh-seconds",
                   draft.system.refreshSeconds,
                   (value) =>
-                    setDraft((current) => ({
+                    updateDraft((current) => ({
                       ...current,
                       system: { ...current.system, refreshSeconds: value },
                     })),
@@ -591,7 +639,7 @@ export function SettingsWorkspace() {
                   "stale-minutes",
                   draft.system.staleMinutes,
                   (value) =>
-                    setDraft((current) => ({
+                    updateDraft((current) => ({
                       ...current,
                       system: { ...current.system, staleMinutes: value },
                     })),
@@ -621,7 +669,7 @@ export function SettingsWorkspace() {
                   id="xau-enabled"
                   checked={draft.system.xauEnabled}
                   onCheckedChange={(value) =>
-                    setDraft((current) => ({
+                    updateDraft((current) => ({
                       ...current,
                       system: { ...current.system, xauEnabled: value },
                     }))
@@ -642,10 +690,17 @@ export function SettingsWorkspace() {
                   {t("previewImpact")}
                 </Button>
               ) : null}
-              <Button type="button" variant="outline" onClick={discard}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={discard}
+                disabled={saveSettings.isPending}
+              >
                 {tCommon("discard")}
               </Button>
-              <Button type="submit">{tCommon("save")}</Button>
+              <Button type="submit" disabled={saveSettings.isPending}>
+                {saveSettings.isPending ? t("saving") : tCommon("save")}
+              </Button>
             </div>
           </div>
         ) : null}
