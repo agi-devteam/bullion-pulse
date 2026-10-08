@@ -289,6 +289,12 @@ export function getPricingRows(): PricingRow[] {
   return rows;
 }
 
+function quoteValidUntil(quoteTime: string) {
+  return new Date(
+    new Date(quoteTime).getTime() + 24 * 60 * 60 * 1000,
+  ).toISOString();
+}
+
 export function getSupplierQuotes(): SupplierQuoteRow[] {
   return [
     {
@@ -300,6 +306,7 @@ export function getSupplierQuotes(): SupplierQuoteRow[] {
       capacity: 160,
       lead_time: 8,
       quote_time: SNAPSHOT_AT,
+      valid_until: quoteValidUntil(SNAPSHOT_AT),
       lock_available: true,
       lock_status: "UNLOCKED",
     },
@@ -312,6 +319,7 @@ export function getSupplierQuotes(): SupplierQuoteRow[] {
       capacity: 1075,
       lead_time: 8,
       quote_time: SNAPSHOT_AT,
+      valid_until: quoteValidUntil(SNAPSHOT_AT),
       lock_available: true,
       lock_status: "UNLOCKED",
     },

@@ -34,6 +34,7 @@ export function SuppliersWorkspace() {
           t("headers.capacity"),
           t("headers.leadTime"),
           t("headers.quoteTime"),
+          t("headers.validUntil"),
           t("headers.lockStatus"),
         ]}
         rows={quotes.map((quote) => [
@@ -46,6 +47,7 @@ export function SuppliersWorkspace() {
           tCommon("gramsUnit", { value: formatNumber(quote.capacity) }),
           t("leadHours", { hours: quote.lead_time }),
           formatStamp(quote.quote_time),
+          formatStamp(quote.valid_until),
           t("lockPair", {
             available: quote.lock_available
               ? tCommon("yes")
@@ -54,11 +56,11 @@ export function SuppliersWorkspace() {
           }),
         ])}
       />
-      <Card className="block p-6">
-        <h2 className="mt-0 mb-4.5 text-[1.25rem] font-semibold">
+      <Card className="block p-6 text-[0.95rem]">
+        <h2 className="mt-0 mb-4.5 text-[1.25rem] font-bold">
           {t("directoryTitle")}
         </h2>
-        <p className="m-0 mb-4 text-[0.9375rem] text-muted-text">
+        <p className="m-0 mb-4 text-[0.95rem] leading-normal text-muted-text">
           {t("directoryNote", { names: SUPPLIER_DIRECTORY.join(" · ") })}
         </p>
         <Button
