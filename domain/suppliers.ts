@@ -2,6 +2,7 @@ import type { Gram } from "@/domain/primitives";
 
 export interface SupplierQuoteRow {
   quoteId: string;
+  supplierId: string;
   name: string;
   active: boolean;
   gram: Gram;

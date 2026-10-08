@@ -1,7 +1,10 @@
 "use client";
 
+import { useMemo } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { classifyInventory } from "@/domain/decision";
 import type { InventoryFilters, PricingFilters } from "@/domain/filters";
+import type { InventoryRecord } from "@/domain/inventory";
 import type { AntamQuote, XauQuote } from "@/domain/market";
 import type { DecisionBucket, Segment } from "@/domain/primitives";
 import {
@@ -12,12 +15,9 @@ import {
 } from "@/domain/settings";
 import { fetchInventories } from "@/lib/api/inventories";
 import { fetchPolicyDraft, persistPolicyDraft } from "@/lib/api/policies";
+import { fetchSuppliers } from "@/lib/api/suppliers";
 import { getHomeIntelligence } from "@/lib/mocks/home-intelligence";
-import {
-  getActionAlerts,
-  getPricingRows,
-  getSupplierQuotes,
-} from "@/lib/mocks/workspace";
+import { getActionAlerts, getPricingRows } from "@/lib/mocks/workspace";
 import { queryKeys } from "@/lib/query/keys";
 import { useSettingsStore } from "@/stores/use-settings-store";
 
@@ -50,6 +50,9 @@ export function useSaveSettings() {
       queryClient.setQueryData<PolicyDraft>(queryKeys.settings, draft);
       void queryClient.invalidateQueries({
         queryKey: queryKeys.intelligence.all,
+      });
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.inventory.all,
       });
     },
   });
@@ -86,14 +89,43 @@ export function useIntelligenceEvidence(
   });
 }
 
+export function useSuppliers(options?: { enabled?: boolean }) {
+  return useQuery({
+    queryKey: queryKeys.suppliers,
+    queryFn: fetchSuppliers,
+    staleTime: 60 * 1000,
+    enabled: options?.enabled ?? true,
+  });
+}
+
 /** Fetches full `GET /inventories` list. Filters are applied client-side. */
 export function useInventoryRecords(options?: { enabled?: boolean }) {
-  return useQuery({
+  const theme = useSettingsStore((state) => state.theme);
+  const language = useSettingsStore((state) => state.language);
+  const settingsQuery = useSettings({ theme, language });
+  const suppliersQuery = useSuppliers();
+  const inventoryQuery = useQuery({
     queryKey: queryKeys.inventory.all,
     queryFn: fetchInventories,
     staleTime: 60 * 1000,
     enabled: options?.enabled ?? true,
   });
+
+  const data = useMemo((): InventoryRecord[] | undefined => {
+    if (!inventoryQuery.data) return undefined;
+    if (!settingsQuery.data) return inventoryQuery.data;
+    return classifyInventory(inventoryQuery.data, {
+      policy: settingsQuery.data,
+      suppliers: suppliersQuery.data ?? [],
+    });
+  }, [inventoryQuery.data, settingsQuery.data, suppliersQuery.data]);
+
+  return {
+    ...inventoryQuery,
+    data,
+    isPending: inventoryQuery.isPending || settingsQuery.isPending,
+    isFetching: inventoryQuery.isFetching || settingsQuery.isFetching,
+  };
 }
 
 export function useInventory(_filters?: InventoryFilters) {
@@ -121,14 +153,6 @@ export function usePricing(_filters?: PricingFilters) {
   return useQuery({
     queryKey: queryKeys.pricing.all,
     queryFn: () => Promise.resolve(getPricingRows()),
-    staleTime: 60 * 1000,
-  });
-}
-
-export function useSuppliers() {
-  return useQuery({
-    queryKey: queryKeys.suppliers,
-    queryFn: () => Promise.resolve(getSupplierQuotes()),
     staleTime: 60 * 1000,
   });
 }

@@ -311,6 +311,7 @@ export function getSupplierQuotes(): SupplierQuoteRow[] {
   return [
     {
       quoteId: "Q-SIMA-10",
+      supplierId: "SIMA",
       name: "SIMA",
       active: true,
       gram: 10,
@@ -324,6 +325,7 @@ export function getSupplierQuotes(): SupplierQuoteRow[] {
     },
     {
       quoteId: "Q-KRISNA-25",
+      supplierId: "KRISNA",
       name: "KRISNA",
       active: true,
       gram: 25,
