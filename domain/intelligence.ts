@@ -24,19 +24,13 @@ export interface BucketData {
   denominations: BucketDenomination[];
 }
 
-export type PriorityTitleKey =
-  | "watch10Title"
-  | "watch25Title"
-  | "reprice50Title";
+export type PriorityTitleKey = "watch10Title" | "watch25Title";
 
-export type PrioritySubtitleKey =
-  | "watch10Subtitle"
-  | "watch25Subtitle"
-  | "reprice50Subtitle";
+export type PrioritySubtitleKey = "watch10Subtitle" | "watch25Subtitle";
 
 export interface PriorityAction {
   id: string;
-  action: "WATCH" | "REPRICE";
+  action: "WATCH";
   titleKey: PriorityTitleKey;
   subtitleKey: PrioritySubtitleKey;
   href: string;

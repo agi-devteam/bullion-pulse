@@ -21,7 +21,7 @@ export function HomeScreen() {
   const setDialog = useUIStore((state) => state.setDialog);
   const data = getHomeIntelligence(segment);
   const actions = data.actions
-    .filter((action) => action.action === "WATCH" || action.action === "REPRICE")
+    .filter((action) => action.action === "WATCH")
     .slice(0, 3);
 
   return (

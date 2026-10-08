@@ -85,13 +85,6 @@ const ALL: HomeIntelligence = {
       subtitleKey: "watch25Subtitle",
       href: "/actions",
     },
-    {
-      id: "reprice-50g",
-      action: "REPRICE",
-      titleKey: "reprice50Title",
-      subtitleKey: "reprice50Subtitle",
-      href: "/pricing",
-    },
   ],
 };
 
