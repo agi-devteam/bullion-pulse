@@ -8,5 +8,6 @@ export {
 export { Input } from "@/components/atoms/input";
 export { Label } from "@/components/atoms/label";
 export { Separator } from "@/components/atoms/separator";
+export { Skeleton } from "@/components/atoms/skeleton";
 export { Status, type StatusProps } from "@/components/atoms/status";
 export { Switch } from "@/components/atoms/switch";

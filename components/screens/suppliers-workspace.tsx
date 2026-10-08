@@ -11,33 +11,38 @@ import {
   WorkspaceStack,
 } from "@/components/molecules/page-toolbar";
 import { DataTable } from "@/components/organisms/data-table";
+import { SuppliersWorkspaceSkeleton } from "@/components/screens/suppliers-workspace-skeleton";
 import { formatStamp } from "@/lib/format/datetime";
 import { formatIdr, formatNumber } from "@/lib/format/money";
-import { getSupplierQuotes } from "@/lib/mocks/workspace";
+import { useSuppliers } from "@/lib/query/hooks";
 import { useUIStore } from "@/stores/use-ui-store";
 
 export function SuppliersWorkspace() {
   const t = useTranslations("suppliers");
   const tCommon = useTranslations("common");
-  const quotes = getSupplierQuotes();
+  const suppliersQuery = useSuppliers();
   const setSettingsTab = useUIStore((state) => state.setSettingsTab);
   const [supplier, setSupplier] = useState("all");
 
   const supplierOptions = useMemo(() => {
+    const quotes = suppliersQuery.data ?? [];
     const names = [...new Set(quotes.map((quote) => quote.name))].sort();
     return [
       ["all", t("filters.allSuppliers")] as [string, string],
       ...names.map((name) => [name, name] as [string, string]),
     ];
-  }, [quotes, t]);
+  }, [suppliersQuery.data, t]);
 
-  const rows = useMemo(
-    () =>
-      quotes.filter(
-        (quote) => supplier === "all" || quote.name === supplier,
-      ),
-    [quotes, supplier],
-  );
+  const rows = useMemo(() => {
+    const quotes = suppliersQuery.data ?? [];
+    return quotes.filter(
+      (quote) => supplier === "all" || quote.name === supplier,
+    );
+  }, [suppliersQuery.data, supplier]);
+
+  if (suppliersQuery.isPending) {
+    return <SuppliersWorkspaceSkeleton />;
+  }
 
   return (
     <WorkspaceStack>

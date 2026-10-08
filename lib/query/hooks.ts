@@ -7,6 +7,12 @@ import type { DecisionBucket, Segment } from "@/domain/primitives";
 import type { DisplaySettings, PolicyDraft } from "@/domain/settings";
 import { fetchInventories } from "@/lib/api/inventories";
 import { fetchPolicyDraft, persistPolicyDraft } from "@/lib/api/policies";
+import { getHomeIntelligence } from "@/lib/mocks/home-intelligence";
+import {
+  getActionAlerts,
+  getPricingRows,
+  getSupplierQuotes,
+} from "@/lib/mocks/workspace";
 import { queryKeys } from "@/lib/query/keys";
 
 class ApiNotImplementedError extends Error {
@@ -23,8 +29,9 @@ function notImplemented(endpoint: string): Promise<never> {
 export function useIntelligence(segment: Segment) {
   return useQuery({
     queryKey: queryKeys.intelligence.bySegment(segment),
-    queryFn: () => notImplemented("GET /api/intelligence"),
-    enabled: false,
+    queryFn: () => Promise.resolve(getHomeIntelligence(segment)),
+    staleTime: 60 * 1000,
+    placeholderData: (previous) => previous,
   });
 }
 
@@ -71,27 +78,28 @@ export function useMarketXau() {
   });
 }
 
-export function usePricing(filters: PricingFilters) {
+/** Full pricing list. Filters are applied client-side. */
+export function usePricing(_filters?: PricingFilters) {
   return useQuery({
-    queryKey: queryKeys.pricing.list(filters),
-    queryFn: () => notImplemented("GET /api/pricing"),
-    enabled: false,
+    queryKey: queryKeys.pricing.all,
+    queryFn: () => Promise.resolve(getPricingRows()),
+    staleTime: 60 * 1000,
   });
 }
 
 export function useSuppliers() {
   return useQuery({
     queryKey: queryKeys.suppliers,
-    queryFn: () => notImplemented("GET /api/suppliers"),
-    enabled: false,
+    queryFn: () => Promise.resolve(getSupplierQuotes()),
+    staleTime: 60 * 1000,
   });
 }
 
 export function useActions() {
   return useQuery({
     queryKey: queryKeys.actions,
-    queryFn: () => notImplemented("GET /api/actions"),
-    enabled: false,
+    queryFn: () => Promise.resolve(getActionAlerts()),
+    staleTime: 60 * 1000,
   });
 }
 

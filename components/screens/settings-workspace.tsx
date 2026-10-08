@@ -26,6 +26,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/organisms/dialog";
+import { SettingsWorkspaceSkeleton } from "@/components/screens/settings-workspace-skeleton";
 import { GRAMS, type Language, type Theme } from "@/domain/primitives";
 import type {
   PolicyDraft,
@@ -403,11 +404,7 @@ export function SettingsWorkspace() {
       );
     }
 
-    return (
-      <Card className="policy-matrix block gap-0 p-6">
-        <p className="m-0 text-[0.95rem] text-muted-text">{t("loading")}</p>
-      </Card>
-    );
+    return <SettingsWorkspaceSkeleton />;
   }
 
   return (

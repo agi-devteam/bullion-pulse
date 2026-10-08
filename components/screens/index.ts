@@ -1,6 +1,12 @@
 export { ActionsWorkspace } from "@/components/screens/actions-workspace";
+export { ActionsWorkspaceSkeleton } from "@/components/screens/actions-workspace-skeleton";
 export { HomeScreen } from "@/components/screens/home-screen";
+export { HomeScreenSkeleton } from "@/components/screens/home-screen-skeleton";
 export { InventoryWorkspace } from "@/components/screens/inventory-workspace";
+export { InventoryWorkspaceSkeleton } from "@/components/screens/inventory-workspace-skeleton";
 export { PricingWorkspace } from "@/components/screens/pricing-workspace";
+export { PricingWorkspaceSkeleton } from "@/components/screens/pricing-workspace-skeleton";
 export { SettingsWorkspace } from "@/components/screens/settings-workspace";
+export { SettingsWorkspaceSkeleton } from "@/components/screens/settings-workspace-skeleton";
 export { SuppliersWorkspace } from "@/components/screens/suppliers-workspace";
+export { SuppliersWorkspaceSkeleton } from "@/components/screens/suppliers-workspace-skeleton";

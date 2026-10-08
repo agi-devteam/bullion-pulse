@@ -10,6 +10,7 @@ import { Choice } from "@/components/molecules/choice";
 import { Metric } from "@/components/molecules/metric";
 import { PageToolbar, WorkspaceStack } from "@/components/molecules/page-toolbar";
 import { DataTable } from "@/components/organisms/data-table";
+import { InventoryWorkspaceSkeleton } from "@/components/screens/inventory-workspace-skeleton";
 import type { InventoryAvailabilityFilter } from "@/domain/filters";
 import type { InventoryDecision } from "@/domain/primitives";
 import { summarizeInventory } from "@/lib/api/inventories";
@@ -33,7 +34,10 @@ export function InventoryWorkspace() {
   const setDialog = useUIStore((state) => state.setDialog);
   const inventoryQuery = useInventoryRecords();
   const records = inventoryQuery.data ?? [];
-  const summary = useMemo(() => summarizeInventory(records), [records]);
+  const summary = useMemo(
+    () => summarizeInventory(inventoryQuery.data ?? []),
+    [inventoryQuery.data],
+  );
   const [channel, setChannel] = useState<"all" | "B2C" | "B2B">("all");
   const [status, setStatus] = useState<InventoryAvailabilityFilter>("READY");
   const [decision, setDecision] = useState<"all" | InventoryDecision>("all");
@@ -41,9 +45,10 @@ export function InventoryWorkspace() {
   const [page, setPage] = useState(0);
 
   const rows = useMemo(() => {
+    const allRecords = inventoryQuery.data ?? [];
     const needle = query.trim().toLowerCase();
 
-    return records.filter((row) => {
+    return allRecords.filter((row) => {
       if (channel !== "all" && row.channel !== channel) return false;
       if (status === "READY" && !row.ready) return false;
       if (status === "EXCLUDED" && (row.ready || !row.valid)) return false;
@@ -57,7 +62,7 @@ export function InventoryWorkspace() {
       }
       return true;
     });
-  }, [records, channel, status, decision, query]);
+  }, [inventoryQuery.data, channel, status, decision, query]);
 
   const pages = Math.max(1, Math.ceil(rows.length / PAGE_SIZE));
   const current = Math.min(page, pages - 1);
@@ -80,12 +85,8 @@ export function InventoryWorkspace() {
     );
   }
 
-  if (inventoryQuery.isLoading && records.length === 0) {
-    return (
-      <Card className="block gap-0 p-6">
-        <p className="m-0 text-[0.95rem] text-muted-text">{t("loading")}</p>
-      </Card>
-    );
+  if (inventoryQuery.isPending) {
+    return <InventoryWorkspaceSkeleton />;
   }
 
   return (

@@ -7,10 +7,11 @@ import { Choice } from "@/components/molecules/choice";
 import { NoticeBanner } from "@/components/molecules/notice-banner";
 import { PageToolbar, WorkspaceStack } from "@/components/molecules/page-toolbar";
 import { DataTable } from "@/components/organisms/data-table";
+import { PricingWorkspaceSkeleton } from "@/components/screens/pricing-workspace-skeleton";
 import { GRAMS } from "@/domain/primitives";
 import type { PricingFilters } from "@/domain/filters";
 import { formatIdr, formatPercent } from "@/lib/format/money";
-import { getPricingRows } from "@/lib/mocks/workspace";
+import { usePricing } from "@/lib/query/hooks";
 
 function recommendationTone(value: string) {
   if (value === "OK") return "sell" as const;
@@ -32,19 +33,22 @@ function translateRecommendation(
 export function PricingWorkspace() {
   const t = useTranslations("pricing");
   const tCommon = useTranslations("common");
-  const allRows = getPricingRows();
+  const pricingQuery = usePricing();
   const [channel, setChannel] = useState<PricingFilters["channel"]>("all");
   const [gram, setGram] = useState<PricingFilters["gram"]>("all");
 
-  const rows = useMemo(
-    () =>
-      allRows.filter((row) => {
-        if (channel !== "all" && row.channel !== channel) return false;
-        if (gram !== "all" && String(row.gram) !== gram) return false;
-        return true;
-      }),
-    [allRows, channel, gram],
-  );
+  const rows = useMemo(() => {
+    const allRows = pricingQuery.data ?? [];
+    return allRows.filter((row) => {
+      if (channel !== "all" && row.channel !== channel) return false;
+      if (gram !== "all" && String(row.gram) !== gram) return false;
+      return true;
+    });
+  }, [pricingQuery.data, channel, gram]);
+
+  if (pricingQuery.isPending) {
+    return <PricingWorkspaceSkeleton />;
+  }
 
   return (
     <WorkspaceStack>

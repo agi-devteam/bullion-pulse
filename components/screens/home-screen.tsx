@@ -7,8 +7,9 @@ import { Card } from "@/components/molecules/card";
 import { DecisionPanel } from "@/components/organisms/decision-panel";
 import { PriorityActionCard } from "@/components/organisms/priority-action-card";
 import { ReadyInventoryCard } from "@/components/organisms/ready-inventory-card";
+import { HomeScreenSkeleton } from "@/components/screens/home-screen-skeleton";
 import type { DecisionBucket } from "@/domain/primitives";
-import { getHomeIntelligence } from "@/lib/mocks/home-intelligence";
+import { useIntelligence } from "@/lib/query/hooks";
 import { useSettingsStore } from "@/stores/use-settings-store";
 import { useUIStore } from "@/stores/use-ui-store";
 
@@ -19,7 +20,14 @@ export function HomeScreen() {
   const tPriority = useTranslations("home.priority");
   const segment = useSettingsStore((state) => state.segment);
   const setDialog = useUIStore((state) => state.setDialog);
-  const data = getHomeIntelligence(segment);
+  const intelligenceQuery = useIntelligence(segment);
+
+  if (intelligenceQuery.isPending || !intelligenceQuery.data) {
+    return <HomeScreenSkeleton />;
+  }
+
+  const data = intelligenceQuery.data;
+
   const actions = data.actions
     .filter((action) => action.action === "WATCH")
     .slice(0, 3);

@@ -1,4 +1,8 @@
 export { DataTable, type DataTableProps } from "@/components/organisms/data-table";
+export {
+  DataTableSkeleton,
+  type DataTableSkeletonProps,
+} from "@/components/organisms/data-table-skeleton";
 export { DecisionPanel, type DecisionPanelProps } from "@/components/organisms/decision-panel";
 export { DenominationBarChart, type DenominationBarChartProps } from "@/components/organisms/denomination-bar-chart";
 export {

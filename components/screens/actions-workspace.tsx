@@ -5,10 +5,11 @@ import { Button } from "@/components/atoms/button";
 import { Status } from "@/components/atoms/status";
 import { WorkspaceStack } from "@/components/molecules/page-toolbar";
 import { DataTable } from "@/components/organisms/data-table";
+import { ActionsWorkspaceSkeleton } from "@/components/screens/actions-workspace-skeleton";
 import type { ActionStatus } from "@/domain/actions";
 import { formatStamp } from "@/lib/format/datetime";
 import { formatNumber } from "@/lib/format/money";
-import { getActionAlerts } from "@/lib/mocks/workspace";
+import { useActions } from "@/lib/query/hooks";
 import { useUIStore } from "@/stores/use-ui-store";
 
 function statusLabel(
@@ -28,7 +29,13 @@ export function ActionsWorkspace() {
   const tCommon = useTranslations("common");
   const setDialog = useUIStore((state) => state.setDialog);
   const actionStatuses = useUIStore((state) => state.actionStatuses);
-  const alerts = getActionAlerts();
+  const actionsQuery = useActions();
+
+  if (actionsQuery.isPending) {
+    return <ActionsWorkspaceSkeleton />;
+  }
+
+  const alerts = actionsQuery.data ?? [];
 
   return (
     <WorkspaceStack>
