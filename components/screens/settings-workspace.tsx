@@ -121,7 +121,7 @@ function SupplierPolicyAccordion({
   return (
     <Accordion
       multiple
-      defaultValue={groups[0] ? [groups[0].supplierId] : []}
+      defaultValue={[]}
       className="gap-3"
     >
       {groups.map((group) => (
