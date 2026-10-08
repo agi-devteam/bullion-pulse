@@ -36,7 +36,6 @@ export function MarketStrip() {
   const antam = useMarketAntam();
   const time = useWibTime();
   const unavailable = t("unavailable");
-  const mockTooltip = t("mockTooltip");
 
   return (
     <div className="flex min-w-0 flex-wrap gap-2 min-[701px]:max-[1500px]:col-span-full min-[701px]:max-[1500px]:row-start-2 max-[1500px]:flex-nowrap max-[1500px]:overflow-x-auto max-[1500px]:scrollbar-none max-[700px]:order-3 max-[700px]:w-full [&::-webkit-scrollbar]:hidden">
@@ -44,7 +43,6 @@ export function MarketStrip() {
         label={t("xauLabel")}
         value={xau.data ? formatUsd(xau.data.current) : unavailable}
         change={xau.data?.change}
-        title={mockTooltip}
       />
       <MarketPill
         label={t("antamSell1g")}
@@ -53,7 +51,6 @@ export function MarketStrip() {
             ? formatRupiah(antam.data.sell[1])
             : unavailable
         }
-        title={mockTooltip}
       />
       <MarketPill
         label={t("antamBuyback")}
@@ -62,7 +59,6 @@ export function MarketStrip() {
             ? formatRupiah(antam.data.buyback)
             : unavailable
         }
-        title={mockTooltip}
       />
       <MarketPill
         value={time ? t("clockWib", { time }) : unavailable}

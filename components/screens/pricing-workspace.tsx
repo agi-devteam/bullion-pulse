@@ -87,7 +87,7 @@ export function PricingWorkspace() {
           t("headers.channel"),
           t("headers.gram"),
           t("headers.pricelist"),
-          t("headers.antamMock"),
+          t("headers.antam"),
           t("headers.gapVsAntam"),
           t("headers.supplierUnit"),
           t("headers.minProfitable"),
