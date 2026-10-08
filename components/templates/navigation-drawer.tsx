@@ -35,12 +35,7 @@ export function NavigationDrawer() {
           <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-ink text-logo">
             <BrandPulse />
           </span>
-          <span>
-            {t("brand")}
-            <small className="mt-0.75 block text-[0.8rem] font-normal text-muted-text">
-              {t("brandTagline")}
-            </small>
-          </span>
+          <span>{t("brand")}</span>
         </SheetTitle>
         <SheetClose
           render={
@@ -89,11 +84,6 @@ export function NavigationDrawer() {
           </div>
         ))}
       </nav>
-      <div className="mt-auto text-[0.9375rem] leading-[1.6] text-muted-text">
-        {t("footerLine1")}
-        <br />
-        {t("footerLine2")}
-      </div>
     </SheetContent>
   );
 }

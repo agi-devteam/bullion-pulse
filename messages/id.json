@@ -58,19 +58,15 @@
     }
   },
   "shell": {
-    "subtitle": "Intelijen Inventory",
-    "metadataDescription": "Inventory Intelligence · V1",
+    "metadataDescription": "Bullion Pulse · V1",
     "openNav": "Tampilkan navigasi",
     "account": "Akun",
     "settingsMenu": "Pengaturan",
     "drawer": {
       "brand": "Bullion Pulse",
-      "brandTagline": "Workspace trading",
       "collapse": "Ciutkan atau perluas sidebar",
-      "description": "Navigasi workspace",
-      "mainNav": "Navigasi utama",
-      "footerLine1": "Workspace",
-      "footerLine2": "Intelijen Inventory"
+      "description": "Navigasi",
+      "mainNav": "Navigasi utama"
     }
   },
   "market": {

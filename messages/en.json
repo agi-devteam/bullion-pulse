@@ -58,19 +58,15 @@
     }
   },
   "shell": {
-    "subtitle": "Inventory Intelligence",
-    "metadataDescription": "Inventory Intelligence · V1",
+    "metadataDescription": "Bullion Pulse · V1",
     "openNav": "Show navigation",
     "account": "Account",
     "settingsMenu": "Settings",
     "drawer": {
       "brand": "Bullion Pulse",
-      "brandTagline": "Trading workspace",
       "collapse": "Collapse or expand sidebar",
-      "description": "Workspace navigation",
-      "mainNav": "Main navigation",
-      "footerLine1": "Workspace",
-      "footerLine2": "Inventory Intelligence"
+      "description": "Navigation",
+      "mainNav": "Main navigation"
     }
   },
   "market": {

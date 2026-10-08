@@ -92,14 +92,6 @@ export function AppShell({ children }: AppShellProps) {
               >
                 {title}
               </h1>
-              <p
-                className={cn(
-                  "mt-1 mb-0 text-[0.95rem] text-muted-text",
-                  isHome && "mt-0 text-[0.875rem] max-[480px]:text-[0.8rem]",
-                )}
-              >
-                {t("subtitle")}
-              </p>
             </div>
           </div>
           {isHome ? (
