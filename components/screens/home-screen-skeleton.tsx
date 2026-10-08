@@ -161,10 +161,6 @@ export function HomeScreenSkeleton() {
           <PriorityActionCardSkeleton />
         </div>
       </section>
-      <footer className="flex flex-wrap justify-between gap-2 text-[0.875rem] text-muted-text">
-        <Skeleton className="h-3.5 w-48" />
-        <Skeleton className="h-3.5 w-56" />
-      </footer>
     </div>
   );
 }

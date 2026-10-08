@@ -5,7 +5,6 @@ export {
   AccordionPanel,
   AccordionTrigger,
 } from "@/components/molecules/accordion";
-export { AppFooter, type AppFooterProps } from "@/components/molecules/app-footer";
 export { Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/molecules/card";
 export { ChannelFilter } from "@/components/molecules/channel-filter";
 export { Choice, type ChoiceProps } from "@/components/molecules/choice";

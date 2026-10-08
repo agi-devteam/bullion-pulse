@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { AppFooter } from "@/components/molecules/app-footer";
 import { Card } from "@/components/molecules/card";
 import { DecisionPanel } from "@/components/organisms/decision-panel";
 import { PriorityActionCard } from "@/components/organisms/priority-action-card";
@@ -82,15 +81,6 @@ export function HomeScreen() {
           ))}
         </div>
       </section>
-      <AppFooter
-        leftText={t("footerSnapshot", { date: data.snapshotDate })}
-        rightText={t("footerSample", {
-          count: data.invalidCount,
-          sources: data.isComplete
-            ? t("sourcesValid")
-            : t("sourcesNeedReview"),
-        })}
-      />
     </div>
   );
 }

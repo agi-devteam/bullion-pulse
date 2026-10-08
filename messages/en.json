@@ -67,8 +67,6 @@
       "brandTagline": "Trading workspace",
       "collapse": "Collapse or expand sidebar",
       "description": "Workspace navigation",
-      "searchLabel": "Search pages",
-      "searchPlaceholder": "Search",
       "mainNav": "Main navigation",
       "footerLine1": "Workspace",
       "footerLine2": "Inventory Intelligence"
@@ -88,10 +86,6 @@
   "home": {
     "priorityTitle": "Priority actions",
     "viewAll": "View all →",
-    "footerSnapshot": "Snapshot · {date}",
-    "footerSample": "Sample data · {count} invalid excluded · {sources}",
-    "sourcesValid": "sources valid",
-    "sourcesNeedReview": "sources need review",
     "ready": {
       "ariaEvidence": "View Ready Inventory evidence",
       "title": "Ready Inventory · {channel}",

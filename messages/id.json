@@ -67,8 +67,6 @@
       "brandTagline": "Workspace trading",
       "collapse": "Ciutkan atau perluas sidebar",
       "description": "Navigasi workspace",
-      "searchLabel": "Cari halaman",
-      "searchPlaceholder": "Cari",
       "mainNav": "Navigasi utama",
       "footerLine1": "Workspace",
       "footerLine2": "Intelijen Inventory"
@@ -88,10 +86,6 @@
   "home": {
     "priorityTitle": "Aksi prioritas",
     "viewAll": "Lihat semua →",
-    "footerSnapshot": "Snapshot · {date}",
-    "footerSample": "Sample data · {count} invalid excluded · {sources}",
-    "sourcesValid": "sources valid",
-    "sourcesNeedReview": "sources need review",
     "ready": {
       "ariaEvidence": "Lihat Ready Inventory evidence",
       "title": "Ready Inventory · {channel}",
