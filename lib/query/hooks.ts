@@ -60,6 +60,12 @@ export function useSaveSettings() {
       void queryClient.invalidateQueries({
         queryKey: queryKeys.inventory.all,
       });
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.suppliers,
+      });
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.pricing.all,
+      });
     },
   });
 }

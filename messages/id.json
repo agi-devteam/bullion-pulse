@@ -247,7 +247,7 @@
       "system": "Sistem / Pasar"
     },
     "tabsNav": "Kategori pengaturan",
-    "footerNote": "Perubahan berlaku setelah Save. Kebijakan margin, route, dan sistem disinkronkan ke server.",
+    "footerNote": "Perubahan berlaku setelah Save. Kebijakan margin, route, supplier, dan sistem disinkronkan ke server.",
     "loading": "Memuat pengaturan dari server…",
     "saving": "Menyimpan…",
     "loadFailed": "Tidak dapat memuat pengaturan dari server.",

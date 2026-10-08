@@ -1,9 +1,9 @@
 import type { Gram } from "@/domain/primitives";
 import { GRAMS } from "@/domain/primitives";
+import type { SupplierPolicy, SupplierPolicyQuote } from "@/domain/settings";
 import type { SupplierQuoteRow } from "@/domain/suppliers";
-import { apiGet } from "@/lib/api/http";
+import { apiGet, apiPut } from "@/lib/api/http";
 
-/** Live backend shape — `GET /suppliers`. */
 export interface SupplierQuoteDto {
   supplierId: string;
   quoteId: string;
@@ -23,18 +23,21 @@ function isGram(value: number): value is Gram {
   return (GRAMS as readonly number[]).includes(value);
 }
 
-/** Backend sends epoch ms; domain + UI expect ISO strings. */
 export function toIsoTimestamp(value: number | string | null | undefined): string {
   if (value == null || value === "") return "";
 
   if (typeof value === "number" && Number.isFinite(value)) {
-    return new Date(value).toISOString();
+    const ms = value < 1e12 ? value * 1000 : value;
+    return new Date(ms).toISOString();
   }
 
   const trimmed = String(value).trim();
   if (/^\d+$/.test(trimmed)) {
-    const ms = Number(trimmed);
-    if (Number.isFinite(ms)) return new Date(ms).toISOString();
+    const raw = Number(trimmed);
+    if (Number.isFinite(raw)) {
+      const ms = raw < 1e12 ? raw * 1000 : raw;
+      return new Date(ms).toISOString();
+    }
   }
 
   const parsed = new Date(trimmed);
@@ -64,7 +67,49 @@ export function mapSupplierQuote(dto: SupplierQuoteDto): SupplierQuoteRow {
   };
 }
 
+export function toSupplierPolicyQuote(row: SupplierQuoteRow): SupplierPolicyQuote {
+  return {
+    quoteId: row.quoteId,
+    supplierId: row.supplierId,
+    name: row.name,
+    gram: row.gram,
+    active: row.active,
+    capacity: row.capacity,
+    leadTime: row.leadTime,
+  };
+}
+
+export async function fetchSupplierDtos(): Promise<SupplierQuoteDto[]> {
+  return apiGet<SupplierQuoteDto[]>("/suppliers");
+}
+
 export async function fetchSuppliers(): Promise<SupplierQuoteRow[]> {
-  const rows = await apiGet<SupplierQuoteDto[]>("/suppliers");
+  const rows = await fetchSupplierDtos();
   return rows.map(mapSupplierQuote);
+}
+
+export async function updateSuppliers(rows: SupplierQuoteDto[]): Promise<void> {
+  await apiPut("/suppliers", rows);
+}
+
+export async function persistSupplierPolicy(
+  policy: SupplierPolicy,
+): Promise<void> {
+  const current = await fetchSupplierDtos();
+  const patchByQuoteId = new Map(
+    policy.quotes.map((quote) => [quote.quoteId, quote] as const),
+  );
+
+  const next = current.map((dto) => {
+    const patch = patchByQuoteId.get(String(dto.quoteId));
+    if (!patch) return dto;
+    return {
+      ...dto,
+      active: patch.active,
+      capacity: patch.capacity,
+      leadTime: patch.leadTime,
+    };
+  });
+
+  await updateSuppliers(next);
 }

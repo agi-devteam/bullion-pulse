@@ -8,6 +8,11 @@ import type {
   SystemSettings,
 } from "@/domain/settings";
 import { apiGet, apiPut } from "@/lib/api/http";
+import {
+  fetchSuppliers,
+  persistSupplierPolicy,
+  toSupplierPolicyQuote,
+} from "@/lib/api/suppliers";
 import { createDefaultPolicyDraft } from "@/lib/settings/defaults";
 
 /** Live backend shapes — match Express /policies/* contracts. */
@@ -165,10 +170,11 @@ export async function updateSystemPolicy(
 export async function fetchPolicyDraft(
   display: DisplaySettings,
 ): Promise<PolicyDraft> {
-  const [margins, route, system] = await Promise.all([
+  const [margins, route, system, suppliers] = await Promise.all([
     fetchMarginPolicies(),
     fetchRoutePolicy(),
     fetchSystemPolicy(),
+    fetchSuppliers(),
   ]);
 
   const base = createDefaultPolicyDraft(display);
@@ -178,6 +184,9 @@ export async function fetchPolicyDraft(
     display,
     margin: marginRowsToPolicy(margins),
     route: routeDtoToPolicy(route),
+    supplier: {
+      quotes: suppliers.map(toSupplierPolicyQuote),
+    },
     system: systemDtoToSettings(system),
   };
 }
@@ -187,5 +196,6 @@ export async function persistPolicyDraft(draft: PolicyDraft): Promise<void> {
     updateMarginPolicies(marginPolicyToRows(draft.margin)),
     updateRoutePolicy(routePolicyToDto(draft.route)),
     updateSystemPolicy(systemSettingsToDto(draft.system)),
+    persistSupplierPolicy(draft.supplier),
   ]);
 }

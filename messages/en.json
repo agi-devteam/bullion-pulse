@@ -247,7 +247,7 @@
       "system": "System / Market"
     },
     "tabsNav": "Settings categories",
-    "footerNote": "Changes apply after Save. Margin, route, and system policies sync to the server.",
+    "footerNote": "Changes apply after Save. Margin, route, supplier, and system policies sync to the server.",
     "loading": "Loading settings from server…",
     "saving": "Saving…",
     "loadFailed": "Could not load settings from the server.",
