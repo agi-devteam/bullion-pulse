@@ -181,15 +181,7 @@ export function EvidenceDialog() {
                   t("rows.productionKeeper"),
                   `${unit.production || tCommon("emDash")} · ${unit.stockKeeper}`,
                 ],
-                [
-                  t("rows.availability"),
-                  t("rows.availabilityValue", {
-                    status: unit.availabilityStatus,
-                    reserved: unit.reserved
-                      ? tCommon("yes")
-                      : tCommon("no"),
-                  }),
-                ],
+                [t("rows.availability"), unit.availabilityStatus],
                 [
                   t("rows.hppUnit"),
                   formatIdr(unit.unitCost > 0 ? unit.unitCost : null),

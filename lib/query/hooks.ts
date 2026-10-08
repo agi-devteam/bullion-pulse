@@ -5,6 +5,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { classifyInventory } from "@/domain/decision";
 import type { InventoryFilters, PricingFilters } from "@/domain/filters";
 import type { InventoryRecord } from "@/domain/inventory";
+import { enrichInventoryEconomics } from "@/domain/inventory-economics";
 import type { AntamQuote, XauQuote } from "@/domain/market";
 import type { DecisionBucket, Segment } from "@/domain/primitives";
 import {
@@ -103,40 +104,6 @@ export function useSuppliers(options?: { enabled?: boolean }) {
   });
 }
 
-/** Fetches full `GET /inventories` list. Filters are applied client-side. */
-export function useInventoryRecords(options?: { enabled?: boolean }) {
-  const theme = useSettingsStore((state) => state.theme);
-  const language = useSettingsStore((state) => state.language);
-  const settingsQuery = useSettings({ theme, language });
-  const suppliersQuery = useSuppliers();
-  const inventoryQuery = useQuery({
-    queryKey: queryKeys.inventory.all,
-    queryFn: fetchInventories,
-    staleTime: 60 * 1000,
-    enabled: options?.enabled ?? true,
-  });
-
-  const data = useMemo((): InventoryRecord[] | undefined => {
-    if (!inventoryQuery.data) return undefined;
-    if (!settingsQuery.data) return inventoryQuery.data;
-    return classifyInventory(inventoryQuery.data, {
-      policy: settingsQuery.data,
-      suppliers: suppliersQuery.data ?? [],
-    });
-  }, [inventoryQuery.data, settingsQuery.data, suppliersQuery.data]);
-
-  return {
-    ...inventoryQuery,
-    data,
-    isPending: inventoryQuery.isPending || settingsQuery.isPending,
-    isFetching: inventoryQuery.isFetching || settingsQuery.isFetching,
-  };
-}
-
-export function useInventory(_filters?: InventoryFilters) {
-  return useInventoryRecords();
-}
-
 export function useMarketAntam() {
   return useQuery<AntamQuote>({
     queryKey: queryKeys.market.antam,
@@ -150,6 +117,59 @@ export function useMarketAntam() {
     },
     staleTime: 60 * 1000,
   });
+}
+
+/** Fetches full `GET /inventories` list. Filters are applied client-side. */
+export function useInventoryRecords(options?: { enabled?: boolean }) {
+  const theme = useSettingsStore((state) => state.theme);
+  const language = useSettingsStore((state) => state.language);
+  const settingsQuery = useSettings({ theme, language });
+  const suppliersQuery = useSuppliers();
+  const antamQuery = useMarketAntam();
+  const inventoryQuery = useQuery({
+    queryKey: queryKeys.inventory.all,
+    queryFn: fetchInventories,
+    staleTime: 60 * 1000,
+    enabled: options?.enabled ?? true,
+  });
+
+  const data = useMemo((): InventoryRecord[] | undefined => {
+    if (!inventoryQuery.data) return undefined;
+
+    const withEconomics = enrichInventoryEconomics(
+      inventoryQuery.data,
+      antamQuery.data?.sell ?? {},
+    );
+
+    if (!settingsQuery.data) return withEconomics;
+
+    return classifyInventory(withEconomics, {
+      policy: settingsQuery.data,
+      suppliers: suppliersQuery.data ?? [],
+    });
+  }, [
+    inventoryQuery.data,
+    settingsQuery.data,
+    suppliersQuery.data,
+    antamQuery.data?.sell,
+  ]);
+
+  return {
+    ...inventoryQuery,
+    data,
+    isPending:
+      inventoryQuery.isPending ||
+      settingsQuery.isPending ||
+      antamQuery.isPending,
+    isFetching:
+      inventoryQuery.isFetching ||
+      settingsQuery.isFetching ||
+      antamQuery.isFetching,
+  };
+}
+
+export function useInventory(_filters?: InventoryFilters) {
+  return useInventoryRecords();
 }
 
 export function useMarketXau() {

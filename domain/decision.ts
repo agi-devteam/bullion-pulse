@@ -102,10 +102,6 @@ function findBestViableSupplier(
   return best;
 }
 
-/**
- * Classifies one READY inventory unit using API `marginPercentage`
- * against margin policy, then route viability.
- */
 export function classifyUnit(
   unit: InventoryRecord,
   margin: MarginPolicy,
@@ -164,7 +160,6 @@ export function classifyUnit(
   };
 }
 
-/** Enriches inventory rows with FE decision overlay (PRD §2.3). */
 export function classifyInventory(
   records: InventoryRecord[],
   context: ClassifyInventoryContext,

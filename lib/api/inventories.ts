@@ -73,7 +73,7 @@ export function mapInventoryRow(dto: InventoryRowDto): InventoryRecord {
     availabilityStatus: valid ? "READY" : "INVALID",
     reserved: false,
     unitCost,
-    purchasePrice: 0,
+    purchasePrice: unitCost,
     sellingPrice,
     directGp: valid ? directGp : null,
     directMargin: valid ? directMargin : null,
