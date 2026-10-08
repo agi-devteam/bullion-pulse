@@ -13,13 +13,13 @@ export interface RoutePolicy {
 }
 
 export interface SupplierPolicyQuote {
-  quote_id: string;
-  supplier_id: string;
+  quoteId: string;
+  supplierId: string;
   name: string;
   gram: Gram;
   active: boolean;
   capacity: number;
-  lead_time: number;
+  leadTime: number;
 }
 
 export interface SupplierPolicy {

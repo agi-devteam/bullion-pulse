@@ -84,11 +84,11 @@ function groupQuotesBySupplier(quotes: SupplierPolicyQuote[]) {
   const indexBySupplier = new Map<string, number>();
 
   for (const quote of quotes) {
-    const existing = indexBySupplier.get(quote.supplier_id);
+    const existing = indexBySupplier.get(quote.supplierId);
     if (existing === undefined) {
-      indexBySupplier.set(quote.supplier_id, groups.length);
+      indexBySupplier.set(quote.supplierId, groups.length);
       groups.push({
-        supplierId: quote.supplier_id,
+        supplierId: quote.supplierId,
         name: quote.name,
         quotes: [quote],
       });
@@ -144,7 +144,7 @@ function SupplierPolicyAccordion({
             <Accordion multiple defaultValue={[]} className="gap-2">
               {group.quotes.map((quote) => (
                 <AccordionItem
-                  key={quote.quote_id}
+                  key={quote.quoteId}
                   value={String(quote.gram)}
                   className="overflow-hidden rounded-md border border-line border-b bg-surface"
                 >
@@ -163,27 +163,27 @@ function SupplierPolicyAccordion({
                   <AccordionPanel contentClassName="px-3.5 pb-1 pt-0">
                     <FormRow
                       label={t("supplier.active")}
-                      id={`supplier-active-${quote.quote_id}`}
+                      id={`supplier-active-${quote.quoteId}`}
                     >
                       <Switch
-                        id={`supplier-active-${quote.quote_id}`}
+                        id={`supplier-active-${quote.quoteId}`}
                         checked={quote.active}
                         onCheckedChange={(value) =>
-                          onQuoteChange(quote.quote_id, { active: value })
+                          onQuoteChange(quote.quoteId, { active: value })
                         }
                       />
                     </FormRow>
                     <FormRow
                       label={t("supplier.capacity")}
-                      id={`supplier-capacity-${quote.quote_id}`}
+                      id={`supplier-capacity-${quote.quoteId}`}
                     >
                       <Input
-                        id={`supplier-capacity-${quote.quote_id}`}
+                        id={`supplier-capacity-${quote.quoteId}`}
                         type="number"
                         min="0"
                         value={quote.capacity}
                         onChange={(event) =>
-                          onQuoteChange(quote.quote_id, {
+                          onQuoteChange(quote.quoteId, {
                             capacity: Number(event.target.value),
                           })
                         }
@@ -191,16 +191,16 @@ function SupplierPolicyAccordion({
                     </FormRow>
                     <FormRow
                       label={t("supplier.leadTime")}
-                      id={`supplier-lead-${quote.quote_id}`}
+                      id={`supplier-lead-${quote.quoteId}`}
                     >
                       <Input
-                        id={`supplier-lead-${quote.quote_id}`}
+                        id={`supplier-lead-${quote.quoteId}`}
                         type="number"
                         min="0"
-                        value={quote.lead_time}
+                        value={quote.leadTime}
                         onChange={(event) =>
-                          onQuoteChange(quote.quote_id, {
-                            lead_time: Number(event.target.value),
+                          onQuoteChange(quote.quoteId, {
+                            leadTime: Number(event.target.value),
                           })
                         }
                       />
@@ -284,7 +284,7 @@ export function SettingsWorkspace() {
       ...current,
       supplier: {
         quotes: current.supplier.quotes.map((quote) =>
-          quote.quote_id === quoteId ? { ...quote, ...patch } : quote,
+          quote.quoteId === quoteId ? { ...quote, ...patch } : quote,
         ),
       },
     }));
@@ -348,8 +348,8 @@ export function SettingsWorkspace() {
       if (
         !Number.isFinite(quote.capacity) ||
         quote.capacity < 0 ||
-        !Number.isFinite(quote.lead_time) ||
-        quote.lead_time < 0
+        !Number.isFinite(quote.leadTime) ||
+        quote.leadTime < 0
       ) {
         showToast(t("toasts.supplierInvalid"));
         return;

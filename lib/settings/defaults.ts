@@ -27,22 +27,22 @@ export function createDefaultPolicyDraft(
     supplier: {
       quotes: [
         {
-          quote_id: "Q-SIMA-10",
-          supplier_id: "SIMA",
+          quoteId: "Q-SIMA-10",
+          supplierId: "SIMA",
           name: "SIMA",
           gram: 10 as Gram,
           active: true,
           capacity: 160,
-          lead_time: 8,
+          leadTime: 8,
         },
         {
-          quote_id: "Q-KRISNA-25",
-          supplier_id: "KRISNA",
+          quoteId: "Q-KRISNA-25",
+          supplierId: "KRISNA",
           name: "KRISNA",
           gram: 25 as Gram,
           active: true,
           capacity: 1075,
-          lead_time: 8,
+          leadTime: 8,
         },
       ],
     },

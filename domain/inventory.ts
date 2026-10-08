@@ -3,27 +3,27 @@ import type { Channel, Gram, InventoryDecision } from "@/domain/primitives";
 
 export interface InventorySupplierRef {
   name: string;
-  quote_price: number;
+  quotePrice: number;
 }
 
 export interface InventoryRecord {
-  stock_id: string;
+  stockId: string;
   serial: string;
   gram: Gram;
   channel: Channel;
-  availability_status: string;
+  availabilityStatus: string;
   reserved: boolean;
-  unit_cost: number;
-  purchase_price: number;
-  selling_price: number | null;
-  direct_gp: number | null;
-  direct_margin: number | null;
+  unitCost: number;
+  purchasePrice: number;
+  sellingPrice: number | null;
+  directGp: number | null;
+  directMargin: number | null;
   decision: InventoryDecision | null;
-  recommended_action: string | null;
+  recommendedAction: string | null;
   production: string;
-  stock_keeper: string;
-  market_at_purchase: number | null;
-  market_at_sale: number | null;
+  stockKeeper: string;
+  marketAtPurchase: number | null;
+  marketAtSale: number | null;
   profit: BucketProfit;
   reason: string | null;
   supplier: InventorySupplierRef | null;

@@ -1,15 +1,15 @@
 import type { Gram } from "@/domain/primitives";
 
 export interface SupplierQuoteRow {
-  quote_id: string;
+  quoteId: string;
   name: string;
   active: boolean;
   gram: Gram;
-  quote_price: number | null;
+  quotePrice: number | null;
   capacity: number;
-  lead_time: number;
-  quote_time: string;
-  valid_until: string;
-  lock_available: boolean;
-  lock_status: string;
+  leadTime: number;
+  quoteTime: string;
+  validUntil: string;
+  lockAvailable: boolean;
+  lockStatus: string;
 }

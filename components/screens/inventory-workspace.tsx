@@ -51,7 +51,7 @@ export function InventoryWorkspace() {
       if (decision !== "all" && row.decision !== decision) return false;
       if (
         needle &&
-        !`${row.serial} ${row.stock_id} ${row.gram}g`.toLowerCase().includes(needle)
+        !`${row.serial} ${row.stockId} ${row.gram}g`.toLowerCase().includes(needle)
       ) {
         return false;
       }
@@ -161,11 +161,11 @@ export function InventoryWorkspace() {
           t("headers.evidence"),
         ]}
         rows={pageRows.map((row) => [
-          <span key={`${row.stock_id}-id`}>
+          <span key={`${row.stockId}-id`}>
             {row.serial}
             <br />
             <span className="text-[0.95rem] leading-normal text-muted-text">
-              {row.stock_id}
+              {row.stockId}
             </span>
           </span>,
           `${row.gram}g`,
@@ -173,12 +173,12 @@ export function InventoryWorkspace() {
           <Status key="availability" tone={row.ready ? "sell" : ""}>
             {row.reserved
               ? tCommon("decisions.reserved")
-              : row.availability_status}
+              : row.availabilityStatus}
           </Status>,
-          formatIdr(row.unit_cost > 0 ? row.unit_cost : null),
-          row.ready ? formatIdr(row.selling_price) : tCommon("emDash"),
-          row.ready && row.direct_gp != null && row.direct_margin != null
-            ? `${formatIdr(row.direct_gp)} / ${formatPercent(row.direct_margin)}`
+          formatIdr(row.unitCost > 0 ? row.unitCost : null),
+          row.ready ? formatIdr(row.sellingPrice) : tCommon("emDash"),
+          row.ready && row.directGp != null && row.directMargin != null
+            ? `${formatIdr(row.directGp)} / ${formatPercent(row.directMargin)}`
             : tCommon("emDash"),
           <Status key="decision" tone={decisionTone(row.decision, row.valid)}>
             {row.decision ??
@@ -193,7 +193,7 @@ export function InventoryWorkspace() {
             onClick={() =>
               setDialog({
                 kind: "inventory-unit",
-                stockId: row.stock_id,
+                stockId: row.stockId,
                 serial: row.serial,
               })
             }

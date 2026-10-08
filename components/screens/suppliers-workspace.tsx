@@ -77,16 +77,16 @@ export function SuppliersWorkspace() {
             {quote.active ? tCommon("active") : tCommon("inactive")}
           </Status>,
           tCommon("gramsUnit", { value: quote.gram }),
-          formatIdr(quote.quote_price),
+          formatIdr(quote.quotePrice),
           tCommon("gramsUnit", { value: formatNumber(quote.capacity) }),
-          t("leadHours", { hours: quote.lead_time }),
-          formatStamp(quote.quote_time),
-          formatStamp(quote.valid_until),
+          t("leadHours", { hours: quote.leadTime }),
+          formatStamp(quote.quoteTime),
+          formatStamp(quote.validUntil),
           t("lockPair", {
-            available: quote.lock_available
+            available: quote.lockAvailable
               ? tCommon("yes")
               : tCommon("no"),
-            status: quote.lock_status,
+            status: quote.lockStatus,
           }),
         ])}
       />

@@ -70,23 +70,23 @@ function makeRecord(input: {
     (input.status ?? "READY") === "READY";
 
   return {
-    stock_id: `STK-${pad(input.index, 5)}`,
+    stockId: `STK-${pad(input.index, 5)}`,
     serial: `GMI-${pad(input.index, 6)}`,
     gram: input.gram,
     channel: input.channel,
-    availability_status: input.status ?? "READY",
+    availabilityStatus: input.status ?? "READY",
     reserved: Boolean(input.reserved),
-    unit_cost: unitCost,
-    purchase_price: unitCost,
-    selling_price: ready ? selling : selling,
-    direct_gp: ready ? gp : null,
-    direct_margin: ready ? margin : null,
+    unitCost,
+    purchasePrice: unitCost,
+    sellingPrice: ready ? selling : selling,
+    directGp: ready ? gp : null,
+    directMargin: ready ? margin : null,
     decision: ready ? (input.decision ?? "SELL READY") : null,
-    recommended_action: input.action ?? (input.decision === "HOLD" ? "REPRICE" : input.decision === "ROUTE ELIGIBLE" ? "WATCH" : "HOLD / WAIT"),
+    recommendedAction: input.action ?? (input.decision === "HOLD" ? "REPRICE" : input.decision === "ROUTE ELIGIBLE" ? "WATCH" : "HOLD / WAIT"),
     production: "2026",
-    stock_keeper: "Vault Jakarta",
-    market_at_purchase: marketBuy,
-    market_at_sale: marketSale,
+    stockKeeper: "Vault Jakarta",
+    marketAtPurchase: marketBuy,
+    marketAtSale: marketSale,
     profit: profitFrom(unitCost, unitCost, marketBuy, marketSale, selling),
     reason: input.reason ?? null,
     supplier: input.supplier ?? null,
@@ -134,7 +134,7 @@ function buildInventory(): InventoryRecord[] {
         costRatio: 0.993,
         decision: "ROUTE ELIGIBLE",
         action: "WATCH",
-        supplier: { name: "SIMA", quote_price: Math.round(sellingPrice("B2C", 10) * (1 - 0.0182)) },
+        supplier: { name: "SIMA", quotePrice: Math.round(sellingPrice("B2C", 10) * (1 - 0.0182)) },
         reason: "Replacement profitable · WATCH until demand",
       }),
     );
@@ -149,7 +149,7 @@ function buildInventory(): InventoryRecord[] {
         costRatio: 0.993,
         decision: "ROUTE ELIGIBLE",
         action: "WATCH",
-        supplier: { name: "KRISNA", quote_price: Math.round(sellingPrice("B2C", 25) * (1 - 0.0183)) },
+        supplier: { name: "KRISNA", quotePrice: Math.round(sellingPrice("B2C", 25) * (1 - 0.0183)) },
         reason: "Replacement profitable · WATCH until demand",
       }),
     );
@@ -204,12 +204,12 @@ function buildInventory(): InventoryRecord[] {
       reason: "gramasi invalid",
     }),
     gram: 10,
-    unit_cost: -1,
+    unitCost: -1,
     valid: false,
     ready: false,
-    selling_price: null,
-    direct_gp: null,
-    direct_margin: null,
+    sellingPrice: null,
+    directGp: null,
+    directMargin: null,
   });
 
   return rows;
@@ -222,14 +222,14 @@ export function getInventoryRecords(): InventoryRecord[] {
 }
 
 export function getInventoryRecord(stockId: string): InventoryRecord | undefined {
-  return INVENTORY.find((row) => row.stock_id === stockId);
+  return INVENTORY.find((row) => row.stockId === stockId);
 }
 
 export function getInventorySummary(): InventorySummary {
   const ready = INVENTORY.filter((row) => row.ready && row.valid);
   const excluded = INVENTORY.filter((row) => row.valid && !row.ready);
   const invalid = INVENTORY.filter((row) => !row.valid);
-  const unpriced = ready.filter((row) => row.selling_price == null);
+  const unpriced = ready.filter((row) => row.sellingPrice == null);
 
   return {
     readyGrams: ready.reduce((sum, row) => sum + row.gram, 0),
@@ -249,7 +249,7 @@ export function getPricingRows(): PricingRow[] {
         (row) => row.ready && row.channel === channel && row.gram === gram,
       );
       const cost = units.length
-        ? Math.max(...units.map((row) => row.unit_cost))
+        ? Math.max(...units.map((row) => row.unitCost))
         : null;
       const pricelist = sellingPrice(channel, gram);
       const antam = antamPrice(gram);
@@ -298,30 +298,30 @@ function quoteValidUntil(quoteTime: string) {
 export function getSupplierQuotes(): SupplierQuoteRow[] {
   return [
     {
-      quote_id: "Q-SIMA-10",
+      quoteId: "Q-SIMA-10",
       name: "SIMA",
       active: true,
       gram: 10,
-      quote_price: Math.round(sellingPrice("B2C", 10) * (1 - 0.0182)),
+      quotePrice: Math.round(sellingPrice("B2C", 10) * (1 - 0.0182)),
       capacity: 160,
-      lead_time: 8,
-      quote_time: SNAPSHOT_AT,
-      valid_until: quoteValidUntil(SNAPSHOT_AT),
-      lock_available: true,
-      lock_status: "UNLOCKED",
+      leadTime: 8,
+      quoteTime: SNAPSHOT_AT,
+      validUntil: quoteValidUntil(SNAPSHOT_AT),
+      lockAvailable: true,
+      lockStatus: "UNLOCKED",
     },
     {
-      quote_id: "Q-KRISNA-25",
+      quoteId: "Q-KRISNA-25",
       name: "KRISNA",
       active: true,
       gram: 25,
-      quote_price: Math.round(sellingPrice("B2C", 25) * (1 - 0.0183)),
+      quotePrice: Math.round(sellingPrice("B2C", 25) * (1 - 0.0183)),
       capacity: 1075,
-      lead_time: 8,
-      quote_time: SNAPSHOT_AT,
-      valid_until: quoteValidUntil(SNAPSHOT_AT),
-      lock_available: true,
-      lock_status: "UNLOCKED",
+      leadTime: 8,
+      quoteTime: SNAPSHOT_AT,
+      validUntil: quoteValidUntil(SNAPSHOT_AT),
+      lockAvailable: true,
+      lockStatus: "UNLOCKED",
     },
   ];
 }
@@ -356,12 +356,12 @@ export function getActionAlerts(): ActionAlert[] {
       status: "OPEN",
       createdAt: SNAPSHOT_AT,
       supplier:
-        sima && sima.quote_price != null
+        sima && sima.quotePrice != null
           ? {
               name: sima.name,
-              quotePrice: sima.quote_price,
+              quotePrice: sima.quotePrice,
               capacity: sima.capacity,
-              leadTime: sima.lead_time,
+              leadTime: sima.leadTime,
             }
           : null,
     },
@@ -377,12 +377,12 @@ export function getActionAlerts(): ActionAlert[] {
       status: "OPEN",
       createdAt: SNAPSHOT_AT,
       supplier:
-        krisna && krisna.quote_price != null
+        krisna && krisna.quotePrice != null
           ? {
               name: krisna.name,
-              quotePrice: krisna.quote_price,
+              quotePrice: krisna.quotePrice,
               capacity: krisna.capacity,
-              leadTime: krisna.lead_time,
+              leadTime: krisna.leadTime,
             }
           : null,
     },

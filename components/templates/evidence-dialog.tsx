@@ -103,19 +103,19 @@ export function EvidenceDialog() {
           {unit ? (
             <Evidence
               rows={[
-                [t("rows.stockId"), unit.stock_id],
+                [t("rows.stockId"), unit.stockId],
                 [
                   t("rows.channelGram"),
                   `${unit.channel} · ${unit.gram}g`,
                 ],
                 [
                   t("rows.productionKeeper"),
-                  `${unit.production} · ${unit.stock_keeper}`,
+                  `${unit.production} · ${unit.stockKeeper}`,
                 ],
                 [
                   t("rows.availability"),
                   t("rows.availabilityValue", {
-                    status: unit.availability_status,
+                    status: unit.availabilityStatus,
                     reserved: unit.reserved
                       ? tCommon("yes")
                       : tCommon("no"),
@@ -123,26 +123,26 @@ export function EvidenceDialog() {
                 ],
                 [
                   t("rows.hppUnit"),
-                  formatIdr(unit.unit_cost > 0 ? unit.unit_cost : null),
+                  formatIdr(unit.unitCost > 0 ? unit.unitCost : null),
                 ],
                 [
                   t("rows.purchasePriceUnit"),
                   formatIdr(
-                    unit.purchase_price > 0 ? unit.purchase_price : null,
+                    unit.purchasePrice > 0 ? unit.purchasePrice : null,
                   ),
                 ],
-                [t("rows.sellingPrice"), formatIdr(unit.selling_price)],
+                [t("rows.sellingPrice"), formatIdr(unit.sellingPrice)],
                 [
                   t("rows.totalGpMargin"),
-                  unit.direct_gp != null && unit.direct_margin != null
-                    ? `${formatIdr(unit.direct_gp)} / ${formatPercent(unit.direct_margin)}`
+                  unit.directGp != null && unit.directMargin != null
+                    ? `${formatIdr(unit.directGp)} / ${formatPercent(unit.directMargin)}`
                     : tCommon("emDash"),
                 ],
                 [
                   t("rows.marketAtPurchase"),
-                  formatIdr(unit.market_at_purchase),
+                  formatIdr(unit.marketAtPurchase),
                 ],
-                [t("rows.marketNowAntam"), formatIdr(unit.market_at_sale)],
+                [t("rows.marketNowAntam"), formatIdr(unit.marketAtSale)],
                 [t("rows.prognosaEstimate"), formatIdr(unit.profit.prognosa)],
                 [
                   t("rows.investmentEstimate"),
@@ -160,7 +160,7 @@ export function EvidenceDialog() {
                 ],
                 [
                   t("rows.decisionAction"),
-                  `${unit.decision ?? tCommon("decisions.excludedUnpriced")} · ${unit.recommended_action ?? "REVIEW"}`,
+                  `${unit.decision ?? tCommon("decisions.excludedUnpriced")} · ${unit.recommendedAction ?? "REVIEW"}`,
                 ],
                 [
                   t("rows.reason"),
@@ -169,7 +169,7 @@ export function EvidenceDialog() {
                 [
                   t("rows.replacement"),
                   unit.supplier
-                    ? `${unit.supplier.name} · ${formatIdr(unit.supplier.quote_price)}`
+                    ? `${unit.supplier.name} · ${formatIdr(unit.supplier.quotePrice)}`
                     : tCommon("unavailable"),
                 ],
               ]}
