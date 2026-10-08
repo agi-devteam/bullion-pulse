@@ -8,7 +8,7 @@
     "gramsUnit": "{value}g",
     "pcs": "{count} pcs",
     "gramPcs": "gram · {pcs} pcs",
-    "gramasiCount": "· {count} denominations",
+    "gramasiCount": "· {count} grammages",
     "recordsPage": "{count} records · page {page} / {pages}",
     "previous": "Previous",
     "next": "Next",
@@ -118,7 +118,7 @@
       },
       "ariaEvidence": "View {bucket} evidence",
       "supplierAria": "ROUTE ELIGIBLE supplier candidates · not locked yet",
-      "chartTitle": "Breakdown by denomination (grams)",
+      "chartTitle": "Breakdown by grammage (grams)",
       "descIncomplete": "Sources not yet valid. Check Data Health & Audit.",
       "descSell": "Prioritize inventory that meets margin policy.",
       "descRoute": "Profitable replacement available. WATCH · wait for demand before lock.",
@@ -170,11 +170,11 @@
     }
   },
   "pricing": {
-    "notice": "Minimum profitable price and target-margin price use the highest READY cost per channel / denomination. ANTAM official source: logammulia.com only. XAU is not an operational pricing benchmark.",
+    "notice": "Minimum profitable price and target-margin price use the highest READY cost per channel / grammage. ANTAM official source: logammulia.com only. XAU is not an operational pricing benchmark.",
     "filters": {
       "channel": "Channel pricing",
-      "gram": "Denomination pricing",
-      "allGramasi": "All denominations"
+      "gram": "Grammage pricing",
+      "allGramasi": "All grammages"
     },
     "headers": {
       "channel": "Channel",
@@ -347,7 +347,7 @@
     },
     "rows": {
       "stockId": "Stock ID",
-      "channelGram": "Channel / Denomination",
+      "channelGram": "Channel / Grammage",
       "productionKeeper": "Production / Keeper",
       "availability": "Availability",
       "availabilityValue": "{status} · reserved {reserved}",
