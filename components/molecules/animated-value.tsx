@@ -10,6 +10,7 @@ import {
   toneForDelta,
   type DeltaSentiment,
 } from "@/lib/motion/delta-sentiment";
+import { useMotionInstant } from "@/lib/motion/motion-instant";
 import { useAnimatedNumber } from "@/lib/motion/use-animated-number";
 import { useBubblePresence } from "@/lib/motion/use-bubble-presence";
 import { formatNumber } from "@/lib/format/money";
@@ -24,6 +25,7 @@ export interface AnimatedValueProps {
   bubblePlacement?: DeltaBubblePlacement;
   formatDelta?: (delta: number) => string;
   onDeltaChange?: (delta: number) => void;
+  instant?: boolean;
   className?: string;
   bubbleClassName?: string;
 }
@@ -42,10 +44,14 @@ export function AnimatedValue({
   bubblePlacement = "below",
   formatDelta = defaultFormatDelta,
   onDeltaChange,
+  instant,
   className,
   bubbleClassName,
 }: AnimatedValueProps) {
-  const { display, delta, flashing } = useAnimatedNumber(value);
+  const instantFromContext = useMotionInstant();
+  const { display, delta, flashing } = useAnimatedNumber(value, {
+    instant: instant ?? instantFromContext,
+  });
   const tone = toneForDelta(delta, sentiment);
   const active = showBubble && delta !== 0 && tone !== "neutral";
   const bubble = useBubblePresence(

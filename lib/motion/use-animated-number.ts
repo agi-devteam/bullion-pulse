@@ -18,10 +18,11 @@ function easeOutCubic(t: number): number {
 
 export function useAnimatedNumber(
   target: number | null,
-  options?: { durationMs?: number; bubbleMs?: number },
+  options?: { durationMs?: number; bubbleMs?: number; instant?: boolean },
 ): AnimatedNumberState {
   const durationMs = options?.durationMs ?? DEFAULT_DURATION_MS;
   const bubbleMs = options?.bubbleMs ?? BUBBLE_MS;
+  const instant = options?.instant ?? false;
   const reducedMotion = usePrefersReducedMotion();
   const [display, setDisplay] = useState<number | null>(target);
   const [delta, setDelta] = useState(0);
@@ -40,6 +41,15 @@ export function useAnimatedNumber(
       previousTarget.current = target;
       displayRef.current = target;
       setDisplay(target);
+      return;
+    }
+
+    if (instant) {
+      previousTarget.current = target;
+      displayRef.current = target;
+      setDisplay(target);
+      setDelta(0);
+      setFlashing(false);
       return;
     }
 
@@ -116,7 +126,7 @@ export function useAnimatedNumber(
       window.clearTimeout(flashTimer);
       window.clearTimeout(bubbleTimer);
     };
-  }, [target, durationMs, bubbleMs, reducedMotion]);
+  }, [target, durationMs, bubbleMs, reducedMotion, instant]);
 
   return { display, delta, flashing };
 }
