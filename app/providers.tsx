@@ -2,6 +2,7 @@
 
 import { QueryClientProvider } from "@tanstack/react-query";
 import { useEffect, useState, type ReactNode } from "react";
+import { BootGate } from "@/components/templates/boot-gate";
 import { createQueryClient } from "@/lib/query/client";
 import { I18nProvider } from "@/lib/i18n/provider";
 import { useSettingsStore } from "@/stores/use-settings-store";
@@ -46,7 +47,7 @@ export function Providers({ children }: { children: ReactNode }) {
     <QueryClientProvider client={queryClient}>
       <I18nProvider>
         <ThemeSync />
-        {children}
+        <BootGate>{children}</BootGate>
       </I18nProvider>
     </QueryClientProvider>
   );

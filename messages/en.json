@@ -57,6 +57,19 @@
       "system": "System"
     }
   },
+  "boot": {
+    "aria": "Loading Bullion Pulse",
+    "eyebrow": "Inventory intelligence",
+    "title": "Bullion Pulse",
+    "loadFailed": "Could not load workspace data. Check your connection and try again.",
+    "statusLines": [
+      "Opening today’s decision snapshot…",
+      "Getting things ready…",
+      "Working on it…",
+      "Almost there…",
+      "Just a moment longer…"
+    ]
+  },
   "shell": {
     "metadataDescription": "Bullion Pulse · V1",
     "openNav": "Show navigation",

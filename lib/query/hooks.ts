@@ -16,14 +16,12 @@ import {
 } from "@/domain/settings";
 import { fetchInventories } from "@/lib/api/inventories";
 import { fetchPolicyDraft, persistPolicyDraft } from "@/lib/api/policies";
-import {
-  fetchAntamPricelists,
-  fetchPricingPricelistSources,
-} from "@/lib/api/pricelists";
+import { fetchPricingPricelistSources } from "@/lib/api/pricelists";
 import { fetchSuppliers } from "@/lib/api/suppliers";
 import { buildActionAlerts } from "@/lib/actions/build-alerts";
 import { buildHomeIntelligence } from "@/lib/intelligence/build-home";
 import { buildPricingRows } from "@/lib/pricing/build-rows";
+import { fetchAntamQuote } from "@/lib/query/bootstrap";
 import { INVENTORY_REFETCH_MS } from "@/lib/query/inventory-refresh";
 import { queryKeys } from "@/lib/query/keys";
 import { useSettingsStore } from "@/stores/use-settings-store";
@@ -110,14 +108,7 @@ export function useMarketAntam() {
 
   return useQuery<AntamQuote>({
     queryKey: queryKeys.market.antam,
-    queryFn: async () => {
-      const rows = await fetchAntamPricelists();
-      const sell: AntamQuote["sell"] = {};
-      for (const row of rows) {
-        sell[row.gram] = row.sellPrice;
-      }
-      return { sell, buyback: null };
-    },
+    queryFn: fetchAntamQuote,
     staleTime: refetchIntervalMs,
     refetchInterval: refetchIntervalMs,
   });

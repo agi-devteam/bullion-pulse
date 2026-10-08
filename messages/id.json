@@ -57,6 +57,19 @@
       "system": "Sistem"
     }
   },
+  "boot": {
+    "aria": "Memuat Bullion Pulse",
+    "eyebrow": "Inventory intelligence",
+    "title": "Bullion Pulse",
+    "loadFailed": "Tidak dapat memuat data workspace. Periksa koneksi lalu coba lagi.",
+    "statusLines": [
+      "Membuka snapshot keputusan hari ini…",
+      "Menyiapkan semuanya…",
+      "Masih diproses…",
+      "Hampir selesai…",
+      "Sebentar lagi…"
+    ]
+  },
   "shell": {
     "metadataDescription": "Bullion Pulse · V1",
     "openNav": "Tampilkan navigasi",

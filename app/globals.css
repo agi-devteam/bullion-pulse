@@ -419,6 +419,37 @@
   }
 }
 
+.boot-screen {
+  background: #0a0a0a;
+  transition: opacity 0.45s ease, visibility 0.45s ease;
+}
+
+.boot-screen--exit {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.boot-screen__lottie-fallback {
+  height: 3rem;
+  border-radius: 9999px;
+  background: #e4b95a;
+}
+
+.boot-screen__status {
+  transition: opacity 0.22s ease, transform 0.22s ease;
+}
+
+.boot-screen__status--in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.boot-screen__status--out {
+  opacity: 0;
+  transform: translateY(4px);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .motion-bar-fill {
     transition: none;
@@ -435,5 +466,13 @@
   .dashboard-flash-route,
   .dashboard-flash-hold {
     animation: none;
+  }
+
+  .boot-screen {
+    transition: none;
+  }
+
+  .boot-screen__status {
+    transition: none;
   }
 }
