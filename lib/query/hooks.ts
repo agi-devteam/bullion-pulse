@@ -21,8 +21,8 @@ import {
   fetchPricingPricelistSources,
 } from "@/lib/api/pricelists";
 import { fetchSuppliers } from "@/lib/api/suppliers";
+import { buildActionAlerts } from "@/lib/actions/build-alerts";
 import { buildHomeIntelligence } from "@/lib/intelligence/build-home";
-import { getActionAlerts } from "@/lib/mocks/workspace";
 import { buildPricingRows } from "@/lib/pricing/build-rows";
 import { queryKeys } from "@/lib/query/keys";
 import { useSettingsStore } from "@/stores/use-settings-store";
@@ -252,10 +252,28 @@ export function usePricing(_filters?: PricingFilters) {
   };
 }
 
-export function useActions() {
-  return useQuery({
-    queryKey: queryKeys.actions,
-    queryFn: () => Promise.resolve(getActionAlerts()),
-    staleTime: 60 * 1000,
+export function useActions(options?: { enabled?: boolean }) {
+  const inventoryQuery = useInventoryRecords({
+    enabled: options?.enabled ?? true,
   });
+  const suppliersQuery = useSuppliers({
+    enabled: options?.enabled ?? true,
+  });
+
+  const data = useMemo(() => {
+    if (!inventoryQuery.data) return undefined;
+    return buildActionAlerts({
+      inventory: inventoryQuery.data,
+      suppliers: suppliersQuery.data ?? [],
+    });
+  }, [inventoryQuery.data, suppliersQuery.data]);
+
+  return {
+    ...inventoryQuery,
+    data,
+    isPending: inventoryQuery.isPending || suppliersQuery.isPending,
+    isFetching: inventoryQuery.isFetching || suppliersQuery.isFetching,
+    isError: inventoryQuery.isError || suppliersQuery.isError,
+    error: inventoryQuery.error ?? suppliersQuery.error,
+  };
 }

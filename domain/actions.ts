@@ -3,7 +3,6 @@ import type { Channel, Gram } from "@/domain/primitives";
 export type ActionType = "WATCH";
 export type ActionSeverity = "attention" | "risk";
 export type ActionStatus = "OPEN" | "WATCHED";
-export type ActionReasonKey = "watch10" | "watch25";
 
 export interface ActionAlertSupplier {
   name: string;
@@ -20,7 +19,8 @@ export interface ActionAlert {
   gram: Gram;
   quantity: number;
   grams: number;
-  reasonKey: ActionReasonKey;
+  existingMargin: number | null;
+  replacementMargin: number | null;
   status: ActionStatus;
   createdAt: string;
   supplier: ActionAlertSupplier | null;

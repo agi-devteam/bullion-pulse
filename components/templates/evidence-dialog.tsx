@@ -20,8 +20,11 @@ import type { DecisionBucket } from "@/domain/primitives";
 import { findInventoryRecord } from "@/lib/api/inventories";
 import { formatIdr, formatNumber, formatPercent } from "@/lib/format/money";
 import { emptyHomeIntelligence } from "@/lib/intelligence/build-home";
-import { getActionAlerts } from "@/lib/mocks/workspace";
-import { useIntelligence, useInventoryRecords } from "@/lib/query/hooks";
+import {
+  useActions,
+  useIntelligence,
+  useInventoryRecords,
+} from "@/lib/query/hooks";
 import { useSettingsStore } from "@/stores/use-settings-store";
 import { useUIStore } from "@/stores/use-ui-store";
 
@@ -199,13 +202,16 @@ export function EvidenceDialog() {
   const inventoryQuery = useInventoryRecords({
     enabled: dialog?.kind === "inventory-unit",
   });
+  const actionsQuery = useActions({
+    enabled: dialog?.kind === "action-alert",
+  });
   const unit =
     dialog?.kind === "inventory-unit"
       ? findInventoryRecord(inventoryQuery.data, dialog.stockId)
       : undefined;
   const actionAlert =
     dialog?.kind === "action-alert"
-      ? getActionAlerts().find((alert) => alert.id === dialog.alertId)
+      ? actionsQuery.data?.find((alert) => alert.id === dialog.alertId)
       : undefined;
 
   return (
@@ -326,11 +332,20 @@ export function EvidenceDialog() {
           }
           description={
             actionAlert
-              ? tActions(`reasons.${actionAlert.reasonKey}`)
+              ? tActions("reasonWatch", {
+                  existing:
+                    actionAlert.existingMargin == null
+                      ? "—"
+                      : actionAlert.existingMargin.toFixed(2),
+                  replacement:
+                    actionAlert.replacementMargin == null
+                      ? "—"
+                      : actionAlert.replacementMargin.toFixed(2),
+                })
               : undefined
           }
         >
-          {actionAlert?.supplier ? (
+          {actionAlert ? (
             <>
               <Evidence
                 rows={[
@@ -343,17 +358,21 @@ export function EvidenceDialog() {
                   ],
                   [
                     t("actionAlert.supplierQuote"),
-                    t("actionAlert.supplierQuoteValue", {
-                      name: actionAlert.supplier.name,
-                      price: formatIdr(actionAlert.supplier.quotePrice),
-                    }),
+                    actionAlert.supplier
+                      ? t("actionAlert.supplierQuoteValue", {
+                          name: actionAlert.supplier.name,
+                          price: formatIdr(actionAlert.supplier.quotePrice),
+                        })
+                      : tCommon("unavailable"),
                   ],
                   [
                     t("actionAlert.capacityLead"),
-                    t("actionAlert.capacityLeadValue", {
-                      capacity: formatNumber(actionAlert.supplier.capacity),
-                      hours: actionAlert.supplier.leadTime,
-                    }),
+                    actionAlert.supplier
+                      ? t("actionAlert.capacityLeadValue", {
+                          capacity: formatNumber(actionAlert.supplier.capacity),
+                          hours: actionAlert.supplier.leadTime,
+                        })
+                      : tCommon("unavailable"),
                   ],
                   [
                     t("actionAlert.action"),
@@ -373,6 +392,8 @@ export function EvidenceDialog() {
                 </Button>
               </div>
             </>
+          ) : actionsQuery.isFetching ? (
+            <p className="text-muted-text">{tInventory("loading")}</p>
           ) : (
             <p className="text-muted-text">{t("recordMissing")}</p>
           )}

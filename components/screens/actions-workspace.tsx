@@ -68,7 +68,16 @@ export function ActionsWorkspace() {
               key="reason"
               className="block min-w-57.5 max-w-110 whitespace-normal"
             >
-              {t(`reasons.${alert.reasonKey}`)}
+              {t("reasonWatch", {
+                existing:
+                  alert.existingMargin == null
+                    ? "—"
+                    : alert.existingMargin.toFixed(2),
+                replacement:
+                  alert.replacementMargin == null
+                    ? "—"
+                    : alert.replacementMargin.toFixed(2),
+              })}
             </span>,
             formatStamp(alert.createdAt),
             <Status key="status" tone={watched ? "route" : ""}>

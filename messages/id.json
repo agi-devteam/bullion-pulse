@@ -127,10 +127,8 @@
       "footerFloor": "Floor B2C {b2c}% · B2B {b2b}%"
     },
     "priority": {
-      "watch10Title": "Watch 10g route potential",
-      "watch10Subtitle": "160g eligible · replacement margin 1.82%",
-      "watch25Title": "Watch 25g route potential",
-      "watch25Subtitle": "1,075g eligible · replacement margin 1.83%"
+      "watchTitle": "Watch {gram}g route potential",
+      "watchSubtitle": "{grams}g eligible · replacement margin {margin}"
     }
   },
   "inventory": {
@@ -234,10 +232,7 @@
       "attention": "attention",
       "risk": "risk"
     },
-    "reasons": {
-      "watch10": "Existing margin 0.70%; replacement 1.82%. Waiting for demand.",
-      "watch25": "Existing margin 0.70%; replacement 1.83%. Waiting for demand."
-    }
+    "reasonWatch": "Existing margin {existing}%; replacement {replacement}%. Waiting for demand."
   },
   "settings": {
     "tabs": {

@@ -10,6 +10,7 @@ import { ReadyInventoryCard } from "@/components/organisms/ready-inventory-card"
 import { HomeScreenSkeleton } from "@/components/screens/home-screen-skeleton";
 import type { DecisionBucket, Segment } from "@/domain/primitives";
 import type { HomeIntelligence } from "@/domain/intelligence";
+import { formatNumber, formatPercent } from "@/lib/format/money";
 import { useIntelligence } from "@/lib/query/hooks";
 import { useSettingsStore } from "@/stores/use-settings-store";
 import { useUIStore } from "@/stores/use-ui-store";
@@ -82,8 +83,14 @@ function HomeScreenContent({
               <PriorityActionCard
                 key={action.id}
                 action={action.action}
-                title={tPriority(action.titleKey)}
-                subtitle={tPriority(action.subtitleKey)}
+                title={tPriority("watchTitle", { gram: action.gram })}
+                subtitle={tPriority("watchSubtitle", {
+                  grams: formatNumber(action.grams),
+                  margin:
+                    action.replacementMargin == null
+                      ? "—"
+                      : formatPercent(action.replacementMargin),
+                })}
                 href={action.href}
               />
             ))}

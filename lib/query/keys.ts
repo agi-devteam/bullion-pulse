@@ -21,6 +21,5 @@ export const queryKeys = {
     list: (filters: PricingFilters) => ["pricing", filters] as const,
   },
   suppliers: ["suppliers"] as const,
-  actions: ["actions"] as const,
   settings: ["settings"] as const,
 } as const;

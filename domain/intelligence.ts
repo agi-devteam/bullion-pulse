@@ -32,15 +32,13 @@ export interface BucketData {
   evidenceRows: BucketEvidenceRow[];
 }
 
-export type PriorityTitleKey = "watch10Title" | "watch25Title";
-
-export type PrioritySubtitleKey = "watch10Subtitle" | "watch25Subtitle";
-
 export interface PriorityAction {
   id: string;
   action: "WATCH";
-  titleKey: PriorityTitleKey;
-  subtitleKey: PrioritySubtitleKey;
+  channel: Channel;
+  gram: Gram;
+  grams: number;
+  replacementMargin: number | null;
   href: string;
 }
 

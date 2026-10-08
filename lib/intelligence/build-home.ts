@@ -16,6 +16,7 @@ import type {
 } from "@/domain/primitives";
 import { GRAMS } from "@/domain/primitives";
 import type { PolicyDraft } from "@/domain/settings";
+import { buildActionAlerts, toPriorityActions } from "@/lib/actions/build-alerts";
 
 const BUCKET_BY_DECISION: Record<InventoryDecision, DecisionBucket> = {
   "SELL READY": "sell",
@@ -233,7 +234,9 @@ export function buildHomeIntelligence(
     buckets,
     routeSuppliers: buildRouteSuppliers(byBucket.route),
     policyFloor: policyFloorFromDraft(input.policy),
-    actions: [],
+    actions: toPriorityActions(
+      buildActionAlerts({ inventory: decided, now }),
+    ),
   };
 }
 
