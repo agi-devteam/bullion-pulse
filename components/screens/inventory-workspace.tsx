@@ -130,7 +130,7 @@ export function InventoryWorkspace() {
               ]}
             />
           </div>
-          <div className="min-w-56">
+          <div className="min-w-64">
             <Choice
               label={t("filters.availability")}
               value={status}

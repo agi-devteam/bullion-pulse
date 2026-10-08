@@ -27,7 +27,7 @@ export function InventoryWorkspaceSkeleton() {
           <div className="min-w-40">
             <ChoiceSkeleton />
           </div>
-          <div className="min-w-56">
+          <div className="min-w-64">
             <ChoiceSkeleton />
           </div>
           <div className="min-w-52">
