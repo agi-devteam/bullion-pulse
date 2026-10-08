@@ -5,5 +5,5 @@ export interface XauQuote {
 
 export interface AntamQuote {
   sell: Partial<Record<number, number>>;
-  buyback: number;
+  buyback: number | null;
 }

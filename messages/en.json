@@ -165,6 +165,8 @@
     }
   },
   "pricing": {
+    "loading": "Loading pricing from server…",
+    "loadFailed": "Could not load pricelists from the server.",
     "notice": "Minimum profitable price and target-margin price use the highest READY cost per channel / grammage. ANTAM official source: logammulia.com only.",
     "filters": {
       "channel": "Channel pricing",

@@ -15,9 +15,14 @@ import {
 } from "@/domain/settings";
 import { fetchInventories } from "@/lib/api/inventories";
 import { fetchPolicyDraft, persistPolicyDraft } from "@/lib/api/policies";
+import {
+  fetchAntamPricelists,
+  fetchPricingPricelistSources,
+} from "@/lib/api/pricelists";
 import { fetchSuppliers } from "@/lib/api/suppliers";
 import { getHomeIntelligence } from "@/lib/mocks/home-intelligence";
-import { getActionAlerts, getPricingRows } from "@/lib/mocks/workspace";
+import { getActionAlerts } from "@/lib/mocks/workspace";
+import { buildPricingRows } from "@/lib/pricing/build-rows";
 import { queryKeys } from "@/lib/query/keys";
 import { useSettingsStore } from "@/stores/use-settings-store";
 
@@ -135,8 +140,15 @@ export function useInventory(_filters?: InventoryFilters) {
 export function useMarketAntam() {
   return useQuery<AntamQuote>({
     queryKey: queryKeys.market.antam,
-    queryFn: () => notImplemented("GET /api/market/antam"),
-    enabled: false,
+    queryFn: async () => {
+      const rows = await fetchAntamPricelists();
+      const sell: AntamQuote["sell"] = {};
+      for (const row of rows) {
+        sell[row.gram] = row.sellPrice;
+      }
+      return { sell, buyback: null };
+    },
+    staleTime: 60 * 1000,
   });
 }
 
@@ -148,13 +160,48 @@ export function useMarketXau() {
   });
 }
 
-/** Full pricing list. Filters are applied client-side. */
 export function usePricing(_filters?: PricingFilters) {
-  return useQuery({
+  const theme = useSettingsStore((state) => state.theme);
+  const language = useSettingsStore((state) => state.language);
+  const settingsQuery = useSettings({ theme, language });
+  const inventoryQuery = useInventoryRecords();
+  const suppliersQuery = useSuppliers();
+  const pricelistsQuery = useQuery({
     queryKey: queryKeys.pricing.all,
-    queryFn: () => Promise.resolve(getPricingRows()),
+    queryFn: fetchPricingPricelistSources,
     staleTime: 60 * 1000,
   });
+
+  const data = useMemo(() => {
+    if (!pricelistsQuery.data) return undefined;
+    return buildPricingRows({
+      pricelists: pricelistsQuery.data.gmiclub,
+      antam: pricelistsQuery.data.antam,
+      inventory: inventoryQuery.data ?? [],
+      margin: settingsQuery.data?.margin,
+      suppliers: suppliersQuery.data ?? [],
+    });
+  }, [
+    pricelistsQuery.data,
+    inventoryQuery.data,
+    settingsQuery.data?.margin,
+    suppliersQuery.data,
+  ]);
+
+  return {
+    ...pricelistsQuery,
+    data,
+    isPending:
+      pricelistsQuery.isPending ||
+      settingsQuery.isPending ||
+      inventoryQuery.isPending,
+    isFetching:
+      pricelistsQuery.isFetching ||
+      settingsQuery.isFetching ||
+      inventoryQuery.isFetching,
+    isError: pricelistsQuery.isError,
+    error: pricelistsQuery.error,
+  };
 }
 
 export function useActions() {

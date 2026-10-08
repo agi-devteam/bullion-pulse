@@ -2,7 +2,9 @@
 
 import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
+import { Button } from "@/components/atoms/button";
 import { Status } from "@/components/atoms/status";
+import { Card } from "@/components/molecules/card";
 import { Choice } from "@/components/molecules/choice";
 import { NoticeBanner } from "@/components/molecules/notice-banner";
 import { PageToolbar, WorkspaceStack } from "@/components/molecules/page-toolbar";
@@ -37,14 +39,32 @@ export function PricingWorkspace() {
   const [channel, setChannel] = useState<PricingFilters["channel"]>("all");
   const [gram, setGram] = useState<PricingFilters["gram"]>("all");
 
+  const allRows = pricingQuery.data ?? [];
+
   const rows = useMemo(() => {
-    const allRows = pricingQuery.data ?? [];
     return allRows.filter((row) => {
       if (channel !== "all" && row.channel !== channel) return false;
       if (gram !== "all" && String(row.gram) !== gram) return false;
       return true;
     });
-  }, [pricingQuery.data, channel, gram]);
+  }, [allRows, channel, gram]);
+
+  if (pricingQuery.isError && allRows.length === 0) {
+    return (
+      <Card className="block gap-0 p-6">
+        <p className="m-0 mb-4 text-[0.95rem] text-muted-text">
+          {t("loadFailed")}
+        </p>
+        <Button
+          type="button"
+          onClick={() => void pricingQuery.refetch()}
+          disabled={pricingQuery.isFetching}
+        >
+          {pricingQuery.isFetching ? t("loading") : tCommon("retry")}
+        </Button>
+      </Card>
+    );
+  }
 
   if (pricingQuery.isPending) {
     return <PricingWorkspaceSkeleton />;
@@ -67,7 +87,7 @@ export function PricingWorkspace() {
               ]}
             />
           </div>
-          <div className="min-w-40">
+          <div className="min-w-52">
             <Choice
               label={t("filters.gram")}
               value={gram}

@@ -19,7 +19,7 @@ export function PricingWorkspaceSkeleton() {
           <div className="min-w-40">
             <ChoiceSkeleton />
           </div>
-          <div className="min-w-40">
+          <div className="min-w-52">
             <ChoiceSkeleton />
           </div>
         </div>

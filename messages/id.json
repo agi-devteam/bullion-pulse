@@ -165,6 +165,8 @@
     }
   },
   "pricing": {
+    "loading": "Memuat pricing dari server…",
+    "loadFailed": "Tidak dapat memuat pricelist dari server.",
     "notice": "Minimum profitable price dan target-margin price memakai biaya READY tertinggi per channel / gramasi. ANTAM official source: logammulia.com saja.",
     "filters": {
       "channel": "Channel pricing",
