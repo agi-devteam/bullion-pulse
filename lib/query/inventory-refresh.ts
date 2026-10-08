@@ -1,0 +1,3 @@
+export const INVENTORY_REFETCH_MS = 60_000;
+
+export const INVENTORY_TIMEOUT_MS = 60_000;

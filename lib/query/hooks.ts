@@ -24,6 +24,7 @@ import { fetchSuppliers } from "@/lib/api/suppliers";
 import { buildActionAlerts } from "@/lib/actions/build-alerts";
 import { buildHomeIntelligence } from "@/lib/intelligence/build-home";
 import { buildPricingRows } from "@/lib/pricing/build-rows";
+import { INVENTORY_REFETCH_MS } from "@/lib/query/inventory-refresh";
 import { queryKeys } from "@/lib/query/keys";
 import { useSettingsStore } from "@/stores/use-settings-store";
 
@@ -45,6 +46,15 @@ export function useSettings(display: DisplaySettings) {
     staleTime: 60 * 1000,
     refetchInterval: false,
   });
+}
+
+function useSettingsRefreshIntervalMs(): number {
+  const theme = useSettingsStore((state) => state.theme);
+  const language = useSettingsStore((state) => state.language);
+  const settingsQuery = useSettings({ theme, language });
+  const refreshSeconds =
+    settingsQuery.data?.system.refreshSeconds ?? DEFAULT_REFRESH_SECONDS;
+  return Math.max(MIN_REFRESH_SECONDS, refreshSeconds) * 1000;
 }
 
 export function useSaveSettings() {
@@ -84,22 +94,19 @@ export function useIntelligenceEvidence(
 }
 
 export function useSuppliers(options?: { enabled?: boolean }) {
+  const refetchIntervalMs = useSettingsRefreshIntervalMs();
+
   return useQuery({
     queryKey: queryKeys.suppliers,
     queryFn: fetchSuppliers,
-    staleTime: 60 * 1000,
+    staleTime: refetchIntervalMs,
+    refetchInterval: refetchIntervalMs,
     enabled: options?.enabled ?? true,
   });
 }
 
 export function useMarketAntam() {
-  const theme = useSettingsStore((state) => state.theme);
-  const language = useSettingsStore((state) => state.language);
-  const settingsQuery = useSettings({ theme, language });
-  const refreshSeconds =
-    settingsQuery.data?.system.refreshSeconds ?? DEFAULT_REFRESH_SECONDS;
-  const refetchIntervalMs =
-    Math.max(MIN_REFRESH_SECONDS, refreshSeconds) * 1000;
+  const refetchIntervalMs = useSettingsRefreshIntervalMs();
 
   return useQuery<AntamQuote>({
     queryKey: queryKeys.market.antam,
@@ -111,27 +118,23 @@ export function useMarketAntam() {
       }
       return { sell, buyback: null };
     },
-    staleTime: Math.min(30 * 1000, refetchIntervalMs),
+    staleTime: refetchIntervalMs,
     refetchInterval: refetchIntervalMs,
   });
 }
 
-/** Fetches full `GET /inventories` list. Filters are applied client-side. */
 export function useInventoryRecords(options?: { enabled?: boolean }) {
   const theme = useSettingsStore((state) => state.theme);
   const language = useSettingsStore((state) => state.language);
   const settingsQuery = useSettings({ theme, language });
   const suppliersQuery = useSuppliers();
   const antamQuery = useMarketAntam();
-  const refreshSeconds =
-    settingsQuery.data?.system.refreshSeconds ?? DEFAULT_REFRESH_SECONDS;
-  const refetchIntervalMs =
-    Math.max(MIN_REFRESH_SECONDS, refreshSeconds) * 1000;
   const inventoryQuery = useQuery({
     queryKey: queryKeys.inventory.all,
     queryFn: fetchInventories,
-    staleTime: Math.min(30 * 1000, refetchIntervalMs),
-    refetchInterval: refetchIntervalMs,
+    staleTime: INVENTORY_REFETCH_MS,
+    refetchInterval: (query) =>
+      query.state.fetchStatus === "fetching" ? false : INVENTORY_REFETCH_MS,
     enabled: options?.enabled ?? true,
   });
 
@@ -214,10 +217,12 @@ export function usePricing(_filters?: PricingFilters) {
   const settingsQuery = useSettings({ theme, language });
   const inventoryQuery = useInventoryRecords();
   const suppliersQuery = useSuppliers();
+  const refetchIntervalMs = useSettingsRefreshIntervalMs();
   const pricelistsQuery = useQuery({
     queryKey: queryKeys.pricing.all,
     queryFn: fetchPricingPricelistSources,
-    staleTime: 60 * 1000,
+    staleTime: refetchIntervalMs,
+    refetchInterval: refetchIntervalMs,
   });
 
   const data = useMemo(() => {

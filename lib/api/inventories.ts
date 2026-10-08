@@ -2,6 +2,7 @@ import type { InventoryRecord, InventorySummary } from "@/domain/inventory";
 import type { Channel, Gram } from "@/domain/primitives";
 import { GRAMS } from "@/domain/primitives";
 import { apiGet } from "@/lib/api/http";
+import { INVENTORY_TIMEOUT_MS } from "@/lib/query/inventory-refresh";
 
 /** Live backend shape — `GET /inventories`. */
 export interface InventoryRowDto {
@@ -133,7 +134,9 @@ export function summarizeInventory(
 }
 
 export async function fetchInventories(): Promise<InventoryRecord[]> {
-  const rows = await apiGet<InventoryRowDto[]>("/inventories");
+  const rows = await apiGet<InventoryRowDto[]>("/inventories", {
+    timeoutMs: INVENTORY_TIMEOUT_MS,
+  });
   return rows.map(mapInventoryRow);
 }
 
