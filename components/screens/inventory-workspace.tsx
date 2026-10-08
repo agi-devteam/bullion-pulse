@@ -51,7 +51,6 @@ export function InventoryWorkspace() {
     return allRecords.filter((row) => {
       if (channel !== "all" && row.channel !== channel) return false;
       if (status === "READY" && !row.ready) return false;
-      if (status === "EXCLUDED" && (row.ready || !row.valid)) return false;
       if (status === "INVALID" && row.valid) return false;
       if (decision !== "all" && row.decision !== decision) return false;
       if (
@@ -91,16 +90,11 @@ export function InventoryWorkspace() {
 
   return (
     <WorkspaceStack>
-      <div className="grid grid-cols-4 gap-3.5 max-[1100px]:grid-cols-2 max-[700px]:gap-2.5">
+      <div className="grid grid-cols-3 gap-3.5 max-[1100px]:grid-cols-2 max-[700px]:gap-2.5">
         <Metric
           label={t("metrics.readyPriced")}
           value={`${formatNumber(summary.readyGrams)}g`}
           note={tCommon("pcs", { count: formatNumber(summary.readyPcs) })}
-        />
-        <Metric
-          label={t("metrics.excluded")}
-          value={tCommon("pcs", { count: formatNumber(summary.excludedPcs) })}
-          note={t("metrics.excludedNote")}
         />
         <Metric
           label={t("metrics.invalid")}
@@ -141,7 +135,6 @@ export function InventoryWorkspace() {
               options={[
                 ["READY", t("filters.availabilityReady")],
                 ["ALL", t("filters.availabilityAll")],
-                ["EXCLUDED", t("filters.availabilityExcluded")],
                 ["INVALID", t("filters.availabilityInvalid")],
               ]}
             />

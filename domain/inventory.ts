@@ -35,7 +35,6 @@ export interface InventoryRecord {
 export interface InventorySummary {
   readyGrams: number;
   readyPcs: number;
-  excludedPcs: number;
   invalidPcs: number;
   unpricedPcs: number;
 }

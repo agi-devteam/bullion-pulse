@@ -131,8 +131,6 @@
     "loadFailed": "Tidak dapat memuat inventory dari server.",
     "metrics": {
       "readyPriced": "READY / priced",
-      "excluded": "Excluded",
-      "excludedNote": "Reserved, incoming, sold dan non-ready",
       "invalid": "Invalid",
       "invalidNote": "Tidak masuk decision pool",
       "unpricedReady": "Unpriced READY",
@@ -143,7 +141,6 @@
       "availability": "Availability",
       "availabilityReady": "READY / AVAILABLE",
       "availabilityAll": "All physical inventory",
-      "availabilityExcluded": "Excluded inventory",
       "availabilityInvalid": "Invalid records",
       "decision": "Decision",
       "decisionAll": "All decisions",
@@ -189,6 +186,8 @@
     }
   },
   "suppliers": {
+    "loading": "Memuat supplier dari server…",
+    "loadFailed": "Tidak dapat memuat supplier dari server.",
     "headers": {
       "supplier": "Supplier",
       "active": "Active",

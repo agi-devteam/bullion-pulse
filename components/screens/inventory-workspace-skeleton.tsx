@@ -13,11 +13,10 @@ export function InventoryWorkspaceSkeleton() {
   return (
     <WorkspaceStack>
       <div
-        className="grid grid-cols-4 gap-3.5 max-[1100px]:grid-cols-2 max-[700px]:gap-2.5"
+        className="grid grid-cols-3 gap-3.5 max-[1100px]:grid-cols-2 max-[700px]:gap-2.5"
         aria-busy="true"
         aria-live="polite"
       >
-        <MetricSkeleton />
         <MetricSkeleton />
         <MetricSkeleton />
         <MetricSkeleton />

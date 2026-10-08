@@ -1,10 +1,6 @@
 import type { Channel, InventoryDecision } from "@/domain/primitives";
 
-export type InventoryAvailabilityFilter =
-  | "READY"
-  | "ALL"
-  | "EXCLUDED"
-  | "INVALID";
+export type InventoryAvailabilityFilter = "READY" | "ALL" | "INVALID";
 
 export interface InventoryFilters {
   channel: "all" | Channel;

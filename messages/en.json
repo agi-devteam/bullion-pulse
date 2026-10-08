@@ -131,8 +131,6 @@
     "loadFailed": "Could not load inventory from the server.",
     "metrics": {
       "readyPriced": "READY / priced",
-      "excluded": "Excluded",
-      "excludedNote": "Reserved, incoming, sold, and non-ready",
       "invalid": "Invalid",
       "invalidNote": "Not included in the decision pool",
       "unpricedReady": "Unpriced READY",
@@ -143,7 +141,6 @@
       "availability": "Availability",
       "availabilityReady": "READY / AVAILABLE",
       "availabilityAll": "All physical inventory",
-      "availabilityExcluded": "Excluded inventory",
       "availabilityInvalid": "Invalid records",
       "decision": "Decision",
       "decisionAll": "All decisions",
@@ -189,6 +186,8 @@
     }
   },
   "suppliers": {
+    "loading": "Loading suppliers from server…",
+    "loadFailed": "Could not load suppliers from the server.",
     "headers": {
       "supplier": "Supplier",
       "active": "Active",

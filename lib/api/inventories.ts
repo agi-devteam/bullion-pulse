@@ -101,14 +101,12 @@ export function summarizeInventory(
   records: InventoryRecord[],
 ): InventorySummary {
   const ready = records.filter((row) => row.ready && row.valid);
-  const excluded = records.filter((row) => row.valid && !row.ready);
   const invalid = records.filter((row) => !row.valid);
   const unpriced = ready.filter((row) => row.sellingPrice == null);
 
   return {
     readyGrams: ready.reduce((sum, row) => sum + row.gram, 0),
     readyPcs: ready.length,
-    excludedPcs: excluded.length,
     invalidPcs: invalid.length,
     unpricedPcs: unpriced.length,
   };

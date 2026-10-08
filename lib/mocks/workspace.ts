@@ -239,14 +239,12 @@ export function getInventoryRecord(stockId: string): InventoryRecord | undefined
 
 export function getInventorySummary(): InventorySummary {
   const ready = INVENTORY.filter((row) => row.ready && row.valid);
-  const excluded = INVENTORY.filter((row) => row.valid && !row.ready);
   const invalid = INVENTORY.filter((row) => !row.valid);
   const unpriced = ready.filter((row) => row.sellingPrice == null);
 
   return {
     readyGrams: ready.reduce((sum, row) => sum + row.gram, 0),
     readyPcs: ready.length,
-    excludedPcs: excluded.length,
     invalidPcs: invalid.length,
     unpricedPcs: unpriced.length,
   };
