@@ -326,14 +326,6 @@ export function getSupplierQuotes(): SupplierQuoteRow[] {
   ];
 }
 
-export const SUPPLIER_DIRECTORY = [
-  "ANTAM",
-  "SIMA",
-  "STARGOLD",
-  "KRISNA",
-  "SUTRISNO",
-] as const;
-
 export function getActionAlerts(): ActionAlert[] {
   const watch10 = INVENTORY.filter(
     (row) =>

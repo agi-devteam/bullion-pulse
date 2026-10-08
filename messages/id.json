@@ -196,7 +196,6 @@
     }
   },
   "suppliers": {
-    "notice": "Supplier quotes adalah mock. Quote tidak sama dengan confirmed lock; GMI internal price bukan supplier.",
     "headers": {
       "supplier": "Supplier",
       "active": "Active",
@@ -209,8 +208,10 @@
       "lockStatus": "Lock available / status"
     },
     "lockPair": "{available} / {status}",
-    "directoryTitle": "Supplier directory",
-    "directoryNote": "{names}. Hanya SIMA dan KRISNA memiliki sample quote pada snapshot ini.",
+    "filters": {
+      "supplier": "Supplier",
+      "allSuppliers": "Semua supplier"
+    },
     "policyButton": "Supplier Policy",
     "leadHours": "{hours}h"
   },

@@ -196,7 +196,6 @@
     }
   },
   "suppliers": {
-    "notice": "Supplier quotes are mock. A quote is not a confirmed lock; GMI internal price is not a supplier.",
     "headers": {
       "supplier": "Supplier",
       "active": "Active",
@@ -209,8 +208,10 @@
       "lockStatus": "Lock available / status"
     },
     "lockPair": "{available} / {status}",
-    "directoryTitle": "Supplier directory",
-    "directoryNote": "{names}. Only SIMA and KRISNA have sample quotes in this snapshot.",
+    "filters": {
+      "supplier": "Supplier",
+      "allSuppliers": "All suppliers"
+    },
     "policyButton": "Supplier Policy",
     "leadHours": "{hours}h"
   },
