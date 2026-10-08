@@ -5,7 +5,6 @@ import { useTranslations } from "next-intl";
 import { AnimatedValue } from "@/components/molecules/animated-value";
 import { Card } from "@/components/molecules/card";
 import { DeltaBubble } from "@/components/molecules/delta-bubble";
-import { LiveUpdated } from "@/components/molecules/live-updated";
 import { ProfitColumn } from "@/components/molecules/profit-column";
 import { SplitLegend } from "@/components/molecules/split-legend";
 import { InventorySplitBar } from "@/components/organisms/inventory-split-bar";
@@ -18,14 +17,12 @@ import { useBubblePresence } from "@/lib/motion/use-bubble-presence";
 export interface ReadyInventoryCardProps {
   data: HomeIntelligence;
   segment: Segment;
-  updatedAt?: number;
   onOpenEvidence: () => void;
 }
 
 export function ReadyInventoryCard({
   data,
   segment,
-  updatedAt,
   onOpenEvidence,
 }: ReadyInventoryCardProps) {
   const t = useTranslations("home.ready");
@@ -61,14 +58,11 @@ export function ReadyInventoryCard({
       aria-label={t("ariaEvidence")}
       onClick={onOpenEvidence}
       onKeyDown={onKeyDown}
-      className="grid cursor-pointer grid-cols-[minmax(0,1fr)_minmax(0,2fr)] gap-0 overflow-hidden p-0 py-0 [--card-spacing:0px] focus-visible:outline-2 focus-visible:-outline-offset-4 focus-visible:outline-route-f max-[1000px]:grid-cols-1 max-[700px]:rounded-2xl"
+      className="grid cursor-pointer grid-cols-[minmax(0,1fr)_minmax(0,2.6fr)] gap-0 overflow-hidden p-0 py-0 [--card-spacing:0px] focus-visible:outline-2 focus-visible:-outline-offset-4 focus-visible:outline-route-f max-[1000px]:grid-cols-1 max-[700px]:rounded-2xl"
     >
       <div className="flex min-w-0 flex-col gap-4.5 px-7 py-6 max-[1000px]:p-5.5 max-[700px]:p-4.5 min-[2560px]:px-8.5 min-[2560px]:py-7.5">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <div className="text-[0.875rem] font-semibold tracking-[0.06em] text-muted-text uppercase">
-            {t("title", { channel })}
-          </div>
-          <LiveUpdated updatedAt={updatedAt} />
+        <div className="text-[0.875rem] font-semibold tracking-[0.06em] text-muted-text uppercase">
+          {t("title", { channel })}
         </div>
         <div className="flex flex-wrap items-baseline gap-3">
           <strong className="mono text-[3.75rem] leading-none font-medium tracking-[-0.03em] max-[700px]:text-[2.85rem] max-[480px]:text-[2.45rem]">
@@ -139,7 +133,7 @@ export function ReadyInventoryCard({
           )}
         </div>
       </div>
-      <div className="grid grid-cols-3 border-l border-line px-7 py-6 max-[1000px]:border-t max-[1000px]:border-l-0 max-[1000px]:p-5.5 max-[700px]:grid-cols-1 max-[700px]:p-4.5 min-[2560px]:px-8.5 min-[2560px]:py-7.5">
+      <div className="grid grid-cols-4 border-l border-line px-7 py-6 max-[1000px]:border-t max-[1000px]:border-l-0 max-[1000px]:grid-cols-2 max-[1000px]:p-5.5 max-[700px]:grid-cols-1 max-[700px]:p-4.5 min-[2560px]:px-8.5 min-[2560px]:py-7.5">
         <ProfitColumn
           label={tProfit("prognosa")}
           value={data.isComplete ? data.profit.prognosa : null}
@@ -154,7 +148,11 @@ export function ReadyInventoryCard({
           label={tProfit("arbitrage")}
           value={data.isComplete ? data.profit.arbitrage : null}
           note={tProfit("arbitrageNote")}
-          variant="arbitrage"
+        />
+        <ProfitColumn
+          label={tProfit("gross")}
+          value={data.isComplete ? data.profit.total : null}
+          note={tProfit("grossNote")}
         />
       </div>
     </Card>

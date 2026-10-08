@@ -100,11 +100,13 @@
     },
     "profit": {
       "prognosa": "Prognosis profit",
-      "prognosaNote": "READY estimate · market at purchase − purchase price",
+      "prognosaNote": "Market at purchase − purchase price",
       "investment": "Investment profit",
-      "investmentNote": "READY estimate · market at sale − market at purchase",
+      "investmentNote": "Market at sale − market at purchase",
       "arbitrage": "Arbitrage profit",
-      "arbitrageNote": "READY estimate · selling price − market at sale"
+      "arbitrageNote": "Selling price − market at sale",
+      "gross": "Gross Profit",
+      "grossNote": "Selling price − unit cost"
     },
     "decision": {
       "captions": {
@@ -327,8 +329,8 @@
     "inventoryTitle": "Inventory evidence · {id}",
     "readyTitle": "Ready Inventory reconciliation",
     "profitTitle": "Profit estimate · READY inventory",
-    "profitIntro": "Market uses ANTAM logammulia.com benchmark · Mock. Average per gram: snapshot at purchase {purchase}; market now {current}. Unsold stock: market now and current pricelist are used as sale estimates. These figures are unrealized.",
-    "profitFooter": "Prognosis + Investment + Arbitrage = selling price − purchase price. In this mock, purchase price = HPP, so the sum equals Total profit. Total profit always uses HPP. Per-unit calculations are summed; negative contributions still count. Margin policy uses Total profit ÷ selling price.",
+    "profitIntro": "Market uses ANTAM logammulia.com benchmark. Average per gram: snapshot at purchase {purchase}; market now {current}. Unsold stock: market now and current pricelist are used as sale estimates. These figures are unrealized.",
+    "profitFooter": "Prognosis + Investment + Arbitrage = selling price − purchase price. Here, purchase price = HPP, so the sum equals Total profit. Total profit always uses HPP. Per-unit calculations are summed; negative contributions still count. Margin policy uses Total profit ÷ selling price.",
     "profitTable": {
       "component": "Component",
       "formula": "Formula",
@@ -339,8 +341,8 @@
       "investmentFormula": "Market at sale − market at purchase",
       "arbitrage": "Arbitrage",
       "arbitrageFormula": "Selling price − market at sale",
-      "totalProfit": "Total profit",
-      "totalFormula": "Selling price − HPP"
+      "totalProfit": "Gross Profit",
+      "totalFormula": "Selling price − unit cost"
     },
     "bucketTable": {
       "channel": "Channel",
@@ -383,8 +385,8 @@
       "purchasePriceUnit": "Purchase price / unit",
       "sellingPrice": "Selling price",
       "totalGpMargin": "Total GP / Margin",
-      "marketAtPurchase": "Market at purchase · Mock / unit",
-      "marketNowAntam": "Market now · ANTAM Mock / unit",
+      "marketAtPurchase": "Market at purchase / unit",
+      "marketNowAntam": "Market now · ANTAM / unit",
       "prognosaEstimate": "Prognosis · estimate",
       "investmentEstimate": "Investment · estimate",
       "arbitrageEstimate": "Arbitrage · estimate",

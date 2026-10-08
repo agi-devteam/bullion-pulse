@@ -20,7 +20,7 @@ function ReadyInventoryCardSkeleton() {
   return (
     <Card
       aria-hidden="true"
-      className="grid grid-cols-[minmax(0,1fr)_minmax(0,2fr)] gap-0 overflow-hidden p-0 py-0 [--card-spacing:0px] max-[1000px]:grid-cols-1 max-[700px]:rounded-2xl"
+      className="grid grid-cols-[minmax(0,1fr)_minmax(0,2.6fr)] gap-0 overflow-hidden p-0 py-0 [--card-spacing:0px] max-[1000px]:grid-cols-1 max-[700px]:rounded-2xl"
     >
       <div className="flex min-w-0 flex-col gap-4.5 px-7 py-6 max-[1000px]:p-5.5 max-[700px]:p-4.5 min-[2560px]:px-8.5 min-[2560px]:py-7.5">
         <div className="text-[0.875rem] font-semibold tracking-[0.06em] text-muted-text uppercase">
@@ -39,27 +39,32 @@ function ReadyInventoryCardSkeleton() {
           </div>
         </div>
       </div>
-      <div className="grid grid-cols-3 border-l border-line px-7 py-6 max-[1000px]:border-t max-[1000px]:border-l-0 max-[1000px]:p-5.5 max-[700px]:grid-cols-1 max-[700px]:p-4.5 min-[2560px]:px-8.5 min-[2560px]:py-7.5">
-        {([tProfit("prognosa"), tProfit("investment"), tProfit("arbitrage")] as const).map(
-          (label, index) => (
-            <div
-              key={label}
-              className="flex min-w-0 flex-col gap-4.5 px-5 first:pl-0 last:pr-0 [&+&]:border-l [&+&]:border-line max-[700px]:px-0 max-[700px]:py-3.5 max-[700px]:first:pt-0 max-[700px]:last:pb-0 max-[700px]:[&+&]:border-t max-[700px]:[&+&]:border-l-0"
-            >
-              <div className="text-[0.875rem] font-semibold tracking-[0.06em] text-muted-text uppercase">
-                {label}
-              </div>
-              <Skeleton
-                className={
-                  index === 2
-                    ? "h-9 w-28"
-                    : "h-9 w-32 before:invisible before:w-0 before:shrink-0 before:font-mono before:text-[3.75rem] before:leading-none before:content-['\\a0'] max-[700px]:before:hidden"
-                }
-              />
-              <Skeleton className="mt-auto h-4 w-36 max-w-full" />
+      <div className="grid grid-cols-4 border-l border-line px-7 py-6 max-[1000px]:border-t max-[1000px]:border-l-0 max-[1000px]:grid-cols-2 max-[1000px]:p-5.5 max-[700px]:grid-cols-1 max-[700px]:p-4.5 min-[2560px]:px-8.5 min-[2560px]:py-7.5">
+        {(
+          [
+            tProfit("prognosa"),
+            tProfit("investment"),
+            tProfit("arbitrage"),
+            tProfit("gross"),
+          ] as const
+        ).map((label, index) => (
+          <div
+            key={label}
+            className="flex min-w-0 flex-col gap-4.5 px-5 first:pl-0 last:pr-0 [&+&]:border-l [&+&]:border-line max-[1000px]:nth-[2n+1]:border-l-0 max-[1000px]:nth-[n+3]:border-t max-[1000px]:nth-[n+3]:border-line max-[700px]:px-0 max-[700px]:py-3.5 max-[700px]:first:pt-0 max-[700px]:last:pb-0 max-[700px]:[&+&]:border-t max-[700px]:[&+&]:border-l-0"
+          >
+            <div className="text-[0.875rem] font-semibold tracking-[0.06em] text-muted-text uppercase">
+              {label}
             </div>
-          ),
-        )}
+            <Skeleton
+              className={
+                index === 2
+                  ? "h-9 w-28"
+                  : "h-9 w-32 before:invisible before:w-0 before:shrink-0 before:font-mono before:text-[3.75rem] before:leading-none before:content-['\\a0'] max-[700px]:before:hidden"
+              }
+            />
+            <Skeleton className="mt-auto h-4 w-36 max-w-full" />
+          </div>
+        ))}
       </div>
     </Card>
   );
