@@ -194,6 +194,12 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* Prototype tables use fixed px padding so row rhythm stays while type scales */
+.table-wrap [data-slot="table-head"],
+.table-wrap [data-slot="table-cell"] {
+  padding: 14px 16px;
+}
+
 /* Compact settings controls — width comes from FormRow / table-wrap */
 .policy-matrix [data-slot="input"],
 .policy-matrix [data-slot="select-trigger"] {

@@ -65,7 +65,7 @@ export function InventoryWorkspace() {
 
   return (
     <WorkspaceStack>
-      <div className="grid grid-cols-4 gap-3.5 max-[1100px]:grid-cols-2">
+      <div className="grid grid-cols-4 gap-3.5 max-[1100px]:grid-cols-2 max-[700px]:gap-2.5">
         <Metric
           label={t("metrics.readyPriced")}
           value={`${formatNumber(summary.readyGrams)}g`}
@@ -104,7 +104,7 @@ export function InventoryWorkspace() {
               ]}
             />
           </div>
-          <div className="min-w-40">
+          <div className="min-w-56">
             <Choice
               label={t("filters.availability")}
               value={status}
@@ -120,7 +120,7 @@ export function InventoryWorkspace() {
               ]}
             />
           </div>
-          <div className="min-w-40">
+          <div className="min-w-52">
             <Choice
               label={t("filters.decision")}
               value={decision}
@@ -164,9 +164,9 @@ export function InventoryWorkspace() {
           <span key={`${row.stock_id}-id`}>
             {row.serial}
             <br />
-            <small className="text-[0.9375rem] leading-normal text-muted-text">
+            <span className="text-[0.95rem] leading-normal text-muted-text">
               {row.stock_id}
-            </small>
+            </span>
           </span>,
           `${row.gram}g`,
           row.channel,
@@ -203,7 +203,7 @@ export function InventoryWorkspace() {
         ])}
       />
       <PageToolbar>
-        <span className="text-[0.9375rem] text-muted-text">
+        <span className="text-[0.95rem] leading-normal text-muted-text">
           {tCommon("recordsPage", {
             count: formatNumber(rows.length),
             page: current + 1,
