@@ -17,7 +17,8 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/organisms/sheet";
-import { NAV_GROUPS, NAV_ITEMS, isNavItemActive } from "@/domain/navigation";
+import { NAV_ITEMS, isNavItemActive, visibleNavGroups } from "@/domain/navigation";
+import { usePermissions } from "@/lib/auth/permissions";
 import { signOut } from "@/lib/auth/sign-out";
 import { cn } from "@/lib/utils";
 
@@ -26,6 +27,8 @@ export function NavigationDrawer() {
   const t = useTranslations("shell.drawer");
   const tShell = useTranslations("shell");
   const tNav = useTranslations("nav");
+  const permissions = usePermissions();
+  const groups = visibleNavGroups(permissions);
 
   return (
     <SheetContent
@@ -60,7 +63,7 @@ export function NavigationDrawer() {
         aria-label={t("mainNav")}
         className="flex flex-1 flex-col gap-1"
       >
-        {NAV_GROUPS.map((group) => (
+        {groups.map((group) => (
           <div key={group.id} className="contents">
             <div className="mx-3.5 mt-3 mb-1.25 text-[0.8rem] font-semibold tracking-[0.08em] text-muted-text uppercase">
               {tNav(`groups.${group.titleKey}`)}

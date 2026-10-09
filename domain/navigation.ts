@@ -1,3 +1,5 @@
+import { PERMISSION, type Permission, hasPermission } from "@/domain/auth";
+
 export const NAV_ITEMS = {
   home: { href: "/" },
   inventory: { href: "/inventory" },
@@ -8,6 +10,39 @@ export const NAV_ITEMS = {
 } as const;
 
 export type NavItemId = keyof typeof NAV_ITEMS;
+
+export const NAV_PERMISSIONS: Partial<Record<NavItemId, Permission>> = {
+  inventory: PERMISSION.VIEW_INVENTORY,
+  pricing: PERMISSION.VIEW_PRICELIST,
+  suppliers: PERMISSION.VIEW_SUPPLIER,
+};
+
+const NAV_FALLBACK_ORDER: readonly NavItemId[] = [
+  "home",
+  "inventory",
+  "pricing",
+  "suppliers",
+  "actions",
+  "settings",
+];
+
+export function canAccessNavItem(
+  id: NavItemId,
+  permissions: readonly string[],
+): boolean {
+  const required = NAV_PERMISSIONS[id];
+  if (!required) return true;
+  return hasPermission(permissions, required);
+}
+
+export function firstAccessibleNavHref(permissions: readonly string[]): string {
+  for (const id of NAV_FALLBACK_ORDER) {
+    if (canAccessNavItem(id, permissions)) {
+      return NAV_ITEMS[id].href;
+    }
+  }
+  return NAV_ITEMS.home.href;
+}
 
 export const NAV_GROUPS = [
   { id: "main", titleKey: "main", items: ["home"] },
@@ -22,6 +57,13 @@ export const NAV_GROUPS = [
   titleKey: "main" | "operations" | "system";
   items: readonly NavItemId[];
 }[];
+
+export function visibleNavGroups(permissions: readonly string[]) {
+  return NAV_GROUPS.map((group) => ({
+    ...group,
+    items: group.items.filter((id) => canAccessNavItem(id, permissions)),
+  })).filter((group) => group.items.length > 0);
+}
 
 export function isNavItemActive(href: string, pathname: string): boolean {
   if (href === "/") {

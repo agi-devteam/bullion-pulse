@@ -16,7 +16,11 @@ import {
 } from "@/domain/settings";
 import { fetchUserInfo } from "@/lib/api/auth";
 import { fetchInventories } from "@/lib/api/inventories";
-import { fetchPolicyDraft, persistPolicyDraft } from "@/lib/api/policies";
+import {
+  fetchPolicyDraft,
+  persistPolicyDraft,
+  type PolicyPersistSection,
+} from "@/lib/api/policies";
 import { fetchPricingPricelistSources } from "@/lib/api/pricelists";
 import { fetchSuppliers } from "@/lib/api/suppliers";
 import { buildActionAlerts } from "@/lib/actions/build-alerts";
@@ -53,10 +57,11 @@ export function useUserInfo() {
 
 export function useSettings(display: DisplaySettings) {
   const status = useAuthStore((state) => state.status);
+  const permissions = useAuthStore((state) => state.permissions);
 
   return useQuery({
     queryKey: queryKeys.settings,
-    queryFn: () => fetchPolicyDraft(display),
+    queryFn: () => fetchPolicyDraft(display, permissions),
     staleTime: 60 * 1000,
     refetchInterval: false,
     enabled: status === "authenticated",
@@ -76,8 +81,14 @@ export function useSaveSettings() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (draft: PolicyDraft) => persistPolicyDraft(draft),
-    onSuccess: (_result, draft) => {
+    mutationFn: ({
+      draft,
+      sections,
+    }: {
+      draft: PolicyDraft;
+      sections?: readonly PolicyPersistSection[];
+    }) => persistPolicyDraft(draft, sections),
+    onSuccess: (_result, { draft }) => {
       queryClient.setQueryData<PolicyDraft>(queryKeys.settings, draft);
       void queryClient.invalidateQueries({
         queryKey: queryKeys.intelligence.all,

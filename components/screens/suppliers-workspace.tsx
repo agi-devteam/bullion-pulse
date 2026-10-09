@@ -15,6 +15,8 @@ import { DataTable } from "@/components/organisms/data-table";
 import { SuppliersWorkspaceSkeleton } from "@/components/screens/suppliers-workspace-skeleton";
 import { formatStamp } from "@/lib/format/datetime";
 import { formatIdr, formatNumber } from "@/lib/format/money";
+import { PERMISSION } from "@/domain/auth";
+import { Can } from "@/lib/auth/permissions";
 import { useSuppliers } from "@/lib/query/hooks";
 import { useUIStore } from "@/stores/use-ui-store";
 
@@ -72,14 +74,16 @@ export function SuppliersWorkspace() {
             options={supplierOptions}
           />
         </div>
-        <Button
-          variant="outline"
-          nativeButton={false}
-          render={<Link href="/settings" />}
-          onClick={() => setSettingsTab("supplier")}
-        >
-          {t("policyButton")}
-        </Button>
+        <Can permission={PERMISSION.VIEW_SUPPLIER_POLICY}>
+          <Button
+            variant="outline"
+            nativeButton={false}
+            render={<Link href="/settings" />}
+            onClick={() => setSettingsTab("supplier")}
+          >
+            {t("policyButton")}
+          </Button>
+        </Can>
       </PageToolbar>
       <DataTable
         headers={[

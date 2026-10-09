@@ -27,6 +27,11 @@ import {
   DialogTitle,
 } from "@/components/organisms/dialog";
 import { SettingsWorkspaceSkeleton } from "@/components/screens/settings-workspace-skeleton";
+import {
+  SETTINGS_TAB_UPDATE,
+  canUpdateSettingsTab,
+  canViewSettingsTab,
+} from "@/domain/auth";
 import { GRAMS, type Language, type Theme } from "@/domain/primitives";
 import {
   MIN_REFRESH_SECONDS,
@@ -34,6 +39,8 @@ import {
   type SettingsTab,
   type SupplierPolicyQuote,
 } from "@/domain/settings";
+import { usePermissions } from "@/lib/auth/permissions";
+import type { PolicyPersistSection } from "@/lib/api/policies";
 import { clonePolicyDraft } from "@/lib/settings/defaults";
 import {
   useIntelligence,
@@ -230,9 +237,22 @@ export function SettingsWorkspace() {
   const setTab = useUIStore((state) => state.setSettingsTab);
   const setDialog = useUIStore((state) => state.setDialog);
   const showToast = useUIStore((state) => state.showToast);
+  const permissions = usePermissions();
   const settingsQuery = useSettings({ theme, language });
   const intelligenceQuery = useIntelligence("all");
   const saveSettings = useSaveSettings();
+  const visibleTabs = TAB_IDS.filter((id) =>
+    canViewSettingsTab(id, permissions),
+  );
+  const persistSections = (
+    Object.entries(SETTINGS_TAB_UPDATE) as [
+      PolicyPersistSection,
+      (typeof SETTINGS_TAB_UPDATE)[keyof typeof SETTINGS_TAB_UPDATE],
+    ][]
+  )
+    .filter(([, code]) => permissions.includes(code))
+    .map(([section]) => section);
+  const canUpdateCurrent = canUpdateSettingsTab(tab, permissions);
   const [draft, setDraft] = useState<PolicyDraft | null>(null);
   const committed = useRef<PolicyDraft | null>(null);
   const [pendingTab, setPendingTab] = useState<SettingsTab | null>(null);
@@ -247,6 +267,12 @@ export function SettingsWorkspace() {
     setDraft(next);
     committed.current = clonePolicyDraft(next);
   }, [settingsQuery.data, theme, language]);
+
+  useEffect(() => {
+    if (canViewSettingsTab(tab, permissions)) return;
+    const fallback = TAB_IDS.find((id) => canViewSettingsTab(id, permissions));
+    if (fallback) setTab(fallback);
+  }, [tab, permissions, setTab]);
 
   const tabLabels: Record<SettingsTab, string> = {
     dashboard: t("tabs.dashboard"),
@@ -341,51 +367,60 @@ export function SettingsWorkspace() {
   }
 
   async function persist() {
-    if (!draft || saveSettings.isPending) return;
+    if (!draft || saveSettings.isPending || persistSections.length === 0) return;
 
-    for (const gram of GRAMS) {
-      for (const channel of ["B2C", "B2B"] as const) {
-        const value = draft.margin.minimumMargin[channel][gram];
-        if (!Number.isFinite(value) || value < 0 || value >= 100) {
-          showToast(t("toasts.marginRange"));
-          return;
+    if (persistSections.includes("margin")) {
+      for (const gram of GRAMS) {
+        for (const channel of ["B2C", "B2B"] as const) {
+          const value = draft.margin.minimumMargin[channel][gram];
+          if (!Number.isFinite(value) || value < 0 || value >= 100) {
+            showToast(t("toasts.marginRange"));
+            return;
+          }
         }
       }
     }
 
     if (
-      !Number.isFinite(draft.route.minimumMargin) ||
-      draft.route.minimumMargin < 0 ||
-      draft.route.minimumMargin >= 100 ||
-      !Number.isFinite(draft.route.maxLeadHours) ||
-      draft.route.maxLeadHours < 0
+      persistSections.includes("route") &&
+      (!Number.isFinite(draft.route.minimumMargin) ||
+        draft.route.minimumMargin < 0 ||
+        draft.route.minimumMargin >= 100 ||
+        !Number.isFinite(draft.route.maxLeadHours) ||
+        draft.route.maxLeadHours < 0)
     ) {
       showToast(t("toasts.routeInvalid"));
       return;
     }
 
     if (
-      !Number.isFinite(draft.system.refreshSeconds) ||
-      draft.system.refreshSeconds < MIN_REFRESH_SECONDS
+      persistSections.includes("system") &&
+      (!Number.isFinite(draft.system.refreshSeconds) ||
+        draft.system.refreshSeconds < MIN_REFRESH_SECONDS)
     ) {
       setRefreshAlertOpen(true);
       return;
     }
 
-    for (const quote of draft.supplier.quotes) {
-      if (
-        !Number.isFinite(quote.capacity) ||
-        quote.capacity < 0 ||
-        !Number.isFinite(quote.leadTime) ||
-        quote.leadTime < 0
-      ) {
-        showToast(t("toasts.supplierInvalid"));
-        return;
+    if (persistSections.includes("supplier")) {
+      for (const quote of draft.supplier.quotes) {
+        if (
+          !Number.isFinite(quote.capacity) ||
+          quote.capacity < 0 ||
+          !Number.isFinite(quote.leadTime) ||
+          quote.leadTime < 0
+        ) {
+          showToast(t("toasts.supplierInvalid"));
+          return;
+        }
       }
     }
 
     try {
-      await saveSettings.mutateAsync(draft);
+      await saveSettings.mutateAsync({
+        draft,
+        sections: persistSections,
+      });
       committed.current = clonePolicyDraft(draft);
       setTheme(draft.display.theme);
       setLanguage(draft.display.language);
@@ -427,7 +462,7 @@ export function SettingsWorkspace() {
           className="gap-0"
         >
           <TabsList className="gap-2">
-            {TAB_IDS.map((id) => (
+            {visibleTabs.map((id) => (
               <TabsTrigger key={id} value={id} className="min-h-11 py-0">
                 {tabLabels[id]}
               </TabsTrigger>
@@ -445,6 +480,15 @@ export function SettingsWorkspace() {
           <h2 className="mt-0 mb-4.5 text-[1.25rem] font-bold">
             {tabLabels[tab]}
           </h2>
+          {tab !== "dashboard" && !canUpdateCurrent ? (
+            <p className="mt-0 mb-4 text-[0.95rem] text-muted-text">
+              {t("readOnlyNote")}
+            </p>
+          ) : null}
+          <fieldset
+            disabled={tab !== "dashboard" && !canUpdateCurrent}
+            className="m-0 min-w-0 border-0 p-0"
+          >
           {tab === "dashboard" ? (
             <>
               <FormRow
@@ -656,8 +700,9 @@ export function SettingsWorkspace() {
               </FormRow>
             </>
           ) : null}
+          </fieldset>
         </Card>
-        {tab !== "dashboard" && isDirty() ? (
+        {tab !== "dashboard" && canUpdateCurrent && isDirty() ? (
           <div className="mt-4.5 flex flex-wrap items-center justify-between gap-3.5">
             <p className="m-0 text-[0.95rem] leading-normal text-muted-text">
               {t("footerNote")}

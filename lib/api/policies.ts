@@ -1,3 +1,4 @@
+import { PERMISSION, hasPermission } from "@/domain/auth";
 import type { Channel, Gram } from "@/domain/primitives";
 import { GRAMS } from "@/domain/primitives";
 import type {
@@ -167,14 +168,22 @@ export async function updateSystemPolicy(
   await apiPut("/policies/systems", body);
 }
 
+export type PolicyPersistSection = "margin" | "route" | "supplier" | "system";
+
 export async function fetchPolicyDraft(
   display: DisplaySettings,
+  permissions?: readonly string[],
 ): Promise<PolicyDraft> {
+  const can = (code: (typeof PERMISSION)[keyof typeof PERMISSION]) =>
+    permissions == null || hasPermission(permissions, code);
+
   const [margins, route, system, suppliers] = await Promise.all([
-    fetchMarginPolicies(),
-    fetchRoutePolicy(),
-    fetchSystemPolicy(),
-    fetchSuppliers(),
+    can(PERMISSION.VIEW_MARGIN_POLICY) ? fetchMarginPolicies() : null,
+    can(PERMISSION.VIEW_ROUTE_POLICY) ? fetchRoutePolicy() : null,
+    can(PERMISSION.VIEW_SYSTEM_POLICY) ? fetchSystemPolicy() : null,
+    can(PERMISSION.VIEW_SUPPLIER_POLICY) || can(PERMISSION.VIEW_SUPPLIER)
+      ? fetchSuppliers()
+      : null,
   ]);
 
   const base = createDefaultPolicyDraft(display);
@@ -182,20 +191,36 @@ export async function fetchPolicyDraft(
   return {
     ...base,
     display,
-    margin: marginRowsToPolicy(margins),
-    route: routeDtoToPolicy(route),
-    supplier: {
-      quotes: suppliers.map(toSupplierPolicyQuote),
-    },
-    system: systemDtoToSettings(system),
+    margin: margins ? marginRowsToPolicy(margins) : base.margin,
+    route: route ? routeDtoToPolicy(route) : base.route,
+    supplier: suppliers
+      ? { quotes: suppliers.map(toSupplierPolicyQuote) }
+      : base.supplier,
+    system: system ? systemDtoToSettings(system) : base.system,
   };
 }
 
-export async function persistPolicyDraft(draft: PolicyDraft): Promise<void> {
-  await Promise.all([
-    updateMarginPolicies(marginPolicyToRows(draft.margin)),
-    updateRoutePolicy(routePolicyToDto(draft.route)),
-    updateSystemPolicy(systemSettingsToDto(draft.system)),
-    persistSupplierPolicy(draft.supplier),
-  ]);
+export async function persistPolicyDraft(
+  draft: PolicyDraft,
+  sections: readonly PolicyPersistSection[] = [
+    "margin",
+    "route",
+    "supplier",
+    "system",
+  ],
+): Promise<void> {
+  const tasks: Promise<void>[] = [];
+  if (sections.includes("margin")) {
+    tasks.push(updateMarginPolicies(marginPolicyToRows(draft.margin)));
+  }
+  if (sections.includes("route")) {
+    tasks.push(updateRoutePolicy(routePolicyToDto(draft.route)));
+  }
+  if (sections.includes("system")) {
+    tasks.push(updateSystemPolicy(systemSettingsToDto(draft.system)));
+  }
+  if (sections.includes("supplier")) {
+    tasks.push(persistSupplierPolicy(draft.supplier));
+  }
+  await Promise.all(tasks);
 }
