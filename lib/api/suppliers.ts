@@ -1,9 +1,9 @@
 import type { Gram } from "@/domain/primitives";
 import { GRAMS } from "@/domain/primitives";
-import type { SupplierPolicy, SupplierPolicyQuote } from "@/domain/settings";
 import type { SupplierQuoteRow } from "@/domain/suppliers";
-import { apiGet, apiPut } from "@/lib/api/http";
+import { apiGet } from "@/lib/api/http";
 
+/** GET /suppliers item — live quote + lock fields. */
 export interface SupplierQuoteDto {
   supplierId: string;
   quoteId: string;
@@ -17,14 +17,6 @@ export interface SupplierQuoteDto {
   validUntil: number | string;
   lockAvailable: boolean;
   lockStatus: string;
-}
-
-/** PUT /suppliers body item — editable policy fields only. */
-export interface SupplierQuoteUpdateDto {
-  quoteId: string;
-  active: boolean;
-  capacity: number;
-  leadTime: number;
 }
 
 function isGram(value: number): value is Gram {
@@ -75,18 +67,6 @@ export function mapSupplierQuote(dto: SupplierQuoteDto): SupplierQuoteRow {
   };
 }
 
-export function toSupplierPolicyQuote(row: SupplierQuoteRow): SupplierPolicyQuote {
-  return {
-    quoteId: row.quoteId,
-    supplierId: row.supplierId,
-    name: row.name,
-    gram: row.gram,
-    active: row.active,
-    capacity: row.capacity,
-    leadTime: row.leadTime,
-  };
-}
-
 export async function fetchSupplierDtos(): Promise<SupplierQuoteDto[]> {
   return apiGet<SupplierQuoteDto[]>("/suppliers");
 }
@@ -94,27 +74,4 @@ export async function fetchSupplierDtos(): Promise<SupplierQuoteDto[]> {
 export async function fetchSuppliers(): Promise<SupplierQuoteRow[]> {
   const rows = await fetchSupplierDtos();
   return rows.map(mapSupplierQuote);
-}
-
-export function toSupplierQuoteUpdate(
-  quote: Pick<SupplierPolicyQuote, "quoteId" | "active" | "capacity" | "leadTime">,
-): SupplierQuoteUpdateDto {
-  return {
-    quoteId: quote.quoteId,
-    active: quote.active,
-    capacity: quote.capacity,
-    leadTime: quote.leadTime,
-  };
-}
-
-export async function updateSuppliers(
-  rows: SupplierQuoteUpdateDto[],
-): Promise<void> {
-  await apiPut("/suppliers", rows);
-}
-
-export async function persistSupplierPolicy(
-  policy: SupplierPolicy,
-): Promise<void> {
-  await updateSuppliers(policy.quotes.map(toSupplierQuoteUpdate));
 }

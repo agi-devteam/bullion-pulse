@@ -6,14 +6,11 @@ import type {
   MarginPolicy,
   PolicyDraft,
   RoutePolicy,
+  SupplierPolicy,
+  SupplierPolicyQuote,
   SystemSettings,
 } from "@/domain/settings";
 import { apiGet, apiPut } from "@/lib/api/http";
-import {
-  fetchSuppliers,
-  persistSupplierPolicy,
-  toSupplierPolicyQuote,
-} from "@/lib/api/suppliers";
 import { createDefaultPolicyDraft } from "@/lib/settings/defaults";
 
 /** Live backend shapes — match Express /policies/* contracts. */
@@ -38,6 +35,25 @@ export interface SystemPolicyDto {
   staleMinutes: number;
   xauEnabled: boolean;
   updatedAt?: number;
+}
+
+/** GET /policies/suppliers item — editable policy fields only. */
+export interface SupplierPolicyDto {
+  supplierId: string;
+  quoteId: string;
+  name: string;
+  active: boolean;
+  grammage: number;
+  capacity: number;
+  leadTime: number;
+}
+
+/** PUT /policies/suppliers body item. */
+export interface SupplierPolicyPutDto {
+  quoteId: string;
+  active: boolean;
+  capacity: number;
+  leadTime: number;
 }
 
 export type MarginPolicyPutDto = Omit<MarginPolicyRowDto, "updatedAt">;
@@ -138,6 +154,33 @@ export function systemSettingsToDto(
   };
 }
 
+export function mapSupplierPolicyDto(
+  dto: SupplierPolicyDto,
+): SupplierPolicyQuote {
+  const gram = isGram(dto.grammage) ? dto.grammage : (dto.grammage as Gram);
+
+  return {
+    quoteId: String(dto.quoteId ?? ""),
+    supplierId: String(dto.supplierId ?? ""),
+    name: dto.name ?? "",
+    gram,
+    active: Boolean(dto.active),
+    capacity: Number.isFinite(dto.capacity) ? dto.capacity : 0,
+    leadTime: Number.isFinite(dto.leadTime) ? dto.leadTime : 0,
+  };
+}
+
+export function toSupplierPolicyPut(
+  quote: Pick<SupplierPolicyQuote, "quoteId" | "active" | "capacity" | "leadTime">,
+): SupplierPolicyPutDto {
+  return {
+    quoteId: quote.quoteId,
+    active: quote.active,
+    capacity: quote.capacity,
+    leadTime: quote.leadTime,
+  };
+}
+
 export async function fetchMarginPolicies(): Promise<MarginPolicyRowDto[]> {
   return apiGet<MarginPolicyRowDto[]>("/policies/margins");
 }
@@ -148,6 +191,10 @@ export async function fetchRoutePolicy(): Promise<RoutePolicyDto> {
 
 export async function fetchSystemPolicy(): Promise<SystemPolicyDto> {
   return apiGet<SystemPolicyDto>("/policies/systems");
+}
+
+export async function fetchSupplierPolicies(): Promise<SupplierPolicyDto[]> {
+  return apiGet<SupplierPolicyDto[]>("/policies/suppliers");
 }
 
 export async function updateMarginPolicies(
@@ -168,6 +215,18 @@ export async function updateSystemPolicy(
   await apiPut("/policies/systems", body);
 }
 
+export async function updateSupplierPolicies(
+  rows: SupplierPolicyPutDto[],
+): Promise<void> {
+  await apiPut("/policies/suppliers", rows);
+}
+
+export async function persistSupplierPolicy(
+  policy: SupplierPolicy,
+): Promise<void> {
+  await updateSupplierPolicies(policy.quotes.map(toSupplierPolicyPut));
+}
+
 export type PolicyPersistSection = "margin" | "route" | "supplier" | "system";
 
 export async function fetchPolicyDraft(
@@ -181,9 +240,7 @@ export async function fetchPolicyDraft(
     can(PERMISSION.VIEW_MARGIN_POLICY) ? fetchMarginPolicies() : null,
     can(PERMISSION.VIEW_ROUTE_POLICY) ? fetchRoutePolicy() : null,
     can(PERMISSION.VIEW_SYSTEM_POLICY) ? fetchSystemPolicy() : null,
-    can(PERMISSION.VIEW_SUPPLIER_POLICY) || can(PERMISSION.VIEW_SUPPLIER)
-      ? fetchSuppliers()
-      : null,
+    can(PERMISSION.VIEW_SUPPLIER_POLICY) ? fetchSupplierPolicies() : null,
   ]);
 
   const base = createDefaultPolicyDraft(display);
@@ -194,7 +251,7 @@ export async function fetchPolicyDraft(
     margin: margins ? marginRowsToPolicy(margins) : base.margin,
     route: route ? routeDtoToPolicy(route) : base.route,
     supplier: suppliers
-      ? { quotes: suppliers.map(toSupplierPolicyQuote) }
+      ? { quotes: suppliers.map(mapSupplierPolicyDto) }
       : base.supplier,
     system: system ? systemDtoToSettings(system) : base.system,
   };
