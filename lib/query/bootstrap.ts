@@ -10,7 +10,6 @@ import {
   fetchXauPricelists,
 } from "@/lib/api/pricelists";
 import { fetchSuppliers } from "@/lib/api/suppliers";
-import { INVENTORY_REFETCH_MS } from "@/lib/query/inventory-refresh";
 import { queryKeys } from "@/lib/query/keys";
 
 export async function fetchAntamQuote(): Promise<AntamQuote> {
@@ -76,7 +75,7 @@ export async function bootstrapAppData(
       queryClient.prefetchQuery({
         queryKey: queryKeys.inventory.all,
         queryFn: fetchInventories,
-        staleTime: INVENTORY_REFETCH_MS,
+        staleTime: 60 * 1000,
       }),
     );
   }

@@ -343,7 +343,7 @@
     "system": {
       "dayStart": "Business day start · WIB",
       "refresh": "Refresh interval (seconds)",
-      "refreshNote": "Market, supplier, and pricelist refresh; minimum 5 seconds. Inventory list refreshes every 60 seconds. Not a live feed connection.",
+      "refreshNote": "Market, inventory, supplier, and pricelist refresh; minimum 5 seconds. Not a live feed connection.",
       "freshness": "Freshness threshold (minutes)",
       "antamSource": "ANTAM official source",
       "antamSourceNote": "Official source only · no fallback.",

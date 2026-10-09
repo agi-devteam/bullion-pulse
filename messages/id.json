@@ -343,7 +343,7 @@
     "system": {
       "dayStart": "Awal hari bisnis · WIB",
       "refresh": "Interval refresh (detik)",
-      "refreshNote": "Refresh market, supplier, dan pricelist; minimum 5 detik. Daftar inventory di-refresh setiap 60 detik. Bukan koneksi feed live.",
+      "refreshNote": "Refresh market, inventory, supplier, dan pricelist; minimum 5 detik. Bukan koneksi feed live.",
       "freshness": "Ambang freshness (menit)",
       "antamSource": "Sumber resmi ANTAM",
       "antamSourceNote": "Official source only · no fallback.",

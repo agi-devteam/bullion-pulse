@@ -1,3 +1,2 @@
-export const INVENTORY_REFETCH_MS = 60_000;
-
-export const INVENTORY_TIMEOUT_MS = 60_000;
+/** Abort inventory fetch when the API stalls; sub-second responses are normal. */
+export const INVENTORY_TIMEOUT_MS = 15_000;

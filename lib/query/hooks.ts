@@ -27,7 +27,6 @@ import { buildActionAlerts } from "@/lib/actions/build-alerts";
 import { buildHomeIntelligence } from "@/lib/intelligence/build-home";
 import { buildPricingRows } from "@/lib/pricing/build-rows";
 import { fetchAntamQuote, fetchXauQuote } from "@/lib/query/bootstrap";
-import { INVENTORY_REFETCH_MS } from "@/lib/query/inventory-refresh";
 import { queryKeys } from "@/lib/query/keys";
 import { useAuthStore } from "@/stores/use-auth-store";
 import { useSettingsStore } from "@/stores/use-settings-store";
@@ -152,12 +151,13 @@ export function useInventoryRecords(options?: { enabled?: boolean }) {
   const suppliersQuery = useSuppliers();
   const antamQuery = useMarketAntam();
   const status = useAuthStore((state) => state.status);
+  const refetchIntervalMs = useSettingsRefreshIntervalMs();
   const inventoryQuery = useQuery({
     queryKey: queryKeys.inventory.all,
     queryFn: fetchInventories,
-    staleTime: INVENTORY_REFETCH_MS,
+    staleTime: refetchIntervalMs,
     refetchInterval: (query) =>
-      query.state.fetchStatus === "fetching" ? false : INVENTORY_REFETCH_MS,
+      query.state.fetchStatus === "fetching" ? false : refetchIntervalMs,
     enabled: (options?.enabled ?? true) && status === "authenticated",
   });
 
