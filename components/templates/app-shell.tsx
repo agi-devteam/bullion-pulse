@@ -142,7 +142,7 @@ export function AppShell({ children }: AppShellProps) {
         <NavigationDrawer />
       </Sheet>
       <EvidenceDialog />
-      <Toast message={toast} />
+      <Toast id={toast.id} message={toast.message} tone={toast.tone} />
     </>
   );
 }

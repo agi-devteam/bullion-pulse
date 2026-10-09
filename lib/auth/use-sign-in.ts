@@ -80,7 +80,7 @@ export function useSignIn() {
       router.replace(safeNextPath());
       router.refresh();
     } catch (error) {
-      showToast(errorText(error, t("errors.verifyFailed")));
+      showToast(errorText(error, t("errors.verifyFailed")), "error");
     } finally {
       setIsSubmitting(false);
     }
@@ -94,7 +94,7 @@ export function useSignIn() {
     try {
       await submitCredentials();
     } catch (error) {
-      showToast(errorText(error, t("errors.signInFailed")));
+      showToast(errorText(error, t("errors.signInFailed")), "error");
     } finally {
       setIsSubmitting(false);
     }
@@ -106,7 +106,7 @@ export function useSignIn() {
     try {
       await submitCredentials();
     } catch (error) {
-      showToast(errorText(error, t("errors.signInFailed")));
+      showToast(errorText(error, t("errors.signInFailed")), "error");
     } finally {
       setIsResending(false);
     }
