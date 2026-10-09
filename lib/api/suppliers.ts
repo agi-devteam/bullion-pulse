@@ -19,6 +19,14 @@ export interface SupplierQuoteDto {
   lockStatus: string;
 }
 
+/** PUT /suppliers body item — editable policy fields only. */
+export interface SupplierQuoteUpdateDto {
+  quoteId: string;
+  active: boolean;
+  capacity: number;
+  leadTime: number;
+}
+
 function isGram(value: number): value is Gram {
   return (GRAMS as readonly number[]).includes(value);
 }
@@ -88,28 +96,25 @@ export async function fetchSuppliers(): Promise<SupplierQuoteRow[]> {
   return rows.map(mapSupplierQuote);
 }
 
-export async function updateSuppliers(rows: SupplierQuoteDto[]): Promise<void> {
+export function toSupplierQuoteUpdate(
+  quote: Pick<SupplierPolicyQuote, "quoteId" | "active" | "capacity" | "leadTime">,
+): SupplierQuoteUpdateDto {
+  return {
+    quoteId: quote.quoteId,
+    active: quote.active,
+    capacity: quote.capacity,
+    leadTime: quote.leadTime,
+  };
+}
+
+export async function updateSuppliers(
+  rows: SupplierQuoteUpdateDto[],
+): Promise<void> {
   await apiPut("/suppliers", rows);
 }
 
 export async function persistSupplierPolicy(
   policy: SupplierPolicy,
 ): Promise<void> {
-  const current = await fetchSupplierDtos();
-  const patchByQuoteId = new Map(
-    policy.quotes.map((quote) => [quote.quoteId, quote] as const),
-  );
-
-  const next = current.map((dto) => {
-    const patch = patchByQuoteId.get(String(dto.quoteId));
-    if (!patch) return dto;
-    return {
-      ...dto,
-      active: patch.active,
-      capacity: patch.capacity,
-      leadTime: patch.leadTime,
-    };
-  });
-
-  await updateSuppliers(next);
+  await updateSuppliers(policy.quotes.map(toSupplierQuoteUpdate));
 }
