@@ -21,7 +21,6 @@ export function I18nProvider({ children }: { children: ReactNode }) {
 
   return (
     <NextIntlClientProvider
-      key={locale}
       locale={locale}
       messages={messagesByLocale[locale]}
       timeZone="Asia/Jakarta"
