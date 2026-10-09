@@ -15,10 +15,17 @@ import { queryKeys } from "@/lib/query/keys";
 export async function fetchAntamQuote(): Promise<AntamQuote> {
   const rows = await fetchAntamPricelists();
   const sell: AntamQuote["sell"] = {};
+  let buyback: number | null = null;
+
   for (const row of rows) {
     sell[row.gram] = row.sellPrice;
+    if (row.buybackPrice != null && row.gram > 0) {
+      const perGram = row.buybackPrice / row.gram;
+      buyback = buyback == null ? perGram : Math.max(buyback, perGram);
+    }
   }
-  return { sell, buyback: null };
+
+  return { sell, buyback };
 }
 
 export async function bootstrapAppData(

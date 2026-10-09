@@ -12,6 +12,7 @@ export interface GmiClubPricelistRowDto {
 export interface AntamPricelistRowDto {
   grammage: number;
   sellPrice: number;
+  buybackPrice?: number;
   updatedAt?: number;
 }
 
@@ -25,6 +26,7 @@ export interface PricelistEntry {
 export interface AntamPricelistEntry {
   gram: Gram;
   sellPrice: number;
+  buybackPrice: number | null;
   updatedAt?: number;
 }
 
@@ -63,9 +65,15 @@ export function mapAntamPricelistRow(
     return null;
   }
 
+  const buybackPrice =
+    typeof dto.buybackPrice === "number" && Number.isFinite(dto.buybackPrice)
+      ? dto.buybackPrice
+      : null;
+
   return {
     gram: dto.grammage,
     sellPrice: dto.sellPrice,
+    buybackPrice,
     updatedAt: dto.updatedAt,
   };
 }
