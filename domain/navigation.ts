@@ -14,7 +14,7 @@ export const NAV_GROUPS = [
   {
     id: "operations",
     titleKey: "operations",
-    items: ["inventory", "pricing", "suppliers", "actions"],
+    items: ["inventory", "pricing", "suppliers"],
   },
   { id: "system", titleKey: "system", items: ["settings"] },
 ] as const satisfies {

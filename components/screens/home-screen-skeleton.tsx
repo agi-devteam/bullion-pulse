@@ -120,25 +120,7 @@ function DecisionPanelSkeleton({ bucket }: { bucket: DecisionBucket }) {
   );
 }
 
-function PriorityActionCardSkeleton() {
-  return (
-    <Card
-      aria-hidden="true"
-      className="flex flex-row items-center gap-3.5 rounded-2xl px-5 py-4 max-[700px]:flex-wrap max-[700px]:gap-2.5 max-[700px]:px-3.5 max-[700px]:py-3.25 max-[480px]:items-start"
-    >
-      <Skeleton className="size-11 flex-none rounded-xl max-[480px]:size-10" />
-      <div className="min-w-0 flex-1 max-[700px]:min-w-40">
-        <Skeleton className="h-4.5 w-40 max-w-full" />
-        <Skeleton className="mt-1.5 h-4 w-52 max-w-full" />
-      </div>
-      <Skeleton className="h-11 w-24 flex-none rounded-[999px] max-[700px]:ml-auto max-[480px]:ml-13.5 max-[480px]:w-[calc(100%-54px)]" />
-    </Card>
-  );
-}
-
 export function HomeScreenSkeleton() {
-  const t = useTranslations("home");
-
   return (
     <div
       className="flex flex-col gap-4 min-[2560px]:gap-5.5 max-[1000px]:gap-3.5"
@@ -153,19 +135,6 @@ export function HomeScreenSkeleton() {
           ))}
         </div>
       </Card>
-      <section className="flex flex-col gap-2.5" aria-labelledby="priority-title">
-        <div className="flex items-baseline justify-between gap-3">
-          <h2 id="priority-title" className="m-0 text-[1.25rem] font-bold">
-            {t("priorityTitle")}
-          </h2>
-          <span className="text-base font-semibold text-ink">{t("viewAll")}</span>
-        </div>
-        <div className="grid grid-cols-3 gap-4 max-[1000px]:grid-cols-1 max-[700px]:gap-2.5">
-          <PriorityActionCardSkeleton />
-          <PriorityActionCardSkeleton />
-          <PriorityActionCardSkeleton />
-        </div>
-      </section>
     </div>
   );
 }

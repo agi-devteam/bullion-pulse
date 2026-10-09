@@ -1,16 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
-import { useTranslations } from "next-intl";
 import { Card } from "@/components/molecules/card";
 import { DecisionPanel } from "@/components/organisms/decision-panel";
-import { PriorityActionCard } from "@/components/organisms/priority-action-card";
 import { ReadyInventoryCard } from "@/components/organisms/ready-inventory-card";
 import { HomeScreenSkeleton } from "@/components/screens/home-screen-skeleton";
 import type { DecisionBucket, Segment } from "@/domain/primitives";
 import type { HomeIntelligence } from "@/domain/intelligence";
-import { formatNumber, formatPercent } from "@/lib/format/money";
 import { useIntelligence } from "@/lib/query/hooks";
 import { useSettingsStore } from "@/stores/use-settings-store";
 import { useUIStore } from "@/stores/use-ui-store";
@@ -24,8 +20,6 @@ function HomeScreenContent({
   data: HomeIntelligence;
   segment: Segment;
 }) {
-  const t = useTranslations("home");
-  const tPriority = useTranslations("home.priority");
   const setDialog = useUIStore((state) => state.setDialog);
   const [barMotionReady, setBarMotionReady] = useState(false);
 
@@ -33,10 +27,6 @@ function HomeScreenContent({
     const id = window.requestAnimationFrame(() => setBarMotionReady(true));
     return () => window.cancelAnimationFrame(id);
   }, []);
-
-  const actions = data.actions
-    .filter((action) => action.action === "WATCH")
-    .slice(0, 3);
 
   return (
     <div
@@ -65,38 +55,6 @@ function HomeScreenContent({
           ))}
         </div>
       </Card>
-      {actions.length > 0 ? (
-        <section
-          className="flex flex-col gap-2.5"
-          aria-labelledby="priority-title"
-        >
-          <div className="flex items-baseline justify-between gap-3">
-            <h2 id="priority-title" className="m-0 text-[1.25rem] font-bold">
-              {t("priorityTitle")}
-            </h2>
-            <Link href="/actions" className="text-base font-semibold text-ink">
-              {t("viewAll")}
-            </Link>
-          </div>
-          <div className="grid grid-cols-3 gap-4 max-[1000px]:grid-cols-1 max-[700px]:gap-2.5">
-            {actions.map((action) => (
-              <PriorityActionCard
-                key={action.id}
-                action={action.action}
-                title={tPriority("watchTitle", { gram: action.gram })}
-                subtitle={tPriority("watchSubtitle", {
-                  grams: formatNumber(action.grams),
-                  margin:
-                    action.replacementMargin == null
-                      ? "—"
-                      : formatPercent(action.replacementMargin),
-                })}
-                href={action.href}
-              />
-            ))}
-          </div>
-        </section>
-      ) : null}
     </div>
   );
 }
