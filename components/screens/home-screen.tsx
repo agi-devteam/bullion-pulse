@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { Card } from "@/components/molecules/card";
 import { DecisionPanel } from "@/components/organisms/decision-panel";
 import { ReadyInventoryCard } from "@/components/organisms/ready-inventory-card";
@@ -60,11 +61,20 @@ function HomeScreenContent({
 }
 
 export function HomeScreen() {
+  const t = useTranslations("home.ready");
   const segment = useSettingsStore((state) => state.segment);
   const intelligenceQuery = useIntelligence(segment);
 
-  if (intelligenceQuery.isPending || !intelligenceQuery.data) {
+  if (intelligenceQuery.isPending) {
     return <HomeScreenSkeleton />;
+  }
+
+  if (!intelligenceQuery.data) {
+    return (
+      <Card className="block gap-0 p-6">
+        <p className="m-0 text-[0.95rem] text-muted-text">{t("unavailable")}</p>
+      </Card>
+    );
   }
 
   return (

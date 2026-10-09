@@ -2,6 +2,9 @@ import type { DecisionBucket, Segment } from "@/domain/primitives";
 import type { InventoryFilters, PricingFilters } from "@/domain/filters";
 
 export const queryKeys = {
+  auth: {
+    user: ["auth", "user"] as const,
+  },
   intelligence: {
     all: ["intelligence"] as const,
     bySegment: (segment: Segment) => ["intelligence", segment] as const,

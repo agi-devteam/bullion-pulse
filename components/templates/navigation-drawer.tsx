@@ -8,6 +8,7 @@ import {
   NavigationIcon,
   NavigationToggleIcon,
 } from "@/components/atoms/navigation-icons";
+import { LogOut } from "lucide-react";
 import { Button } from "@/components/atoms/button";
 import {
   SheetClose,
@@ -17,11 +18,13 @@ import {
   SheetTitle,
 } from "@/components/organisms/sheet";
 import { NAV_GROUPS, NAV_ITEMS, isNavItemActive } from "@/domain/navigation";
+import { signOut } from "@/lib/auth/sign-out";
 import { cn } from "@/lib/utils";
 
 export function NavigationDrawer() {
   const pathname = usePathname();
   const t = useTranslations("shell.drawer");
+  const tShell = useTranslations("shell");
   const tNav = useTranslations("nav");
 
   return (
@@ -84,6 +87,14 @@ export function NavigationDrawer() {
           </div>
         ))}
       </nav>
+      <button
+        type="button"
+        className="flex min-h-12 items-center gap-3.5 rounded-[14px] px-3.5 text-[1.0625rem] font-medium text-muted-text hover:bg-track hover:text-ink"
+        onClick={() => void signOut()}
+      >
+        <LogOut size={20} aria-hidden="true" />
+        {tShell("signOut")}
+      </button>
     </SheetContent>
   );
 }

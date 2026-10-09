@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Instrument_Sans, JetBrains_Mono } from "next/font/google";
 import { Providers } from "@/app/providers";
-import { AppShell } from "@/components/templates/app-shell";
 import { cn } from "@/lib/utils";
 import "./globals.css";
 
@@ -36,9 +35,7 @@ export default function RootLayout({
       className={cn(instrumentSans.variable, jetbrainsMono.variable, "font-sans")}
     >
       <body>
-        <Providers>
-          <AppShell>{children}</AppShell>
-        </Providers>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

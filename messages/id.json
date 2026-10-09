@@ -57,6 +57,24 @@
       "system": "Sistem"
     }
   },
+  "auth": {
+    "title": "Masuk ke Bullion Pulse",
+    "subtitle": "Gunakan email Anda untuk lanjut",
+    "verifySubtitle": "Masukkan kode verifikasi yang kami kirim",
+    "emailLabel": "Email",
+    "emailPlaceholder": "Masukkan alamat email...",
+    "passwordLabel": "Kata sandi",
+    "passwordPlaceholder": "Masukkan kata sandi",
+    "continue": "Lanjutkan",
+    "submitting": "Memproses…",
+    "resendOtp": "Kirim ulang OTP",
+    "resendCountdown": "{seconds} Kirim ulang OTP",
+    "backToLogin": "Kembali ke formulir login",
+    "errors": {
+      "signInFailed": "Tidak dapat masuk. Periksa email dan kata sandi.",
+      "verifyFailed": "Kode tidak valid. Coba lagi."
+    }
+  },
   "boot": {
     "aria": "Memuat Bullion Pulse",
     "eyebrow": "Inventory intelligence",
@@ -75,6 +93,7 @@
     "openNav": "Tampilkan navigasi",
     "account": "Akun",
     "settingsMenu": "Pengaturan",
+    "signOut": "Keluar",
     "drawer": {
       "brand": "Bullion Pulse",
       "collapse": "Ciutkan atau perluas sidebar",
@@ -258,6 +277,7 @@
     },
     "tabsNav": "Kategori pengaturan",
     "footerNote": "Perubahan berlaku setelah Save. Kebijakan margin, route, supplier, dan sistem disinkronkan ke server.",
+    "readOnlyNote": "Anda dapat melihat kebijakan ini, tetapi tidak memiliki izin untuk mengubahnya.",
     "loading": "Memuat pengaturan dari server…",
     "saving": "Menyimpan…",
     "loadFailed": "Tidak dapat memuat pengaturan dari server.",
@@ -286,8 +306,8 @@
       "themeDark": "Gelap",
       "language": "Bahasa",
       "languageNote": "Bahasa antarmuka untuk workspace ini.",
-      "languageId": "Indonesia (id)",
-      "languageEn": "English (en)"
+      "languageId": "Indonesia",
+      "languageEn": "English (US)"
     },
     "margin": {
       "intro": "Margin = total GP ÷ harga jual; bukan hanya komponen Prognosa.",

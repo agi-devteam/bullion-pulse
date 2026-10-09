@@ -57,6 +57,24 @@
       "system": "System"
     }
   },
+  "auth": {
+    "title": "Log in to Bullion Pulse",
+    "subtitle": "Use your email to continue",
+    "verifySubtitle": "Enter the verification code we sent you",
+    "emailLabel": "Email",
+    "emailPlaceholder": "Enter your email address...",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "continue": "Continue",
+    "submitting": "Continuing…",
+    "resendOtp": "Resend OTP",
+    "resendCountdown": "{seconds} Resend OTP",
+    "backToLogin": "Back to login form",
+    "errors": {
+      "signInFailed": "Could not sign in. Check your email and password.",
+      "verifyFailed": "Could not verify that code. Try again."
+    }
+  },
   "boot": {
     "aria": "Loading Bullion Pulse",
     "eyebrow": "Inventory intelligence",
@@ -75,6 +93,7 @@
     "openNav": "Show navigation",
     "account": "Account",
     "settingsMenu": "Settings",
+    "signOut": "Sign out",
     "drawer": {
       "brand": "Bullion Pulse",
       "collapse": "Collapse or expand sidebar",
@@ -258,6 +277,7 @@
     },
     "tabsNav": "Settings categories",
     "footerNote": "Changes apply after Save. Margin, route, supplier, and system policies sync to the server.",
+    "readOnlyNote": "You can view this policy but do not have permission to change it.",
     "loading": "Loading settings from server…",
     "saving": "Saving…",
     "loadFailed": "Could not load settings from the server.",
@@ -286,8 +306,8 @@
       "themeDark": "Dark",
       "language": "Language",
       "languageNote": "UI language for this workspace.",
-      "languageId": "Indonesia (id)",
-      "languageEn": "English (en)"
+      "languageId": "Indonesia",
+      "languageEn": "English (US)"
     },
     "margin": {
       "intro": "Margin = total GP ÷ selling price; not Prognosis alone.",

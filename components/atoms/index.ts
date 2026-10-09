@@ -6,6 +6,12 @@ export {
   NavigationToggleIcon,
 } from "@/components/atoms/navigation-icons";
 export { Input } from "@/components/atoms/input";
+export {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSeparator,
+  InputOTPSlot,
+} from "@/components/atoms/input-otp";
 export { Label } from "@/components/atoms/label";
 export { Separator } from "@/components/atoms/separator";
 export { Skeleton } from "@/components/atoms/skeleton";

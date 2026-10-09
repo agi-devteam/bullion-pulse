@@ -1,3 +1,4 @@
+export { LoginScreen } from "@/components/screens/login-screen";
 export { ActionsWorkspace } from "@/components/screens/actions-workspace";
 export { ActionsWorkspaceSkeleton } from "@/components/screens/actions-workspace-skeleton";
 export { HomeScreen } from "@/components/screens/home-screen";

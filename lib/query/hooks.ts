@@ -14,6 +14,7 @@ import {
   type DisplaySettings,
   type PolicyDraft,
 } from "@/domain/settings";
+import { fetchUserInfo } from "@/lib/api/auth";
 import { fetchInventories } from "@/lib/api/inventories";
 import { fetchPolicyDraft, persistPolicyDraft } from "@/lib/api/policies";
 import { fetchPricingPricelistSources } from "@/lib/api/pricelists";
@@ -24,6 +25,7 @@ import { buildPricingRows } from "@/lib/pricing/build-rows";
 import { fetchAntamQuote } from "@/lib/query/bootstrap";
 import { INVENTORY_REFETCH_MS } from "@/lib/query/inventory-refresh";
 import { queryKeys } from "@/lib/query/keys";
+import { useAuthStore } from "@/stores/use-auth-store";
 import { useSettingsStore } from "@/stores/use-settings-store";
 
 class ApiNotImplementedError extends Error {
@@ -37,12 +39,27 @@ function notImplemented(endpoint: string): Promise<never> {
   return Promise.reject(new ApiNotImplementedError(endpoint));
 }
 
+export function useUserInfo() {
+  const status = useAuthStore((state) => state.status);
+
+  return useQuery({
+    queryKey: queryKeys.auth.user,
+    queryFn: fetchUserInfo,
+    staleTime: 60 * 1000,
+    refetchInterval: false,
+    enabled: status === "authenticated",
+  });
+}
+
 export function useSettings(display: DisplaySettings) {
+  const status = useAuthStore((state) => state.status);
+
   return useQuery({
     queryKey: queryKeys.settings,
     queryFn: () => fetchPolicyDraft(display),
     staleTime: 60 * 1000,
     refetchInterval: false,
+    enabled: status === "authenticated",
   });
 }
 
@@ -92,6 +109,7 @@ export function useIntelligenceEvidence(
 }
 
 export function useSuppliers(options?: { enabled?: boolean }) {
+  const status = useAuthStore((state) => state.status);
   const refetchIntervalMs = useSettingsRefreshIntervalMs();
 
   return useQuery({
@@ -99,11 +117,12 @@ export function useSuppliers(options?: { enabled?: boolean }) {
     queryFn: fetchSuppliers,
     staleTime: refetchIntervalMs,
     refetchInterval: refetchIntervalMs,
-    enabled: options?.enabled ?? true,
+    enabled: (options?.enabled ?? true) && status === "authenticated",
   });
 }
 
 export function useMarketAntam() {
+  const status = useAuthStore((state) => state.status);
   const refetchIntervalMs = useSettingsRefreshIntervalMs();
 
   return useQuery<AntamQuote>({
@@ -111,6 +130,7 @@ export function useMarketAntam() {
     queryFn: fetchAntamQuote,
     staleTime: refetchIntervalMs,
     refetchInterval: refetchIntervalMs,
+    enabled: status === "authenticated",
   });
 }
 
@@ -120,13 +140,14 @@ export function useInventoryRecords(options?: { enabled?: boolean }) {
   const settingsQuery = useSettings({ theme, language });
   const suppliersQuery = useSuppliers();
   const antamQuery = useMarketAntam();
+  const status = useAuthStore((state) => state.status);
   const inventoryQuery = useQuery({
     queryKey: queryKeys.inventory.all,
     queryFn: fetchInventories,
     staleTime: INVENTORY_REFETCH_MS,
     refetchInterval: (query) =>
       query.state.fetchStatus === "fetching" ? false : INVENTORY_REFETCH_MS,
-    enabled: options?.enabled ?? true,
+    enabled: (options?.enabled ?? true) && status === "authenticated",
   });
 
   const data = useMemo((): InventoryRecord[] | undefined => {
@@ -209,11 +230,13 @@ export function usePricing(_filters?: PricingFilters) {
   const inventoryQuery = useInventoryRecords();
   const suppliersQuery = useSuppliers();
   const refetchIntervalMs = useSettingsRefreshIntervalMs();
+  const status = useAuthStore((state) => state.status);
   const pricelistsQuery = useQuery({
     queryKey: queryKeys.pricing.all,
     queryFn: fetchPricingPricelistSources,
     staleTime: refetchIntervalMs,
     refetchInterval: refetchIntervalMs,
+    enabled: status === "authenticated",
   });
 
   const data = useMemo(() => {

@@ -1,4 +1,32 @@
 import { getApiBaseUrl } from "@/lib/api/config";
+import {
+  getAuthToken,
+  toBearerAuthorization,
+} from "@/lib/auth/token";
+import { handleUnauthorized } from "@/lib/auth/unauthorized";
+
+const AUTH_OPEN_PATHS = new Set([
+  "/auth/credentials",
+  "/auth/verification",
+]);
+
+function isAuthOpenPath(path: string): boolean {
+  return AUTH_OPEN_PATHS.has(path);
+}
+
+function errorMessageFromBody(body: unknown, status: number): string {
+  if (typeof body === "string" && body.length > 0) return body;
+  if (body && typeof body === "object") {
+    const record = body as Record<string, unknown>;
+    if (typeof record.message === "string" && record.message.length > 0) {
+      return record.message;
+    }
+    if (typeof record.error === "string" && record.error.length > 0) {
+      return record.error;
+    }
+  }
+  return `Request failed (${status})`;
+}
 
 export class ApiError extends Error {
   constructor(
@@ -51,6 +79,13 @@ export async function apiRequest<T>(
     headers.set("Content-Type", "application/json");
   }
 
+  if (!isAuthOpenPath(path) && !headers.has("Authorization")) {
+    const token = getAuthToken();
+    if (token) {
+      headers.set("Authorization", toBearerAuthorization(token));
+    }
+  }
+
   const controller = new AbortController();
   let timedOut = false;
   let timeoutId: ReturnType<typeof setTimeout> | undefined;
@@ -75,11 +110,14 @@ export async function apiRequest<T>(
     const body = await parseResponseBody(response);
 
     if (!response.ok) {
-      const message =
-        typeof body === "string" && body.length > 0
-          ? body
-          : `Request failed (${response.status})`;
-      throw new ApiError(response.status, path, message);
+      if (response.status === 401 && !isAuthOpenPath(path)) {
+        handleUnauthorized();
+      }
+      throw new ApiError(
+        response.status,
+        path,
+        errorMessageFromBody(body, response.status),
+      );
     }
 
     return body as T;
@@ -99,6 +137,13 @@ export function apiGet<T>(
   options?: Pick<ApiRequestOptions, "timeoutMs" | "signal">,
 ): Promise<T> {
   return apiRequest<T>(path, { method: "GET", ...options });
+}
+
+export function apiPost<T>(path: string, body: JsonBody): Promise<T> {
+  return apiRequest<T>(path, {
+    method: "POST",
+    body: JSON.stringify(body),
+  });
 }
 
 export function apiPut<T = null>(path: string, body: JsonBody): Promise<T> {

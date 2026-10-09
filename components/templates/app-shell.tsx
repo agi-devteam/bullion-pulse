@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { Settings, UserRound } from "lucide-react";
+import { LogOut, Settings, UserRound } from "lucide-react";
 import { useEffect, type ReactNode } from "react";
 import { NavigationToggleIcon } from "@/components/atoms/navigation-icons";
 import { Button } from "@/components/atoms/button";
@@ -20,6 +20,7 @@ import { Sheet, SheetTrigger } from "@/components/organisms/sheet";
 import { EvidenceDialog } from "@/components/templates/evidence-dialog";
 import { NavigationDrawer } from "@/components/templates/navigation-drawer";
 import { navItemIdFromPathname } from "@/domain/navigation";
+import { signOut } from "@/lib/auth/sign-out";
 import { cn } from "@/lib/utils";
 import { useUIStore } from "@/stores/use-ui-store";
 
@@ -122,6 +123,13 @@ export function AppShell({ children }: AppShellProps) {
                     >
                       <Settings size={20} aria-hidden="true" />
                       {t("settingsMenu")}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      className="min-h-12 gap-3.5 rounded-[14px] px-3.5 text-[1.0625rem]"
+                      onClick={() => void signOut()}
+                    >
+                      <LogOut size={20} aria-hidden="true" />
+                      {t("signOut")}
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
