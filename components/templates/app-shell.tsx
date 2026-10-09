@@ -3,15 +3,19 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { LogOut, Settings, UserRound } from "lucide-react";
+import { LogOut, Settings } from "lucide-react";
 import { useEffect, type ReactNode } from "react";
 import { NavigationToggleIcon } from "@/components/atoms/navigation-icons";
 import { Button } from "@/components/atoms/button";
+import { UserAvatar } from "@/components/atoms/user-avatar";
 import { ChannelFilter } from "@/components/molecules/channel-filter";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/molecules/dropdown-menu";
 import { MarketStrip } from "@/components/molecules/market-strip";
@@ -22,6 +26,7 @@ import { NavigationDrawer } from "@/components/templates/navigation-drawer";
 import { navItemIdFromPathname } from "@/domain/navigation";
 import { signOut } from "@/lib/auth/sign-out";
 import { cn } from "@/lib/utils";
+import { useAuthStore } from "@/stores/use-auth-store";
 import { useUIStore } from "@/stores/use-ui-store";
 
 export interface AppShellProps {
@@ -34,6 +39,7 @@ export function AppShell({ children }: AppShellProps) {
   const tNav = useTranslations("nav");
   const isHome = pathname === "/";
   const title = tNav(navItemIdFromPathname(pathname));
+  const user = useAuthStore((state) => state.user);
   const navOpen = useUIStore((state) => state.navOpen);
   const setNavOpen = useUIStore((state) => state.setNavOpen);
   const setDialog = useUIStore((state) => state.setDialog);
@@ -106,16 +112,41 @@ export function AppShell({ children }: AppShellProps) {
                       <Button
                         size="icon"
                         aria-label={t("account")}
-                        className="size-11 min-h-11 flex-none rounded-[999px] border border-ink bg-ink text-surface max-[700px]:size-10 max-[700px]:min-h-10"
+                        className={cn(
+                          "size-11 min-h-11 flex-none overflow-hidden rounded-[999px] border border-ink max-[700px]:size-10 max-[700px]:min-h-10",
+                          user?.image
+                            ? "bg-transparent p-0"
+                            : "bg-ink text-surface",
+                        )}
                       />
                     }
                   >
-                    <UserRound size={20} aria-hidden="true" />
+                    <UserAvatar
+                      name={user?.name}
+                      image={user?.image}
+                      size="lg"
+                      className="size-full"
+                    />
                   </DropdownMenuTrigger>
                   <DropdownMenuContent
                     align="end"
                     className="w-75 rounded-lg border-line p-2 shadow-[0_16px_48px_#0003] max-[700px]:fixed max-[700px]:top-18 max-[700px]:right-3 max-[700px]:left-3 max-[700px]:w-auto"
                   >
+                    {user ? (
+                      <>
+                        <DropdownMenuGroup>
+                          <DropdownMenuLabel className="flex items-center gap-3.5 px-3.5 py-2.5 text-[1.0625rem] font-medium text-popover-foreground">
+                            <UserAvatar
+                              name={user.name}
+                              image={user.image}
+                              size="md"
+                            />
+                            <span className="min-w-0 truncate">{user.name}</span>
+                          </DropdownMenuLabel>
+                        </DropdownMenuGroup>
+                        <DropdownMenuSeparator className="mx-2 my-1 bg-line" />
+                      </>
+                    ) : null}
                     <DropdownMenuItem
                       className="min-h-12 gap-3.5 rounded-[14px] px-3.5 text-[1.0625rem]"
                       nativeButton={false}

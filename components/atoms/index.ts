@@ -17,3 +17,4 @@ export { Separator } from "@/components/atoms/separator";
 export { Skeleton } from "@/components/atoms/skeleton";
 export { Status, type StatusProps } from "@/components/atoms/status";
 export { Switch } from "@/components/atoms/switch";
+export { UserAvatar, type UserAvatarProps } from "@/components/atoms/user-avatar";
