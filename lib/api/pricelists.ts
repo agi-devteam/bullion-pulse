@@ -40,11 +40,6 @@ export interface XauPricelistEntry {
   updatedAt?: number;
 }
 
-export interface PricingPricelistSources {
-  gmiclub: PricelistEntry[];
-  antam: AntamPricelistEntry[];
-}
-
 function isGram(value: number): value is Gram {
   return (GRAMS as readonly number[]).includes(value);
 }
@@ -120,12 +115,4 @@ export async function fetchXauPricelists(): Promise<XauPricelistEntry[]> {
   return rows
     .map(mapXauPricelistRow)
     .filter((row): row is XauPricelistEntry => row != null);
-}
-
-export async function fetchPricingPricelistSources(): Promise<PricingPricelistSources> {
-  const [gmiclub, antam] = await Promise.all([
-    fetchGmiClubPricelists(),
-    fetchAntamPricelists().catch(() => [] as AntamPricelistEntry[]),
-  ]);
-  return { gmiclub, antam };
 }

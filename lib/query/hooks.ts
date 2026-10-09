@@ -6,7 +6,7 @@ import { classifyInventory } from "@/domain/decision";
 import type { InventoryFilters, PricingFilters } from "@/domain/filters";
 import type { InventoryRecord } from "@/domain/inventory";
 import { enrichInventoryEconomics } from "@/domain/inventory-economics";
-import type { AntamQuote, XauQuote } from "@/domain/market";
+import type { XauQuote } from "@/domain/market";
 import type { DecisionBucket, Segment } from "@/domain/primitives";
 import {
   DEFAULT_REFRESH_SECONDS,
@@ -21,12 +21,16 @@ import {
   persistPolicyDraft,
   type PolicyPersistSection,
 } from "@/lib/api/policies";
-import { fetchPricingPricelistSources } from "@/lib/api/pricelists";
+import {
+  type AntamPricelistEntry,
+  fetchAntamPricelists,
+  fetchGmiClubPricelists,
+} from "@/lib/api/pricelists";
 import { fetchSuppliers } from "@/lib/api/suppliers";
 import { buildActionAlerts } from "@/lib/actions/build-alerts";
 import { buildHomeIntelligence } from "@/lib/intelligence/build-home";
 import { buildPricingRows } from "@/lib/pricing/build-rows";
-import { fetchAntamQuote, fetchXauQuote } from "@/lib/query/bootstrap";
+import { fetchXauQuote, toAntamQuote } from "@/lib/query/bootstrap";
 import { queryKeys } from "@/lib/query/keys";
 import { useAuthStore } from "@/stores/use-auth-store";
 import { useSettingsStore } from "@/stores/use-settings-store";
@@ -131,13 +135,27 @@ export function useSuppliers(options?: { enabled?: boolean }) {
   });
 }
 
+function useAntamPricelists(options?: { enabled?: boolean }) {
+  const status = useAuthStore((state) => state.status);
+  const refetchIntervalMs = useSettingsRefreshIntervalMs();
+
+  return useQuery<AntamPricelistEntry[]>({
+    queryKey: queryKeys.market.antam,
+    queryFn: fetchAntamPricelists,
+    staleTime: refetchIntervalMs,
+    refetchInterval: refetchIntervalMs,
+    enabled: (options?.enabled ?? true) && status === "authenticated",
+  });
+}
+
 export function useMarketAntam() {
   const status = useAuthStore((state) => state.status);
   const refetchIntervalMs = useSettingsRefreshIntervalMs();
 
-  return useQuery<AntamQuote>({
+  return useQuery({
     queryKey: queryKeys.market.antam,
-    queryFn: fetchAntamQuote,
+    queryFn: fetchAntamPricelists,
+    select: toAntamQuote,
     staleTime: refetchIntervalMs,
     refetchInterval: refetchIntervalMs,
     enabled: status === "authenticated",
@@ -245,11 +263,12 @@ export function usePricing(_filters?: PricingFilters) {
   const settingsQuery = useSettings({ theme, language });
   const inventoryQuery = useInventoryRecords();
   const suppliersQuery = useSuppliers();
+  const antamQuery = useAntamPricelists();
   const refetchIntervalMs = useSettingsRefreshIntervalMs();
   const status = useAuthStore((state) => state.status);
   const pricelistsQuery = useQuery({
     queryKey: queryKeys.pricing.all,
-    queryFn: fetchPricingPricelistSources,
+    queryFn: fetchGmiClubPricelists,
     staleTime: refetchIntervalMs,
     refetchInterval: refetchIntervalMs,
     enabled: status === "authenticated",
@@ -258,14 +277,15 @@ export function usePricing(_filters?: PricingFilters) {
   const data = useMemo(() => {
     if (!pricelistsQuery.data) return undefined;
     return buildPricingRows({
-      pricelists: pricelistsQuery.data.gmiclub,
-      antam: pricelistsQuery.data.antam,
+      pricelists: pricelistsQuery.data,
+      antam: antamQuery.data ?? [],
       inventory: inventoryQuery.data ?? [],
       margin: settingsQuery.data?.margin,
       suppliers: suppliersQuery.data ?? [],
     });
   }, [
     pricelistsQuery.data,
+    antamQuery.data,
     inventoryQuery.data,
     settingsQuery.data?.margin,
     suppliersQuery.data,
@@ -281,7 +301,8 @@ export function usePricing(_filters?: PricingFilters) {
     isFetching:
       pricelistsQuery.isFetching ||
       settingsQuery.isFetching ||
-      inventoryQuery.isFetching,
+      inventoryQuery.isFetching ||
+      antamQuery.isFetching,
     isError: pricelistsQuery.isError,
     error: pricelistsQuery.error,
   };

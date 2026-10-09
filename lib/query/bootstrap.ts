@@ -5,15 +5,15 @@ import type { DisplaySettings } from "@/domain/settings";
 import { fetchInventories } from "@/lib/api/inventories";
 import { fetchPolicyDraft } from "@/lib/api/policies";
 import {
+  type AntamPricelistEntry,
   fetchAntamPricelists,
-  fetchPricingPricelistSources,
+  fetchGmiClubPricelists,
   fetchXauPricelists,
 } from "@/lib/api/pricelists";
 import { fetchSuppliers } from "@/lib/api/suppliers";
 import { queryKeys } from "@/lib/query/keys";
 
-export async function fetchAntamQuote(): Promise<AntamQuote> {
-  const rows = await fetchAntamPricelists();
+export function toAntamQuote(rows: AntamPricelistEntry[]): AntamQuote {
   const sell: AntamQuote["sell"] = {};
   let buyback: number | null = null;
 
@@ -60,7 +60,7 @@ export async function bootstrapAppData(
     }),
     queryClient.prefetchQuery({
       queryKey: queryKeys.market.antam,
-      queryFn: fetchAntamQuote,
+      queryFn: fetchAntamPricelists,
       staleTime: 60 * 1000,
     }),
     queryClient.prefetchQuery({
@@ -94,7 +94,7 @@ export async function bootstrapAppData(
     tasks.push(
       queryClient.prefetchQuery({
         queryKey: queryKeys.pricing.all,
-        queryFn: fetchPricingPricelistSources,
+        queryFn: fetchGmiClubPricelists,
         staleTime: 60 * 1000,
       }),
     );
