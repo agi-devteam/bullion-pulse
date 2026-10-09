@@ -106,6 +106,7 @@
     "segmentAll": "All",
     "segmentB2c": "B2C",
     "segmentB2b": "B2B",
+    "xauLabel": "XAU/USD",
     "antamSell1g": "ANTAM Sell 1g",
     "antamBuyback": "ANTAM Buyback",
     "unavailable": "Unavailable",
@@ -199,7 +200,7 @@
   "pricing": {
     "loading": "Loading pricing from server…",
     "loadFailed": "Could not load pricelists from the server.",
-    "notice": "Minimum profitable price and target-margin price use the highest READY cost per channel / grammage. ANTAM official source: logammulia.com only.",
+    "notice": "Minimum profitable price and target-margin price use the highest READY cost per channel / grammage. ANTAM official source: logammulia.com only. XAU is not an operational pricing benchmark.",
     "filters": {
       "channel": "Channel pricing",
       "gram": "Grammage pricing",
@@ -345,7 +346,9 @@
       "freshness": "Freshness threshold (minutes)",
       "antamSource": "ANTAM official source",
       "antamSourceNote": "Official source only · no fallback.",
-      "antamLink": "logammulia.com"
+      "antamLink": "logammulia.com",
+      "xau": "XAU market awareness",
+      "xauNote": "XAU is not part of the operational decision engine."
     }
   },
   "evidence": {
@@ -433,6 +436,8 @@
       "excludedInvalidValue": "{excluded} non-ready · {invalid} invalid",
       "readyWithoutSource": "Ready without valid source",
       "readyWithoutSourceValue": "{count} pcs · not in intelligence",
+      "xau": "XAU",
+      "xauValue": "Market context only · does not affect classification",
       "totalProfitHpp": "Total profit · HPP basis"
     }
   }

@@ -1,6 +1,6 @@
 export interface XauQuote {
   current: number;
-  change: number;
+  change: number | null;
 }
 
 export interface AntamQuote {

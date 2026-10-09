@@ -32,7 +32,10 @@ export function MarketPill({
         value
       )}
       {change != null ? (
-        <span className="sell-text">+{formatPercent(change)}</span>
+        <span className={change >= 0 ? "sell-text" : "hold-text"}>
+          {change >= 0 ? "+" : ""}
+          {formatPercent(change)}
+        </span>
       ) : null}
     </span>
   );

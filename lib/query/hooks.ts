@@ -26,7 +26,7 @@ import { fetchSuppliers } from "@/lib/api/suppliers";
 import { buildActionAlerts } from "@/lib/actions/build-alerts";
 import { buildHomeIntelligence } from "@/lib/intelligence/build-home";
 import { buildPricingRows } from "@/lib/pricing/build-rows";
-import { fetchAntamQuote } from "@/lib/query/bootstrap";
+import { fetchAntamQuote, fetchXauQuote } from "@/lib/query/bootstrap";
 import { INVENTORY_REFETCH_MS } from "@/lib/query/inventory-refresh";
 import { queryKeys } from "@/lib/query/keys";
 import { useAuthStore } from "@/stores/use-auth-store";
@@ -226,11 +226,16 @@ export function useInventory(_filters?: InventoryFilters) {
   return useInventoryRecords();
 }
 
-export function useMarketXau() {
+export function useMarketXau(options?: { enabled?: boolean }) {
+  const status = useAuthStore((state) => state.status);
+  const refetchIntervalMs = useSettingsRefreshIntervalMs();
+
   return useQuery<XauQuote>({
     queryKey: queryKeys.market.xau,
-    queryFn: () => notImplemented("GET /api/market/xau"),
-    enabled: false,
+    queryFn: fetchXauQuote,
+    staleTime: refetchIntervalMs,
+    refetchInterval: refetchIntervalMs,
+    enabled: (options?.enabled ?? true) && status === "authenticated",
   });
 }
 

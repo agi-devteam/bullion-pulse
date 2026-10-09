@@ -30,6 +30,16 @@ export interface AntamPricelistEntry {
   updatedAt?: number;
 }
 
+export interface XauPricelistRowDto {
+  price: number;
+  updatedAt?: number;
+}
+
+export interface XauPricelistEntry {
+  price: number;
+  updatedAt?: number;
+}
+
 export interface PricingPricelistSources {
   gmiclub: PricelistEntry[];
   antam: AntamPricelistEntry[];
@@ -90,6 +100,26 @@ export async function fetchAntamPricelists(): Promise<AntamPricelistEntry[]> {
   return rows
     .map(mapAntamPricelistRow)
     .filter((row): row is AntamPricelistEntry => row != null);
+}
+
+export function mapXauPricelistRow(
+  dto: XauPricelistRowDto,
+): XauPricelistEntry | null {
+  if (typeof dto.price !== "number" || !Number.isFinite(dto.price)) {
+    return null;
+  }
+
+  return {
+    price: dto.price,
+    updatedAt: dto.updatedAt,
+  };
+}
+
+export async function fetchXauPricelists(): Promise<XauPricelistEntry[]> {
+  const rows = await apiGet<XauPricelistRowDto[]>("/pricelists/xau");
+  return rows
+    .map(mapXauPricelistRow)
+    .filter((row): row is XauPricelistEntry => row != null);
 }
 
 export async function fetchPricingPricelistSources(): Promise<PricingPricelistSources> {

@@ -1,12 +1,13 @@
 import type { QueryClient } from "@tanstack/react-query";
 import { PERMISSION, hasPermission } from "@/domain/auth";
-import type { AntamQuote } from "@/domain/market";
+import type { AntamQuote, XauQuote } from "@/domain/market";
 import type { DisplaySettings } from "@/domain/settings";
 import { fetchInventories } from "@/lib/api/inventories";
 import { fetchPolicyDraft } from "@/lib/api/policies";
 import {
   fetchAntamPricelists,
   fetchPricingPricelistSources,
+  fetchXauPricelists,
 } from "@/lib/api/pricelists";
 import { fetchSuppliers } from "@/lib/api/suppliers";
 import { INVENTORY_REFETCH_MS } from "@/lib/query/inventory-refresh";
@@ -28,6 +29,25 @@ export async function fetchAntamQuote(): Promise<AntamQuote> {
   return { sell, buyback };
 }
 
+export async function fetchXauQuote(): Promise<XauQuote> {
+  const rows = await fetchXauPricelists();
+  const sorted = [...rows].sort(
+    (a, b) => (b.updatedAt ?? 0) - (a.updatedAt ?? 0),
+  );
+  const latest = sorted[0];
+  if (latest == null) {
+    throw new Error("No XAU prices available");
+  }
+
+  const previous = sorted[1]?.price;
+  const change =
+    previous != null && previous > 0
+      ? ((latest.price - previous) / previous) * 100
+      : null;
+
+  return { current: latest.price, change };
+}
+
 export async function bootstrapAppData(
   queryClient: QueryClient,
   display: DisplaySettings,
@@ -42,6 +62,11 @@ export async function bootstrapAppData(
     queryClient.prefetchQuery({
       queryKey: queryKeys.market.antam,
       queryFn: fetchAntamQuote,
+      staleTime: 60 * 1000,
+    }),
+    queryClient.prefetchQuery({
+      queryKey: queryKeys.market.xau,
+      queryFn: fetchXauQuote,
       staleTime: 60 * 1000,
     }),
   ];
