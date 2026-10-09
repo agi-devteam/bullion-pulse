@@ -149,6 +149,7 @@
       },
       "ariaEvidence": "Lihat evidence {bucket}",
       "supplierAria": "Kandidat supplier ROUTE ELIGIBLE · belum locked",
+      "supplierMore": "+{count} lagi",
       "chartTitle": "Rincian per gramasi (gram)",
       "descIncomplete": "Source belum valid. Periksa Data Health & Audit.",
       "descSell": "Prioritaskan inventory yang memenuhi kebijakan margin.",

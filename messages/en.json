@@ -149,6 +149,7 @@
       },
       "ariaEvidence": "View {bucket} evidence",
       "supplierAria": "ROUTE ELIGIBLE supplier candidates · not locked yet",
+      "supplierMore": "+{count} more",
       "chartTitle": "Breakdown by grammage (grams)",
       "descIncomplete": "Sources not yet valid. Check Data Health & Audit.",
       "descSell": "Prioritize inventory that meets margin policy.",

@@ -38,10 +38,20 @@ export { Metric, type MetricProps } from "@/components/molecules/metric";
 export { MetricSkeleton } from "@/components/molecules/metric-skeleton";
 export { NoticeBanner } from "@/components/molecules/notice-banner";
 export {
+  OverflowChipList,
+  type OverflowChipListProps,
+} from "@/components/molecules/overflow-chip-list";
+export {
   PageToolbar,
   WorkspaceStack,
 } from "@/components/molecules/page-toolbar";
 export { ProfitColumn, type ProfitColumnProps } from "@/components/molecules/profit-column";
+export {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/molecules/tooltip";
 export {
   Select,
   SelectContent,

@@ -12,6 +12,7 @@ import { ArrowUpRight, ChevronRight } from "lucide-react";
 import { Status } from "@/components/atoms/status";
 import { AnimatedValue } from "@/components/molecules/animated-value";
 import { DeltaBubble } from "@/components/molecules/delta-bubble";
+import { OverflowChipList } from "@/components/molecules/overflow-chip-list";
 import { DenominationBarChart } from "@/components/organisms/denomination-bar-chart";
 import type { BucketData, SupplierSplit } from "@/domain/intelligence";
 import type { DecisionBucket } from "@/domain/primitives";
@@ -171,7 +172,7 @@ export function DecisionPanel({
           />
         ) : null}
       </div>
-      <div className="flex flex-wrap items-baseline gap-x-4 gap-y-2">
+      <div className="flex min-w-0 items-baseline gap-x-4">
         <div className="inline-flex shrink-0 items-baseline gap-1.5">
           <strong className="mono text-[2.25rem] font-normal tracking-[-0.02em] max-[480px]:text-[1.9rem]">
             <AnimatedValue
@@ -191,17 +192,16 @@ export function DecisionPanel({
           </span>
         </div>
         {bucket === "route" && supplierSplit.length > 0 ? (
-          <div
-            className="flex flex-wrap items-baseline gap-x-3.5 gap-y-1.5 text-[min(0.9375rem,20px)] leading-[1.4] text-muted-text"
-            role="list"
+          <OverflowChipList
+            items={supplierSplit}
+            getKey={(supplier) => supplier.name}
             aria-label={t("supplierAria")}
-          >
-            {supplierSplit.map((supplier) => (
-              <span
-                key={supplier.name}
-                className="flex items-baseline gap-1.75"
-                role="listitem"
-              >
+            listClassName="gap-x-3.5 text-[min(0.9375rem,20px)] leading-[1.4] text-muted-text"
+            itemClassName="inline-flex items-baseline gap-1.75"
+            moreClassName="text-[min(0.9375rem,20px)] leading-[1.4] text-muted-text"
+            moreLabel={(count) => t("supplierMore", { count })}
+            renderItem={(supplier) => (
+              <>
                 <b className="font-semibold text-route-t">{supplier.name}</b>
                 <span className="mono shrink-0 text-ink">
                   <AnimatedValue
@@ -211,9 +211,32 @@ export function DecisionPanel({
                     showBubble={false}
                   />
                 </span>
-              </span>
-            ))}
-          </div>
+              </>
+            )}
+            renderMeasureItem={(supplier) => (
+              <>
+                <b className="font-semibold text-route-t">{supplier.name}</b>
+                <span className="mono shrink-0 text-ink">
+                  {formatNumber(Math.round(supplier.grams))}g
+                </span>
+              </>
+            )}
+            renderOverflow={(hidden) => (
+              <ul className="m-0 flex list-none flex-col gap-1.5 p-0">
+                {hidden.map((supplier) => (
+                  <li
+                    key={supplier.name}
+                    className="flex items-baseline gap-1.75"
+                  >
+                    <b className="font-semibold text-route-t">{supplier.name}</b>
+                    <span className="mono shrink-0 text-ink">
+                      {formatNumber(Math.round(supplier.grams))}g
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          />
         ) : null}
       </div>
       <p className="m-0 text-base leading-[1.45] text-muted-text">
