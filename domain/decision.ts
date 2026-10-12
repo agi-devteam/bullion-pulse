@@ -33,7 +33,6 @@ function isViableSupplier(
   quote: SupplierQuoteRow,
   unit: InventoryRecord,
   route: RoutePolicy,
-  staleMinutes: number,
   now: Date,
   remainingCapacity: number,
 ): boolean {
@@ -48,9 +47,6 @@ function isViableSupplier(
   if (!Number.isFinite(quoteTime) || !Number.isFinite(validUntil)) return false;
   if (validUntil <= now.getTime()) return false;
   if (quoteTime > now.getTime() + QUOTE_CLOCK_TOLERANCE_MS) return false;
-
-  const ageMs = now.getTime() - quoteTime;
-  if (ageMs > staleMinutes * 60_000) return false;
 
   if (quote.capacity < unit.gram) return false;
   if (quote.leadTime > route.maxLeadHours) return false;
@@ -71,7 +67,6 @@ function findBestViableSupplier(
   unit: InventoryRecord,
   suppliers: SupplierQuoteRow[],
   route: RoutePolicy,
-  staleMinutes: number,
   now: Date,
   consumedByQuoteId: Map<string, number>,
 ): SupplierQuoteRow | null {
@@ -84,9 +79,7 @@ function findBestViableSupplier(
     if (quote.quotePrice == null) continue;
     const consumed = consumedByQuoteId.get(quote.quoteId) ?? 0;
     const remaining = quote.capacity - consumed;
-    if (
-      !isViableSupplier(quote, unit, route, staleMinutes, now, remaining)
-    ) {
+    if (!isViableSupplier(quote, unit, route, now, remaining)) {
       continue;
     }
     if (
@@ -107,7 +100,6 @@ export function classifyUnit(
   margin: MarginPolicy,
   route: RoutePolicy,
   suppliers: SupplierQuoteRow[],
-  staleMinutes: number,
   now: Date,
   consumedByQuoteId: Map<string, number>,
 ): UnitDecision | null {
@@ -133,7 +125,6 @@ export function classifyUnit(
     unit,
     suppliers,
     route,
-    staleMinutes,
     now,
     consumedByQuoteId,
   );
@@ -166,7 +157,7 @@ export function classifyInventory(
 ): InventoryRecord[] {
   const now = context.now ?? new Date();
   const consumedByQuoteId = new Map<string, number>();
-  const { margin, route, system } = context.policy;
+  const { margin, route } = context.policy;
 
   return records.map((unit) => {
     const result = classifyUnit(
@@ -174,7 +165,6 @@ export function classifyInventory(
       margin,
       route,
       context.suppliers,
-      system.staleMinutes,
       now,
       consumedByQuoteId,
     );

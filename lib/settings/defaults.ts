@@ -50,7 +50,6 @@ export function createDefaultPolicyDraft(
     system: {
       businessDayStart: "08:00",
       refreshSeconds: DEFAULT_REFRESH_SECONDS,
-      staleMinutes: 30,
       antamSource: "https://www.logammulia.com/",
       xauEnabled: true,
     },

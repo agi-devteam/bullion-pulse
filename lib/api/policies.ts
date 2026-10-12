@@ -137,7 +137,6 @@ export function systemDtoToSettings(dto: SystemPolicyDto): SystemSettings {
   return {
     businessDayStart: toTimeInputValue(dto.businessDayStart),
     refreshSeconds: dto.refreshSeconds,
-    staleMinutes: dto.staleMinutes,
     antamSource: ANTAM_SOURCE,
     xauEnabled: dto.xauEnabled,
   };
@@ -149,7 +148,7 @@ export function systemSettingsToDto(
   return {
     businessDayStart: toBackendTimeValue(settings.businessDayStart),
     refreshSeconds: settings.refreshSeconds,
-    staleMinutes: settings.staleMinutes,
+    staleMinutes: 30,
     xauEnabled: settings.xauEnabled,
   };
 }

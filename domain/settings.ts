@@ -29,7 +29,6 @@ export interface SupplierPolicy {
 export interface SystemSettings {
   businessDayStart: string;
   refreshSeconds: number;
-  staleMinutes: number;
   antamSource: string;
   xauEnabled: boolean;
 }
