@@ -20,7 +20,7 @@ function ReadyInventoryCardSkeleton() {
   return (
     <Card
       aria-hidden="true"
-      className="grid grid-cols-[minmax(0,1fr)_minmax(0,2.6fr)] gap-0 overflow-hidden p-0 py-0 [--card-spacing:0px] max-[1000px]:grid-cols-1 max-[700px]:rounded-2xl"
+      className="grid grid-cols-[minmax(0,1fr)_minmax(0,2fr)] gap-0 overflow-hidden p-0 py-0 [--card-spacing:0px] max-[1000px]:grid-cols-1 max-[700px]:rounded-2xl"
     >
       <div className="flex min-w-0 flex-col gap-4.5 px-7 py-6 max-[1000px]:p-5.5 max-[700px]:p-4.5 min-[2560px]:px-8.5 min-[2560px]:py-7.5">
         <div className="text-[0.875rem] font-semibold tracking-[0.06em] text-muted-text uppercase">
