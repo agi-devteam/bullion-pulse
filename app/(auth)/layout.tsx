@@ -4,7 +4,7 @@ import { LoginLanguageSelect } from "@/components/templates/auth/login-language-
 
 export default function AuthLayout({ children }: { children: ReactNode }) {
   return (
-    <div className="flex min-h-dvh flex-col bg-[#141414]">
+    <div className="flex min-h-dvh flex-col bg-bg">
       <main className="flex flex-1 items-center justify-center px-6 py-12">
         <div className="w-full max-w-90">{children}</div>
       </main>
