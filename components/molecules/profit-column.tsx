@@ -1,7 +1,12 @@
 "use client";
 
 import { AnimatedValue } from "@/components/molecules/animated-value";
-import { compactRupiah } from "@/lib/format/money";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/molecules/tooltip";
+import { compactRupiah, formatIdr } from "@/lib/format/money";
 import { cn } from "@/lib/utils";
 import { useSettingsStore } from "@/stores/use-settings-store";
 
@@ -19,6 +24,21 @@ export function ProfitColumn({
   variant,
 }: ProfitColumnProps) {
   const language = useSettingsStore((state) => state.language);
+
+  const amount = (
+    <AnimatedValue
+      value={value}
+      sentiment="good-up"
+      bubblePlacement="below"
+      format={(next) => compactRupiah(next, language)}
+      emptyLabel={compactRupiah(null, language)}
+      formatDelta={(delta) => {
+        const sign = delta > 0 ? "+" : "";
+        return `${sign}${compactRupiah(delta, language)}`;
+      }}
+      className={variant === "arbitrage" ? "text-muted-text" : undefined}
+    />
+  );
 
   return (
     <div
@@ -40,18 +60,26 @@ export function ProfitColumn({
           variant === "arbitrage" ? "text-muted-text" : "mono",
         )}
       >
-        <AnimatedValue
-          value={value}
-          sentiment="good-up"
-          bubblePlacement="below"
-          format={(next) => compactRupiah(next, language)}
-          emptyLabel={compactRupiah(null, language)}
-          formatDelta={(delta) => {
-            const sign = delta > 0 ? "+" : "";
-            return `${sign}${compactRupiah(delta, language)}`;
-          }}
-          className={variant === "arbitrage" ? "text-muted-text" : undefined}
-        />
+        {value == null ? (
+          amount
+        ) : (
+          <Tooltip>
+            <TooltipTrigger
+              delay={0}
+              render={<span />}
+              className="cursor-help"
+            >
+              {amount}
+            </TooltipTrigger>
+            <TooltipContent
+              side="bottom"
+              className="font-mono tabular-nums"
+              onClick={(event) => event.stopPropagation()}
+            >
+              {formatIdr(value)}
+            </TooltipContent>
+          </Tooltip>
+        )}
       </div>
       <div className="mt-auto text-[0.9375rem] text-muted-text">{note}</div>
     </div>
