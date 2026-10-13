@@ -202,7 +202,11 @@
 /* Tabular numbers for values — PRD 2.2 */
 .mono {
   font-family: var(--font-jetbrains-mono), "JetBrains Mono", ui-monospace, monospace;
-  font-variant-numeric: tabular-nums;
+}
+
+.mono,
+.font-mono {
+  font-variant-numeric: tabular-nums slashed-zero;
 }
 
 /* Prototype tables use fixed px padding so row rhythm stays while type scales */
