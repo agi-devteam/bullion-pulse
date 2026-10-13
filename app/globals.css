@@ -207,6 +207,7 @@
 .mono,
 .font-mono {
   font-variant-numeric: tabular-nums slashed-zero;
+  font-feature-settings: "tnum" 1, "zero" 1;
 }
 
 /* Prototype tables use fixed px padding so row rhythm stays while type scales */
