@@ -5,31 +5,57 @@ import type { DisplaySettings } from "@/domain/settings";
 import { fetchInventories } from "@/lib/api/inventories";
 import { fetchPolicyDraft } from "@/lib/api/policies";
 import {
-  type AntamPricelistEntry,
-  fetchAntamPricelists,
+  type AntamPricelistSnapshot,
+  antamBuybackChangePercent,
+  antamBuybackPerGram,
+  antamSellChangePercent,
+  fetchAntamPricelistSnapshots,
   fetchGmiClubPricelists,
   fetchXauPricelists,
+  percentChange,
+  pickAntamSnapshot,
 } from "@/lib/api/pricelists";
 import { fetchSuppliers } from "@/lib/api/suppliers";
 import { queryKeys } from "@/lib/query/keys";
 
-export function toAntamQuote(rows: AntamPricelistEntry[]): AntamQuote {
-  const sell: AntamQuote["sell"] = {};
-  let buyback: number | null = null;
+export function toAntamQuote(snapshots: AntamPricelistSnapshot[]): AntamQuote {
+  const current = pickAntamSnapshot(snapshots, "CURRENT");
+  const previous = pickAntamSnapshot(snapshots, "PREVIOUS");
+  const currentPrices = current?.prices ?? [];
 
-  for (const row of rows) {
+  const sell: AntamQuote["sell"] = {};
+  for (const row of currentPrices) {
     sell[row.gram] = row.sellPrice;
-    if (row.buybackPrice != null && row.gram > 0) {
-      const perGram = row.buybackPrice / row.gram;
-      buyback = buyback == null ? perGram : Math.max(buyback, perGram);
-    }
   }
 
-  return { sell, buyback };
+  return {
+    sell,
+    buyback: antamBuybackPerGram(currentPrices),
+    sell1gChange:
+      previous != null
+        ? antamSellChangePercent(currentPrices, previous.prices, 1)
+        : null,
+    buybackChange:
+      previous != null
+        ? antamBuybackChangePercent(currentPrices, previous.prices)
+        : null,
+  };
 }
 
 export async function fetchXauQuote(): Promise<XauQuote> {
   const rows = await fetchXauPricelists();
+  const byType = {
+    CURRENT: rows.find((row) => row.type === "CURRENT"),
+    PREVIOUS: rows.find((row) => row.type === "PREVIOUS"),
+  };
+
+  if (byType.CURRENT != null) {
+    const previous = byType.PREVIOUS?.price;
+    const change =
+      previous != null ? percentChange(byType.CURRENT.price, previous) : null;
+    return { current: byType.CURRENT.price, change };
+  }
+
   const sorted = [...rows].sort(
     (a, b) => (b.updatedAt ?? 0) - (a.updatedAt ?? 0),
   );
@@ -40,9 +66,7 @@ export async function fetchXauQuote(): Promise<XauQuote> {
 
   const previous = sorted[1]?.price;
   const change =
-    previous != null && previous > 0
-      ? ((latest.price - previous) / previous) * 100
-      : null;
+    previous != null ? percentChange(latest.price, previous) : null;
 
   return { current: latest.price, change };
 }
@@ -60,7 +84,7 @@ export async function bootstrapAppData(
     }),
     queryClient.prefetchQuery({
       queryKey: queryKeys.market.antam,
-      queryFn: fetchAntamPricelists,
+      queryFn: fetchAntamPricelistSnapshots,
       staleTime: 60 * 1000,
     }),
     queryClient.prefetchQuery({

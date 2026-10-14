@@ -58,6 +58,7 @@ export function MarketStrip() {
             ? formatRupiah(antam.data.sell[1])
             : unavailable
         }
+        change={antam.data?.sell1gChange ?? undefined}
       />
       <MarketPill
         label={t("antamBuyback")}
@@ -66,6 +67,7 @@ export function MarketStrip() {
             ? formatRupiah(antam.data.buyback)
             : unavailable
         }
+        change={antam.data?.buybackChange ?? undefined}
       />
       <MarketPill
         value={time ? t("clockWib", { time }) : unavailable}

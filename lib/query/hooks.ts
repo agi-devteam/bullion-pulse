@@ -23,8 +23,10 @@ import {
 } from "@/lib/api/policies";
 import {
   type AntamPricelistEntry,
-  fetchAntamPricelists,
+  type AntamPricelistSnapshot,
+  fetchAntamPricelistSnapshots,
   fetchGmiClubPricelists,
+  pickAntamSnapshot,
 } from "@/lib/api/pricelists";
 import { fetchSuppliers } from "@/lib/api/suppliers";
 import { buildActionAlerts } from "@/lib/actions/build-alerts";
@@ -139,9 +141,11 @@ function useAntamPricelists(options?: { enabled?: boolean }) {
   const status = useAuthStore((state) => state.status);
   const refetchIntervalMs = useSettingsRefreshIntervalMs();
 
-  return useQuery<AntamPricelistEntry[]>({
+  return useQuery({
     queryKey: queryKeys.market.antam,
-    queryFn: fetchAntamPricelists,
+    queryFn: fetchAntamPricelistSnapshots,
+    select: (snapshots: AntamPricelistSnapshot[]): AntamPricelistEntry[] =>
+      pickAntamSnapshot(snapshots, "CURRENT")?.prices ?? [],
     staleTime: refetchIntervalMs,
     refetchInterval: refetchIntervalMs,
     enabled: (options?.enabled ?? true) && status === "authenticated",
@@ -154,7 +158,7 @@ export function useMarketAntam() {
 
   return useQuery({
     queryKey: queryKeys.market.antam,
-    queryFn: fetchAntamPricelists,
+    queryFn: fetchAntamPricelistSnapshots,
     select: toAntamQuote,
     staleTime: refetchIntervalMs,
     refetchInterval: refetchIntervalMs,
