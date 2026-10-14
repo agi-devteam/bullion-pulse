@@ -126,61 +126,57 @@ export function useIntelligenceEvidence(
 
 export function useSuppliers(options?: { enabled?: boolean }) {
   const status = useAuthStore((state) => state.status);
-  const refetchIntervalMs = useSettingsRefreshIntervalMs();
 
   return useQuery({
     queryKey: queryKeys.suppliers,
     queryFn: fetchSuppliers,
-    staleTime: refetchIntervalMs,
-    refetchInterval: refetchIntervalMs,
+    refetchInterval: false,
+    refetchOnMount: "always",
     enabled: (options?.enabled ?? true) && status === "authenticated",
   });
 }
 
 function useAntamPricelists(options?: { enabled?: boolean }) {
   const status = useAuthStore((state) => state.status);
-  const refetchIntervalMs = useSettingsRefreshIntervalMs();
 
   return useQuery({
     queryKey: queryKeys.market.antam,
     queryFn: fetchAntamPricelistSnapshots,
     select: (snapshots: AntamPricelistSnapshot[]): AntamPricelistEntry[] =>
       pickAntamSnapshot(snapshots, "CURRENT")?.prices ?? [],
-    staleTime: refetchIntervalMs,
-    refetchInterval: refetchIntervalMs,
+    refetchInterval: false,
+    refetchOnMount: "always",
     enabled: (options?.enabled ?? true) && status === "authenticated",
   });
 }
 
-export function useMarketAntam() {
+export function useMarketAntam(options?: { enabled?: boolean }) {
   const status = useAuthStore((state) => state.status);
-  const refetchIntervalMs = useSettingsRefreshIntervalMs();
 
   return useQuery({
     queryKey: queryKeys.market.antam,
     queryFn: fetchAntamPricelistSnapshots,
     select: toAntamQuote,
-    staleTime: refetchIntervalMs,
-    refetchInterval: refetchIntervalMs,
-    enabled: status === "authenticated",
+    refetchInterval: false,
+    refetchOnMount: "always",
+    enabled: (options?.enabled ?? true) && status === "authenticated",
   });
 }
 
 export function useInventoryRecords(options?: { enabled?: boolean }) {
   const theme = useSettingsStore((state) => state.theme);
   const language = useSettingsStore((state) => state.language);
+  const enabled = options?.enabled ?? true;
   const settingsQuery = useSettings({ theme, language });
-  const suppliersQuery = useSuppliers();
-  const antamQuery = useMarketAntam();
+  const suppliersQuery = useSuppliers({ enabled });
+  const antamQuery = useMarketAntam({ enabled });
   const status = useAuthStore((state) => state.status);
-  const refetchIntervalMs = useSettingsRefreshIntervalMs();
   const inventoryQuery = useQuery({
     queryKey: queryKeys.inventory.all,
     queryFn: fetchInventories,
-    staleTime: refetchIntervalMs,
-    refetchInterval: (query) =>
-      query.state.fetchStatus === "fetching" ? false : refetchIntervalMs,
-    enabled: (options?.enabled ?? true) && status === "authenticated",
+    refetchInterval: false,
+    refetchOnMount: "always",
+    enabled: enabled && status === "authenticated",
   });
 
   const data = useMemo((): InventoryRecord[] | undefined => {
@@ -226,6 +222,7 @@ export function useIntelligence(segment: Segment) {
     queryKey: queryKeys.intelligence.bySegment(segment),
     queryFn: () => fetchHomeIntelligence(segment),
     staleTime: refetchIntervalMs,
+    // Only home intelligence keeps polling after boot.
     refetchInterval: (query) =>
       query.state.fetchStatus === "fetching" ? false : refetchIntervalMs,
     refetchOnMount: "always",
@@ -239,13 +236,12 @@ export function useInventory(_filters?: InventoryFilters) {
 
 export function useMarketXau(options?: { enabled?: boolean }) {
   const status = useAuthStore((state) => state.status);
-  const refetchIntervalMs = useSettingsRefreshIntervalMs();
 
   return useQuery<XauQuote>({
     queryKey: queryKeys.market.xau,
     queryFn: fetchXauQuote,
-    staleTime: refetchIntervalMs,
-    refetchInterval: refetchIntervalMs,
+    refetchInterval: false,
+    refetchOnMount: "always",
     enabled: (options?.enabled ?? true) && status === "authenticated",
   });
 }
@@ -257,13 +253,12 @@ export function usePricing(_filters?: PricingFilters) {
   const inventoryQuery = useInventoryRecords();
   const suppliersQuery = useSuppliers();
   const antamQuery = useAntamPricelists();
-  const refetchIntervalMs = useSettingsRefreshIntervalMs();
   const status = useAuthStore((state) => state.status);
   const pricelistsQuery = useQuery({
     queryKey: queryKeys.pricing.all,
     queryFn: fetchGmiClubPricelists,
-    staleTime: refetchIntervalMs,
-    refetchInterval: refetchIntervalMs,
+    refetchInterval: false,
+    refetchOnMount: "always",
     enabled: status === "authenticated",
   });
 
