@@ -25,6 +25,13 @@ node_modules
 /ui-mockup/
 /Master-Build-Spec.md
 
+# gold scrape outputs / research CSVs (local only)
+/data/
+.tmp-*.html
+scripts/__pycache__/
+scripts/*.py
+*.pyc
+
 # misc
 .DS_Store
 *.pem
