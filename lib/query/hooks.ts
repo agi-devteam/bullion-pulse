@@ -28,9 +28,9 @@ import {
   fetchGmiClubPricelists,
   pickAntamSnapshot,
 } from "@/lib/api/pricelists";
+import { fetchHomeIntelligence } from "@/lib/api/intelligence";
 import { fetchSuppliers } from "@/lib/api/suppliers";
 import { buildActionAlerts } from "@/lib/actions/build-alerts";
-import { buildHomeIntelligence } from "@/lib/intelligence/build-home";
 import { buildPricingRows } from "@/lib/pricing/build-rows";
 import { fetchXauQuote, toAntamQuote } from "@/lib/query/bootstrap";
 import { queryKeys } from "@/lib/query/keys";
@@ -219,29 +219,18 @@ export function useInventoryRecords(options?: { enabled?: boolean }) {
 }
 
 export function useIntelligence(segment: Segment) {
-  const theme = useSettingsStore((state) => state.theme);
-  const language = useSettingsStore((state) => state.language);
-  const settingsQuery = useSettings({ theme, language });
-  const inventoryQuery = useInventoryRecords();
+  const status = useAuthStore((state) => state.status);
+  const refetchIntervalMs = useSettingsRefreshIntervalMs();
 
-  const data = useMemo(() => {
-    if (!inventoryQuery.data) return undefined;
-    return buildHomeIntelligence({
-      inventory: inventoryQuery.data,
-      policy: settingsQuery.data,
-      segment,
-    });
-  }, [inventoryQuery.data, settingsQuery.data, segment]);
-
-  return {
-    ...inventoryQuery,
-    data,
-    dataUpdatedAt: inventoryQuery.dataUpdatedAt,
-    isPending: inventoryQuery.isPending || settingsQuery.isPending,
-    isFetching: inventoryQuery.isFetching || settingsQuery.isFetching,
-    isError: inventoryQuery.isError,
-    error: inventoryQuery.error,
-  };
+  return useQuery({
+    queryKey: queryKeys.intelligence.bySegment(segment),
+    queryFn: () => fetchHomeIntelligence(segment),
+    staleTime: refetchIntervalMs,
+    refetchInterval: (query) =>
+      query.state.fetchStatus === "fetching" ? false : refetchIntervalMs,
+    refetchOnMount: "always",
+    enabled: status === "authenticated",
+  });
 }
 
 export function useInventory(_filters?: InventoryFilters) {

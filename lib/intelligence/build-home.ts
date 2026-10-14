@@ -237,6 +237,7 @@ export function buildHomeIntelligence(
     actions: toPriorityActions(
       buildActionAlerts({ inventory: decided, now }),
     ),
+    market: null,
   };
 }
 
@@ -262,5 +263,6 @@ export function emptyHomeIntelligence(segment: Segment): HomeIntelligence {
     routeSuppliers: [],
     policyFloor: { b2c: 3, b2b: 2.5 },
     actions: [],
+    market: null,
   };
 }

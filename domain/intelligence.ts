@@ -42,6 +42,18 @@ export interface PriorityAction {
   href: string;
 }
 
+/** Market strip quote — `change` is percent vs previous tick. */
+export interface HomeMarketQuote {
+  current: number;
+  change: number | null;
+}
+export interface HomeMarket {
+  xauEnabled: boolean;
+  xau: HomeMarketQuote | null;
+  antamSell1g: HomeMarketQuote | null;
+  antamBuybackPerGram: HomeMarketQuote | null;
+}
+
 export interface HomeIntelligence {
   isComplete: boolean;
   snapshotDate: string;
@@ -58,6 +70,7 @@ export interface HomeIntelligence {
   routeSuppliers: SupplierSplit[];
   policyFloor: { b2c: number; b2b: number };
   actions: PriorityAction[];
+  market: HomeMarket | null;
 }
 
 export const TONE_FILL_CLASS: Record<DecisionBucket, string> = {

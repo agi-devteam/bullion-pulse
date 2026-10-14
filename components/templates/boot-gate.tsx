@@ -75,8 +75,13 @@ export function BootGate({ children }: { children: ReactNode }) {
       useAuthStore.getState().setSession(user);
       queryClient.setQueryData(queryKeys.auth.user, user);
 
-      const { theme, language } = useSettingsStore.getState();
-      await bootstrapAppData(queryClient, { theme, language }, user.permissions);
+      const { theme, language, segment } = useSettingsStore.getState();
+      await bootstrapAppData(
+        queryClient,
+        { theme, language },
+        user.permissions,
+        segment,
+      );
       if (generation !== generationRef.current) return;
 
       const minMs = reducedMotionRef.current ? 0 : BOOT_MIN_MS;

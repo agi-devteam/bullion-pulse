@@ -1,7 +1,9 @@
 import type { QueryClient } from "@tanstack/react-query";
 import { PERMISSION, hasPermission } from "@/domain/auth";
 import type { AntamQuote, XauQuote } from "@/domain/market";
+import type { Segment } from "@/domain/primitives";
 import type { DisplaySettings } from "@/domain/settings";
+import { fetchHomeIntelligence } from "@/lib/api/intelligence";
 import { fetchInventories } from "@/lib/api/inventories";
 import { fetchPolicyDraft } from "@/lib/api/policies";
 import {
@@ -75,11 +77,17 @@ export async function bootstrapAppData(
   queryClient: QueryClient,
   display: DisplaySettings,
   permissions: readonly string[] = [],
+  segment: Segment = "all",
 ): Promise<void> {
   const tasks: Promise<unknown>[] = [
     queryClient.prefetchQuery({
       queryKey: queryKeys.settings,
       queryFn: () => fetchPolicyDraft(display, permissions),
+      staleTime: 60 * 1000,
+    }),
+    queryClient.prefetchQuery({
+      queryKey: queryKeys.intelligence.bySegment(segment),
+      queryFn: () => fetchHomeIntelligence(segment),
       staleTime: 60 * 1000,
     }),
     queryClient.prefetchQuery({
